@@ -15,7 +15,7 @@ class Edition extends Model
         'place',
         'tun_price',
         'eur_price',
-        'image_url',
+        'images_url',
     ];
 
     public function programs()
