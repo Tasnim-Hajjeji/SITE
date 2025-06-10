@@ -11,9 +11,7 @@ class Program extends Model
     protected $fillable = [
         'name',
         'description',
-        'start_time',
-        'end_time',
-        'location',
+        'time_start',
         'edition_id',
     ];
 

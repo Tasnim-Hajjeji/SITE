@@ -19,9 +19,6 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('image_url');
             $table->string('profession');
-            $table->foreignId('program_id')
-                ->constrained('program')
-                ->onDelete('cascade');
         });
     }
 

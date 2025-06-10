@@ -4,17 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CommitteeMember extends Model
+class document extends Model
 {
-    protected $table = 'committee_member';
+     protected $table = 'document';
 
     protected $fillable = [
-        'full_name',
-        'committee',
-        'role',
-        'from',
-        'image_url',
-        'edition_id',
+        'name',
+        'description',
+        'url',
     ];
 
     public function edition()

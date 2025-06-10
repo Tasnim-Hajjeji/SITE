@@ -9,10 +9,17 @@ class Participant extends Model
     protected $table = 'participant';
 
     protected $fillable = [
-        'name',
+        'nom',
+        'prenom',
         'email',
-        'phone',
-        'photo_url',
+        'fonction',
+        'tel',
+        'pays',
+        'etablissement',
+        'num_enfant',
+        'num_adulte',
+        'supp_single',
+        'supp_nuit',
         'edition_id',
         
     ];
@@ -20,10 +27,5 @@ class Participant extends Model
     public function edition()
     {
         return $this->belongsTo(Edition::class, 'edition_id');
-    }
-
-    public function programs()
-    {
-        return $this->belongsToMany(Program::class, 'program_participant', 'participant_id', 'program_id');
     }
 }

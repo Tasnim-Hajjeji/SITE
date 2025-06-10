@@ -12,8 +12,9 @@ class Edition extends Model
         'name',
         'start_date',
         'end_date',
-        'location',
-        'description',
+        'place',
+        'tun_price',
+        'eur_price',
         'image_url',
     ];
 
