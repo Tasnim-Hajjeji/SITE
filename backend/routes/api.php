@@ -7,6 +7,7 @@ use App\Http\Controllers\ImportantDateController;
 use App\Http\Controllers\IntervenantController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\PartenaireController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -88,4 +89,13 @@ Route::prefix('documents')->group(function () {
     Route::put('/{id}', [DocumentController::class, 'update']);
     Route::delete('/{id}', [DocumentController::class, 'destroy']);
     Route::get('/{id}/download', [DocumentController::class, 'download']);
+});
+// Add this to your existing routes
+Route::prefix('partenaires')->group(function () {
+    Route::get('/', [PartenaireController::class, 'index']);
+    Route::get('/edition/{editionId}', [PartenaireController::class, 'getPartenairesByEdition']);
+    Route::post('/', [PartenaireController::class, 'store']);
+    Route::get('/{partenaire}', [PartenaireController::class, 'show']);
+    Route::put('/{partenaire}', [PartenaireController::class, 'update']);
+    Route::delete('/{partenaire}', [PartenaireController::class, 'destroy']);
 });
