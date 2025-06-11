@@ -18,6 +18,12 @@ class Edition extends Model
         'images_url',
     ];
 
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'images_url' => 'array'
+    ];
+
     public function programs()
     {
         return $this->hasMany(Program::class, 'edition_id');
