@@ -85,4 +85,33 @@ class ProgramController extends Controller
 
         return response()->json(null, 204);
     }
+    /**
+     * Get programs by edition ID.
+     */
+    public function getProgramsByEdition($editionId)
+    {
+        $programs = Program::with('intervenants')
+            ->where('edition_id', $editionId)
+            ->orderBy('time_start', 'asc')
+            ->get();
+
+        return response()->json($programs);
+    }
+
+    /**
+     * Get programs by specific date.
+     */
+    public function getProgramsByDate(Request $request)
+    {
+        $validated = $request->validate([
+            'date' => 'required|date',
+        ]);
+
+        $programs = Program::with('intervenants')
+            ->whereDate('time_start', $validated['date'])
+            ->orderBy('time_start', 'asc')
+            ->get();
+
+        return response()->json($programs);
+    }
 }

@@ -18,10 +18,13 @@ Route::get('/user', function (Request $request) {
 // Edition Routes
 Route::prefix('editions')->group(function () {
     Route::get('/', [EditionController::class, 'index']);
+    Route::get('/current', [EditionController::class, 'getCurrentEdition']);
+    Route::get('/previous', [EditionController::class, 'getPreviousEditions']);
     Route::get('/{id}', [EditionController::class, 'show']);
     Route::post('/', [EditionController::class, 'store']);
     Route::put('/{id}', [EditionController::class, 'update']);
     Route::delete('/{id}', [EditionController::class, 'destroy']);
+    Route::delete('/delete/{id}', [EditionController::class, 'deleteById']); // Additional delete endpoint
     Route::post('/{id}/images', [EditionController::class, 'addImages']);
     Route::delete('/{id}/images/{imageIndex}', [EditionController::class, 'removeImage']);
 });
@@ -29,6 +32,7 @@ Route::prefix('editions')->group(function () {
 // Important Date Routes
 Route::prefix('important-dates')->group(function () {
     Route::get('/', [ImportantDateController::class, 'index']);
+    Route::get('/edition/{editionId}', [ImportantDateController::class, 'getDatesByEdition']);
     Route::get('/{id}', [ImportantDateController::class, 'show']);
     Route::post('/', [ImportantDateController::class, 'store']);
     Route::put('/{id}', [ImportantDateController::class, 'update']);
@@ -38,6 +42,7 @@ Route::prefix('important-dates')->group(function () {
 // Intervenant Routes
 Route::prefix('intervenants')->group(function () {
     Route::get('/', [IntervenantController::class, 'index']);
+    Route::get('/edition/{editionId}', [IntervenantController::class, 'getByEdition']);
     Route::get('/{id}', [IntervenantController::class, 'show']);
     Route::post('/', [IntervenantController::class, 'store']);
     Route::put('/{id}', [IntervenantController::class, 'update']);
@@ -56,7 +61,10 @@ Route::prefix('participants')->group(function () {
 // Program Routes
 Route::prefix('programs')->group(function () {
     Route::get('/', [ProgramController::class, 'index']);
+    Route::get('/edition/{editionId}', [ProgramController::class, 'getProgramsByEdition']);
+    Route::get('/date', [ProgramController::class, 'getProgramsByDate']);
     Route::get('/{id}', [ProgramController::class, 'show']);
+    Route::get('/{programId}/intervenants', [ProgramController::class, 'getIntervenantsByProgramId']);
     Route::post('/', [ProgramController::class, 'store']);
     Route::put('/{id}', [ProgramController::class, 'update']);
     Route::delete('/{id}', [ProgramController::class, 'destroy']);
@@ -65,6 +73,7 @@ Route::prefix('programs')->group(function () {
 // Committee Member Routes
 Route::prefix('committee-members')->group(function () {
     Route::get('/', [CommitteeMemberController::class, 'index']);
+    Route::get('/edition/{editionId}/{committee}', [CommitteeMemberController::class, 'getMembersByEditionAndCommittee']);
     Route::get('/{id}', [CommitteeMemberController::class, 'show']);
     Route::post('/', [CommitteeMemberController::class, 'store']);
     Route::put('/{id}', [CommitteeMemberController::class, 'update']);
@@ -80,4 +89,3 @@ Route::prefix('documents')->group(function () {
     Route::delete('/{id}', [DocumentController::class, 'destroy']);
     Route::get('/{id}/download', [DocumentController::class, 'download']);
 });
-

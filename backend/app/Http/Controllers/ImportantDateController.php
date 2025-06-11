@@ -71,4 +71,15 @@ class ImportantDateController extends Controller
 
         return response()->json(null, 204);
     }
+    /**
+     * Get important dates by edition ID.
+     */
+    public function getDatesByEdition($editionId)
+    {
+        $dates = ImportantDate::where('edition_id', $editionId)
+            ->orderBy('date', 'asc')
+            ->get();
+
+        return response()->json($dates);
+    }
 }

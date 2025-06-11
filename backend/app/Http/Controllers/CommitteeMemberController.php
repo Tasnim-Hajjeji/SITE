@@ -101,4 +101,16 @@ class CommitteeMemberController extends Controller
 
         return response()->json(null, 204);
     }
+    /**
+     * Get members by edition and committee.
+     */
+    public function getMembersByEditionAndCommittee($editionId, $committee)
+    {
+        $members = CommitteeMember::where('edition_id', $editionId)
+            ->where('committee', $committee)
+            ->orderBy('role', 'asc')
+            ->get();
+
+        return response()->json($members);
+    }
 }

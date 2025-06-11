@@ -198,4 +198,47 @@ class EditionController extends Controller
 
         return response()->json($edition);
     }
+    /**
+     * Get the current edition (eldest where start_date > current date).
+     */
+    public function getCurrentEdition()
+    {
+        $currentEdition = Edition::where('start_date', '>', now())
+            ->orderBy('start_date', 'asc')
+            ->first();
+
+        return response()->json($currentEdition);
+    }
+
+    /**
+     * Get previous editions (where end_date < current date).
+     */
+    public function getPreviousEditions()
+    {
+        $previousEditions = Edition::where('end_date', '<', now())
+            ->orderBy('start_date', 'desc')
+            ->get();
+
+        return response()->json($previousEditions);
+    }
+
+    /**
+     * Delete edition by ID.
+     */
+    public function deleteById($id)
+    {
+        $edition = Edition::findOrFail($id);
+
+        // Delete associated images if they exist
+        if ($edition->images_url) {
+            foreach ($edition->images_url as $url) {
+                $path = str_replace('/storage', 'public', $url);
+                Storage::delete($path);
+            }
+        }
+
+        $edition->delete();
+
+        return response()->json(['message' => 'Edition deleted successfully'], 200);
+    }
 }

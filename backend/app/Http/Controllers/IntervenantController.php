@@ -111,4 +111,15 @@ class IntervenantController extends Controller
 
         return response()->json(null, 204);
     }
+    /**
+     * Get intervenants by edition ID.
+     */
+    public function getByEdition($editionId)
+    {
+        $intervenants = Intervenant::with('programs')
+            ->where('edition_id', $editionId)
+            ->get();
+
+        return response()->json($intervenants);
+    }
 }
