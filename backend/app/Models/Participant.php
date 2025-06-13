@@ -20,6 +20,7 @@ class Participant extends Model
         'num_adulte',
         'supp_single',
         'supp_nuit',
+        'prix_total',
         'edition_id',
         
     ];

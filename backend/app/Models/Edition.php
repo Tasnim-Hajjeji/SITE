@@ -12,17 +12,16 @@ class Edition extends Model
 
     protected $fillable = [
         'name',
+        'description',
         'start_date',
         'end_date',
         'place',
-        'tun_price',
-        'eur_price',
         'images_url',
     ];
 
     protected $casts = [
-        'start_date' => 'date',  // Changed from 'datetime' to 'date' to match migration
-        'end_date' => 'date',    // Changed from 'datetime' to 'date' to match migration
+        'start_date' => 'date',  
+        'end_date' => 'date',    
         'images_url' => 'array'
     ];
 
