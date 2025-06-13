@@ -27,6 +27,8 @@ return new class extends Migration
             $table->integer('num_adulte')->default(0);
             $table->boolean('supp_single');
             $table->integer('supp_nuit')->default(0);
+            $table->integer('prix_total')->default(0);
+            $table->timestamps();
         });
     }
 

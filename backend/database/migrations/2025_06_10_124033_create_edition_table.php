@@ -18,8 +18,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->json('images_url')->nullable();
             $table->string('place');
-            $table->integer('tun_price')->default(0);
-            $table->integer('eur_price')->default(0);
+            $table->timestamps();
         });
     }
 

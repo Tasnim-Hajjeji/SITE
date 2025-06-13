@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('role');
             $table->string('from');
             $table->string('image_url')->nullable();
+            $table->timestamps();
         });
     }
 

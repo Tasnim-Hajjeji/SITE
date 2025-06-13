@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Edition extends Model
 {
     // Disable timestamps since your migration doesn't include them
-    public $timestamps = false;
     
     protected $table = 'edition';
 
