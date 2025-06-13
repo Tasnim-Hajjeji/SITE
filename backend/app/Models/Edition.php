@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Edition extends Model
 {
+    // Disable timestamps since your migration doesn't include them
+    public $timestamps = false;
+    
     protected $table = 'edition';
 
     protected $fillable = [
@@ -19,8 +22,8 @@ class Edition extends Model
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'start_date' => 'date',  // Changed from 'datetime' to 'date' to match migration
+        'end_date' => 'date',    // Changed from 'datetime' to 'date' to match migration
         'images_url' => 'array'
     ];
 

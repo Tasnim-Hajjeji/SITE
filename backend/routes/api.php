@@ -23,7 +23,7 @@ Route::prefix('editions')->group(function () {
     Route::get('/previous', [EditionController::class, 'getPreviousEditions']);
     Route::get('/{id}', [EditionController::class, 'show']);
     Route::post('/', [EditionController::class, 'store']);
-    Route::put('/{id}', [EditionController::class, 'update']);
+    Route::post('/{id}', [EditionController::class, 'update']);
     Route::delete('/{id}', [EditionController::class, 'destroy']);
     Route::delete('/delete/{id}', [EditionController::class, 'deleteById']); // Additional delete endpoint
     Route::post('/{id}/images', [EditionController::class, 'addImages']);
@@ -77,7 +77,7 @@ Route::prefix('committee-members')->group(function () {
     Route::get('/edition/{editionId}/{committee}', [CommitteeMemberController::class, 'getMembersByEditionAndCommittee']);
     Route::get('/{id}', [CommitteeMemberController::class, 'show']);
     Route::post('/', [CommitteeMemberController::class, 'store']);
-    Route::put('/{id}', [CommitteeMemberController::class, 'update']);
+    Route::post('/{id}', [CommitteeMemberController::class, 'update']);
     Route::delete('/{id}', [CommitteeMemberController::class, 'destroy']);
 });
 
