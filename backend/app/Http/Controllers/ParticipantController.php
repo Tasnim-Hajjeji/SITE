@@ -33,6 +33,7 @@ class ParticipantController extends Controller
             'num_adulte' => 'required|integer|min:0',
             'supp_single' => 'required|boolean',
             'supp_nuit' => 'required|boolean',
+            'prix_total' => 'required|integer|min:0',
             'edition_id' => 'required|exists:edition,id',
         ]);
 

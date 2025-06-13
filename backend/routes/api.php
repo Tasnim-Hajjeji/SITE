@@ -84,12 +84,12 @@ Route::prefix('committee-members')->group(function () {
 
 // Document Routes
 Route::prefix('documents')->group(function () {
+    Route::get('/download/{id}', [DocumentController::class, 'download']);
     Route::get('/', [DocumentController::class, 'index']);
     Route::get('/{id}', [DocumentController::class, 'show']);
     Route::post('/', [DocumentController::class, 'store']);
-    Route::put('/{id}', [DocumentController::class, 'update']);
+    Route::post('/{id}', [DocumentController::class, 'update']);
     Route::delete('/{id}', [DocumentController::class, 'destroy']);
-    Route::get('/{id}/download', [DocumentController::class, 'download']);
 });
 // Add this to your existing routes
 Route::prefix('partenaires')->group(function () {

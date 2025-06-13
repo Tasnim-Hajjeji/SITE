@@ -12,6 +12,7 @@ class document extends Model
         'name',
         'description',
         'url',
+        'edition_id',
     ];
 
     public function edition()

@@ -29,6 +29,8 @@ class DocumentController extends Controller
             'edition_id' => 'nullable|exists:edition,id',
         ]);
 
+        unset($validated['file']);
+        $validated['url'] = null;
         // Handle file upload
         if ($request->hasFile('file')) {
             $path = $request->file('file')->store('public/documents');
@@ -55,12 +57,12 @@ class DocumentController extends Controller
     public function download(string $id)
     {
         $document = Document::findOrFail($id);
-        $path = str_replace('/storage', 'public', $document->url);
-        
+
+        $path = str_replace('http://localhost/storage/', '', $document->url);
         if (!Storage::exists($path)) {
+            dd("File does not exist at path: " . $path);
             abort(404);
         }
-
         return Storage::download($path, $document->name);
     }
 
