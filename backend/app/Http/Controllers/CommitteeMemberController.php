@@ -31,6 +31,9 @@ class CommitteeMemberController extends Controller
             'edition_id' => 'required|exists:edition,id',
         ]);
 
+        // Remove the image file object from validated data
+        unset($validated['image']);
+
         // Handle image upload
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('public/committee_members');
@@ -67,6 +70,11 @@ class CommitteeMemberController extends Controller
             'edition_id' => 'sometimes|exists:edition,id',
         ]);
 
+        // Remove the image file object from validated data if present
+        if (isset($validated['image'])) {
+            unset($validated['image']);
+        }
+
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if exists
@@ -81,7 +89,8 @@ class CommitteeMemberController extends Controller
 
         $member->update($validated);
 
-        return response()->json($member);
+        // Return the updated member with fresh data
+        return response()->json($member->fresh());
     }
 
     /**
@@ -101,6 +110,7 @@ class CommitteeMemberController extends Controller
 
         return response()->json(null, 204);
     }
+
     /**
      * Get members by edition and committee.
      */
