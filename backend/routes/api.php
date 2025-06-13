@@ -8,6 +8,7 @@ use App\Http\Controllers\IntervenantController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\PartenaireController;
+use App\Http\Controllers\FormPricesController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -98,4 +99,13 @@ Route::prefix('partenaires')->group(function () {
     Route::get('/{partenaire}', [PartenaireController::class, 'show']);
     Route::put('/{partenaire}', [PartenaireController::class, 'update']);
     Route::delete('/{partenaire}', [PartenaireController::class, 'destroy']);
+});
+// Form Prices Routes
+Route::prefix('form-prices')->group(function () {
+    Route::get('/', [FormPricesController::class, 'index']);
+    Route::get('/edition/{editionId}', [FormPricesController::class, 'getByEdition']);
+    Route::get('/{id}', [FormPricesController::class, 'show']);
+    Route::post('/', [FormPricesController::class, 'store']);
+    Route::put('/{id}', [FormPricesController::class, 'update']);
+    Route::delete('/{id}', [FormPricesController::class, 'destroy']);
 });
