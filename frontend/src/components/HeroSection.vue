@@ -6,9 +6,9 @@
             <h2>Step into the future of sustainable innovation !</h2>
             <p>
                 The third edition of the international conference on Smart Industry, Technology and Environment<br />
-“SITE’2025” aims to bring together academicians,researchers, professionals and experts from
-various fields to share their latest findings, innovations and best practices. It consists of keynotes, 
-oral sessions and poster presentations. 
+                “SITE’2025” aims to bring together academicians,researchers, professionals and experts from
+                various fields to share their latest findings, innovations and best practices. It consists of keynotes,
+                oral sessions and poster presentations.
             </p>
             <div class="countdown">
                 <div><span>00</span><small>Days</small></div>
@@ -18,7 +18,9 @@ oral sessions and poster presentations.
             </div>
             <br>
             <div class="buttons">
-                <button class="btn-blue">Important dates</button>
+
+                <a href="#date" class="btn-blue">Important dates</a>
+
                 <button class="btn-white">Article submission</button>
                 <button class="btn-whit">Article template</button>
                 <button class="btn-green">Registration</button>
@@ -33,6 +35,31 @@ oral sessions and poster presentations.
     background: white;
     padding: 1rem 2rem;
     text-align: center;
+}
+
+.btn-blue {
+    background-color: #005a90;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+    margin: 0.5rem;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+.buttons {
+  display: flex;
+  flex-wrap: wrap; /* optionnel : va à la ligne si trop étroit */
+  justify-content: center;
+  gap: 0.5rem; /* espace entre les boutons */
 }
 
 .hero h1 {
@@ -76,23 +103,21 @@ oral sessions and poster presentations.
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-.buttons .btn-blue {
-    background-color: #005a90;
-    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
 }
 
-.buttons .btn-white{
+.buttons .btn-white {
     background-color: #163654;
     color: white;
 }
-.buttons .btn-whit{
+
+.buttons .btn-whit {
     background-color: #476784;
     color: white;
 }
 
-.buttons .btn-green{
+.buttons .btn-green {
     background-color: #3c7547;
     color: white;
 }

@@ -7,22 +7,22 @@
         SITE 2025
       </div>
       <ul :class="['nav-links', { 'nav-active': toggleMenu }]">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Program</a></li>
-        <li><a href="#" >Speakers</a></li> 
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/schedule">Program</router-link></li>
+        <li><router-link to="/speaker">Speakers</router-link></li>
         <li class="dropdown">
           <a href="#">
             Committees
             <span class="chevron">&#9662;</span>
           </a>
           <ul class="dropdown-menu">
-            <li><a href="#">Scientific Committee</a></li>
-            <li><a href="#">Honor Committee</a></li>
-            <li><a href="#">Organizing Committee</a></li>
+            <li><router-link to="/scientific">Scientific Committee</router-link></li>
+            <li><router-link to="/honor">Honor Committee</router-link></li>
+            <li><router-link to="/scientific">Organizing Committee</router-link></li>
           </ul>
         </li>       
-        <li><a href="#" >Previous Editions</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><router-link to="/previous-editions">Previous Editions</router-link></li>
+        <li><a href="#contact">Contact</a></li>
       </ul>
       <div class="lang-switch">
         <button>French</button>
@@ -41,6 +41,10 @@ const toggleMenu = ref(false);
 </script>
 
 <style scoped>
+html {
+  scroll-behavior: smooth;
+}
+
 .navbar {
   font-family: 'Segoe UI', sans-serif;
 }
