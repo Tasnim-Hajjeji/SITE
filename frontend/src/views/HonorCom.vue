@@ -1,7 +1,7 @@
 <template>
-    <HonorCommittee />
+    <HonorCom />
 </template>
     
 <script setup>
-    import HonorCommittee from '@/components/HonorCommittee.vue';
+    import HonorCom from '@/components/HonorCommittee.vue';
    </script>

@@ -28,9 +28,9 @@
         </div>
       </div>
     </section>
-  </template>
+</template>
   
-  <script setup>
+<script setup>
   const members = [
     {
       name: "John Doe",
@@ -81,9 +81,9 @@
       image: "",
     },
   ];
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
   .honor-section {
     padding: 4rem 2rem;
     max-width: 1200px;
@@ -100,7 +100,7 @@
   }
   
   .honor-header .highlight {
-    color: #1e518f;hhhh
+    color: #1e518f;
   }
   
   .honor-header p {
@@ -176,5 +176,5 @@
     color: #444;
     text-align: left;
   }
-  </style>
+</style>
   
