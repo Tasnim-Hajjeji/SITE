@@ -2,8 +2,9 @@
 
   <SiteNavbar />
   <router-view />
-  <ContactUs />
-
+  <div id="contact">
+    <ContactUs />
+  </div>
 
 </template>
 

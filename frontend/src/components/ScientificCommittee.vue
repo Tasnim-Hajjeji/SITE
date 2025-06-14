@@ -1,6 +1,6 @@
 <template>
     <section class="committee-section">
-      <h2 class="committee-title">scientific commity</h2>
+      <h2 class="committee-title">Scientific committee</h2>
   
       <!-- Chair seul en haut -->
       <div class="chair-wrapper">

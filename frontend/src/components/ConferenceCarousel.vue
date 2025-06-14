@@ -17,11 +17,12 @@
           <div class="carousel-caption">
             <h3>{{ slides[currentIndex].title }}</h3>
             <p>{{ slides[currentIndex].description }}</p>
-            <button class="carousel-button">
+            <router-link to="/previous-editions/edition" class="carousel-button">
               {{ slides[currentIndex].buttonText }}
-              <span>➜</span>
-            </button>
-          </div>
+              <span>➜</span></router-link>
+            
+
+           </div>
         </div>
   
         <div class="carousel-preview right-preview" :style="{ backgroundImage: `url(${getNextSlide().image})` }"></div>
@@ -179,10 +180,12 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s;
+    text-decoration: none;
   }
   
   .carousel-button:hover {
     background: white;
+    text-decoration: none;
     color: #333;
   }
   

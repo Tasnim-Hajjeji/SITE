@@ -3,7 +3,9 @@
   <BlueSection />
   <TopicsCarousel />
   <PartnersCarousel />
+  <div id="date">
   <ImportantDates />
+  </div>
 </template>
   
 <script setup>
