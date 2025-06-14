@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('image_url');
             $table->string('profession');
+            $table->timestamps();
         });
     }
 

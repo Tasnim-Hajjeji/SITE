@@ -8,6 +8,7 @@ use App\Http\Controllers\IntervenantController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\PartenaireController;
+use App\Http\Controllers\FormPricesController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,7 +24,7 @@ Route::prefix('editions')->group(function () {
     Route::get('/previous', [EditionController::class, 'getPreviousEditions']);
     Route::get('/{id}', [EditionController::class, 'show']);
     Route::post('/', [EditionController::class, 'store']);
-    Route::put('/{id}', [EditionController::class, 'update']);
+    Route::post('/{id}', [EditionController::class, 'update']);
     Route::delete('/{id}', [EditionController::class, 'destroy']);
     Route::delete('/delete/{id}', [EditionController::class, 'deleteById']); // Additional delete endpoint
     Route::post('/{id}/images', [EditionController::class, 'addImages']);
@@ -77,18 +78,18 @@ Route::prefix('committee-members')->group(function () {
     Route::get('/edition/{editionId}/{committee}', [CommitteeMemberController::class, 'getMembersByEditionAndCommittee']);
     Route::get('/{id}', [CommitteeMemberController::class, 'show']);
     Route::post('/', [CommitteeMemberController::class, 'store']);
-    Route::put('/{id}', [CommitteeMemberController::class, 'update']);
+    Route::post('/{id}', [CommitteeMemberController::class, 'update']);
     Route::delete('/{id}', [CommitteeMemberController::class, 'destroy']);
 });
 
 // Document Routes
 Route::prefix('documents')->group(function () {
+    Route::get('/download/{id}', [DocumentController::class, 'download']);
     Route::get('/', [DocumentController::class, 'index']);
     Route::get('/{id}', [DocumentController::class, 'show']);
     Route::post('/', [DocumentController::class, 'store']);
-    Route::put('/{id}', [DocumentController::class, 'update']);
+    Route::post('/{id}', [DocumentController::class, 'update']);
     Route::delete('/{id}', [DocumentController::class, 'destroy']);
-    Route::get('/{id}/download', [DocumentController::class, 'download']);
 });
 // Add this to your existing routes
 Route::prefix('partenaires')->group(function () {
@@ -98,4 +99,13 @@ Route::prefix('partenaires')->group(function () {
     Route::get('/{partenaire}', [PartenaireController::class, 'show']);
     Route::put('/{partenaire}', [PartenaireController::class, 'update']);
     Route::delete('/{partenaire}', [PartenaireController::class, 'destroy']);
+});
+// Form Prices Routes
+Route::prefix('form-prices')->group(function () {
+    Route::get('/', [FormPricesController::class, 'index']);
+    Route::get('/edition/{editionId}', [FormPricesController::class, 'getByEdition']);
+    Route::get('/{id}', [FormPricesController::class, 'show']);
+    Route::post('/', [FormPricesController::class, 'store']);
+    Route::put('/{id}', [FormPricesController::class, 'update']);
+    Route::delete('/{id}', [FormPricesController::class, 'destroy']);
 });

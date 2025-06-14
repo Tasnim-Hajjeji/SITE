@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('edition', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('description')->nullable();
             $table->date('start_date');
             $table->date('end_date');
             $table->json('images_url')->nullable();
             $table->string('place');
-            $table->integer('tun_price')->default(0);
-            $table->integer('eur_price')->default(0);
+            $table->timestamps();
         });
     }
 

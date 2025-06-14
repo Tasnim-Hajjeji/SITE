@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CommitteeMember extends Model
 {
+    // Disable timestamps since your migration doesn't include them
+    
     protected $table = 'committee_member';
 
     protected $fillable = [

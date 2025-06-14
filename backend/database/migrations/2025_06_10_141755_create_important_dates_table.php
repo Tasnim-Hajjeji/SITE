@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('edition_id')
                 ->constrained('edition')
                 ->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

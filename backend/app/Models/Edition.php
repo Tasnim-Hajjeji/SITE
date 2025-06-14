@@ -6,21 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Edition extends Model
 {
+    // Disable timestamps since your migration doesn't include them
+    
     protected $table = 'edition';
 
     protected $fillable = [
         'name',
+        'description',
         'start_date',
         'end_date',
         'place',
-        'tun_price',
-        'eur_price',
         'images_url',
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'start_date' => 'date',  
+        'end_date' => 'date',    
         'images_url' => 'array'
     ];
 

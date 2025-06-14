@@ -21,17 +21,17 @@ class EditionController extends Controller
     /**
      * Store a newly created edition in storage.
      */
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'description' => 'sometimes|string|nullable',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'place' => 'required|string|max:255',
-            'tun_price' => 'required|integer|min:0',
-            'eur_price' => 'required|integer|min:0',
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'images' => 'sometimes|array',
+            'images.*' => 'file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -39,16 +39,22 @@ class EditionController extends Controller
         }
 
         $editionData = $validator->validated();
+
+        // Remove images from the data that will be saved to database
+        unset($editionData['images']);
+
+        // Initialize empty images array
         $editionData['images_url'] = [];
 
-        // Handle image uploads
+        // Handle image uploads if they exist
         if ($request->hasFile('images')) {
-            $imageUrls = [];
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('public/editions');
-                $imageUrls[] = Storage::url($path);
+            $files = $request->file('images');
+            foreach ($files as $image) {
+                if ($image && $image->isValid()) {
+                    $path = $image->store('editions');
+                    $editionData['images_url'][] = Storage::url($path);
+                }
             }
-            $editionData['images_url'] = $imageUrls;
         }
 
         $edition = Edition::create($editionData);
@@ -74,12 +80,11 @@ class EditionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string|nullable',
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after_or_equal:start_date',
             'place' => 'sometimes|string|max:255',
-            'tun_price' => 'sometimes|integer|min:0',
-            'eur_price' => 'sometimes|integer|min:0',
-            'images' => 'nullable|array',
+            'images' => 'sometimes|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
