@@ -3,7 +3,8 @@ import HomeView from '@/views/HomeView.vue';
 import PreviousEditions from '@/views/PreviousEditions.vue';
 import PrevEdition from '@/views/PrevEdition.vue';
 import SpeakerPage from '@/views/SpeakerPage.vue';
-import HonorCommittee from '@/views/HonorCom.vue';
+import HonorCom from '@/views/HonorCom.vue';
+import ScientificCom from '@/views/ScientificCom.vue';
 const routes = [
   {
     path: '/',
@@ -28,8 +29,13 @@ const routes = [
   {
     path: '/honor',
     name: 'HonorCommittee',
-    component: HonorCommittee
-  } 
+    component: HonorCom
+  },
+  {
+    path: '/scientific',
+    name: 'ScientificCom',
+    component: ScientificCom
+  }
 
 ];
 
