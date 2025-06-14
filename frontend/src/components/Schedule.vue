@@ -1,7 +1,7 @@
 <template>
     <section class="schedule-section">
       <div class="schedule-header">
-        <h2><strong>Conference</strong> <span class="highlight">Schedule</span></h2>
+        <h2>Conference <span class="highlight">Schedule</span></h2>
         <p>
           Explore the full 3-day schedule of our conference, including keynotes, workshops, sessions, and networking moments.
         </p>
@@ -90,7 +90,13 @@
     padding: 2rem;
     font-family: 'Segoe UI', sans-serif;
   }
-  
+  p{
+    font-size: 1rem;
+  }
+  h2{
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+  }
   .schedule-header {
     text-align: center;
   }
@@ -199,21 +205,16 @@
   /* Responsive : ligne devient verticale entre les cercles */
   @media (max-width: 768px) {
     .timeline {
-      flex-direction: column;
-      align-items: center;
-    }
-    .timeline-item {
-      width: 100%;
-    }
-    .connector-line {
-      top: auto !important;
-      right: 50% !important;
-      left: 50% !important;
-      bottom: -40px;
-      width: 4px !important;
-      height: 40px !important;
-      transform: translateX(-50%) !important;
-    }
+    flex-direction: column;
+    align-items: center;
+  }
+  .timeline-item {
+    width: 100%;
+  }
+  .connector-line {
+    display: none; /* <-- ligne cachée sur petit écran */
+  }
+   
   }
   </style>
   
