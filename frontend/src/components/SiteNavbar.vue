@@ -9,6 +9,7 @@
       <ul :class="['nav-links', { 'nav-active': toggleMenu }]">
         <li><a href="#">Home</a></li>
         <li><a href="#">Program</a></li>
+        <li><a href="#" >Speakers</a></li> 
         <li class="dropdown">
           <a href="#">
             Committees
@@ -19,7 +20,7 @@
             <li><a href="#">Honor Committee</a></li>
             <li><a href="#">Organizing Committee</a></li>
           </ul>
-        </li>
+        </li>       
         <li><a href="#" >Previous Editions</a></li>
         <li><a href="#">Contact</a></li>
       </ul>
