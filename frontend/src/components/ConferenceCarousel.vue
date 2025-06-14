@@ -84,11 +84,12 @@
   .carousel-container {
     text-align: center;
     padding: 0.5rem;
+    font-family: 'Segoe UI', sans-serif;
+
   }
   
   .carousel-title {
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-size: 1.7rem;
   }
   
   .highlight {

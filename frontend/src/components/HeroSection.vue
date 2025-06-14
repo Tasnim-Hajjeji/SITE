@@ -20,6 +20,7 @@ oral sessions and poster presentations.
             <div class="buttons">
                 <button class="btn-blue">Important dates</button>
                 <button class="btn-white">Article submission</button>
+                <button class="btn-whit">Article template</button>
                 <button class="btn-green">Registration</button>
             </div>
         </div>
@@ -83,7 +84,11 @@ oral sessions and poster presentations.
 }
 
 .buttons .btn-white{
-    background-color: #1e476d;
+    background-color: #163654;
+    color: white;
+}
+.buttons .btn-whit{
+    background-color: #476784;
     color: white;
 }
 
