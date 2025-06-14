@@ -5,6 +5,7 @@ import PrevEdition from '@/views/PrevEdition.vue';
 import SpeakerPage from '@/views/SpeakerPage.vue';
 import HonorCom from '@/views/HonorCom.vue';
 import ScientificCom from '@/views/ScientificCom.vue';
+import Schedule from '@/views/ConferenceSchedule.vue';
 const routes = [
   {
     path: '/',
@@ -35,6 +36,11 @@ const routes = [
     path: '/scientific',
     name: 'ScientificCom',
     component: ScientificCom
+  },
+  {
+    path: '/schedule',
+    name: 'Schedule',
+    component: Schedule
   }
 
 ];
