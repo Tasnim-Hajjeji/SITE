@@ -30,7 +30,7 @@ class PartenaireController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('public/partenaires');
+            $path = $request->file('image')->store('partenaires');
             $validated['image_url'] = Storage::url($path);
         }
 
@@ -41,9 +41,10 @@ class PartenaireController extends Controller
     /**
      * Display the specified partner.
      */
-    public function show(Partenaire $partenaire)
+    public function show(string $id)
     {
-        return response()->json($partenaire->load('edition'));
+        $partenaire = Partenaire::with('edition')->findOrFail($id);
+        return response()->json($partenaire);
     }
 
     /**
@@ -65,7 +66,7 @@ class PartenaireController extends Controller
                 Storage::delete($oldPath);
             }
 
-            $path = $request->file('image')->store('public/partenaires');
+            $path = $request->file('image')->store('partenaires');
             $validated['image_url'] = Storage::url($path);
         }
 

@@ -96,7 +96,7 @@ Route::prefix('partenaires')->group(function () {
     Route::get('/', [PartenaireController::class, 'index']);
     Route::get('/edition/{editionId}', [PartenaireController::class, 'getPartenairesByEdition']);
     Route::post('/', [PartenaireController::class, 'store']);
-    Route::get('/{partenaire}', [PartenaireController::class, 'show']);
+    Route::get('/{id}', [PartenaireController::class, 'show']);
     Route::put('/{partenaire}', [PartenaireController::class, 'update']);
     Route::delete('/{partenaire}', [PartenaireController::class, 'destroy']);
 });

@@ -33,7 +33,7 @@ class IntervenantController extends Controller
 
         // Handle photo upload
         if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('public/intervenants');
+            $path = $request->file('photo')->store('intervenants');
             $validated['photo_url'] = Storage::url($path);
         }
 
@@ -80,7 +80,7 @@ class IntervenantController extends Controller
                 Storage::delete($oldPath);
             }
 
-            $path = $request->file('photo')->store('public/intervenants');
+            $path = $request->file('photo')->store('intervenants');
             $validated['photo_url'] = Storage::url($path);
         }
 
