@@ -12,6 +12,7 @@ class Program extends Model
         'name',
         'description',
         'time_start',
+        'time_end',
         'edition_id',
     ];
 

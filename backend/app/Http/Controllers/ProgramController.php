@@ -25,14 +25,12 @@ class ProgramController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'time_start' => 'required|date_format:Y-m-d H:i:s',
+            'time_end' => 'required|date_format:Y-m-d H:i:s',
             'edition_id' => 'required|exists:edition,id',
-            
         ]);
 
         
         $program = Program::create($validated);
-
-        
 
         return response()->json($program, 201);
     }
@@ -59,6 +57,7 @@ class ProgramController extends Controller
                 'name' => 'sometimes|string|max:255',
                 'description' => 'sometimes|string',
                 'time_start' => 'sometimes|date_format:Y-m-d H:i:s',
+                'time_end' => 'sometimes|date_format:Y-m-d H:i:s',
                 'edition_id' => 'sometimes|exists:edition,id',
                 // intervenant_ids is optional and can be added later
                 'intervenant_ids' => 'nullable|array',

@@ -22,12 +22,15 @@ return new class extends Migration
             $table->string('fonction');
             $table->string('tel');
             $table->string('pays');
+            $table->boolean('est_tunisien');
             $table->string('etablissement')->nullable();
             $table->integer('num_enfant')->default(0);
             $table->integer('num_adulte')->default(0);
             $table->boolean('supp_single');
             $table->integer('supp_nuit')->default(0);
             $table->integer('prix_total')->default(0);
+            $table->string('methode_paie');
+            $table->string('recu_paie');
             $table->timestamps();
         });
     }
