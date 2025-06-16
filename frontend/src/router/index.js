@@ -6,6 +6,7 @@ import SpeakerPage from '@/views/SpeakerPage.vue';
 import HonorCom from '@/views/HonorCom.vue';
 import ScientificCom from '@/views/ScientificCom.vue';
 import Schedule from '@/views/ConferenceSchedule.vue';
+
 const routes = [
   {
     path: '/',
@@ -47,7 +48,11 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior() {
+    // Always scroll to top
+    return { top: 0 }
+  }
 });
 
 export default router;
