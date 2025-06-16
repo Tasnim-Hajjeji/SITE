@@ -6,42 +6,48 @@ import SpeakerPage from '@/views/SpeakerPage.vue';
 import HonorCom from '@/views/HonorCom.vue';
 import ScientificCom from '@/views/ScientificCom.vue';
 import Schedule from '@/views/ConferenceSchedule.vue';
-
 const routes = [
   {
     path: '/',
     name: 'HomeView',
-    component: HomeView
+    component: HomeView,
+    meta:{layout :'default'}
   },
   { 
     path: '/previous-editions',
     name: 'PreviousEditions',
-    component: PreviousEditions
+    component: PreviousEditions,
+    meta: { layout: 'default' }
   },
   {
     path: '/previous-editions/edition',
     name: 'PrevEdition',
-    component: PrevEdition
+    component: PrevEdition,
+    meta: { layout: 'default' }
   },
   {
     path: '/speaker',
     name: 'SpeakerPage',
-    component: SpeakerPage
+    component: SpeakerPage,
+    meta: { layout: 'default' }
   },
   {
     path: '/honor',
     name: 'HonorCommittee',
-    component: HonorCom
+    component: HonorCom,
+    meta: { layout: 'default' }
   },
   {
     path: '/scientific',
     name: 'ScientificCom',
-    component: ScientificCom
+    component: ScientificCom,
+    meta: { layout: 'default' }
   },
   {
     path: '/schedule',
     name: 'Schedule',
-    component: Schedule
+    component: Schedule,
+    meta: { layout: 'default' }
   }
 
 ];
