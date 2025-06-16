@@ -15,6 +15,7 @@ class Participant extends Model
         'fonction',
         'tel',
         'pays',
+        'est_tunisien',
         'etablissement',
         'num_enfant',
         'num_adulte',
@@ -22,7 +23,8 @@ class Participant extends Model
         'supp_nuit',
         'prix_total',
         'edition_id',
-        
+        'methode_paie',
+        'recu_paie'
     ];
 
     public function edition()
