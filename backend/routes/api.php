@@ -99,8 +99,8 @@ Route::prefix('partenaires')->group(function () {
     Route::get('/edition/{editionId}', [PartenaireController::class, 'getPartenairesByEdition']);
     Route::post('/', [PartenaireController::class, 'store']);
     Route::get('/{id}', [PartenaireController::class, 'show']);
-    Route::put('/{partenaire}', [PartenaireController::class, 'update']);
-    Route::delete('/{partenaire}', [PartenaireController::class, 'destroy']);
+    Route::post('/{id}', [PartenaireController::class, 'update']);
+    Route::delete('/{id}', [PartenaireController::class, 'destroy']);
 });
 // Form Prices Routes
 Route::prefix('form-prices')->group(function () {
