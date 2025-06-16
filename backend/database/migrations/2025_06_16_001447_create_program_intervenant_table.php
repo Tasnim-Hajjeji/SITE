@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('intervenant', function (Blueprint $table) {
+        Schema::create('program_intervenant', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('edition_id')
-                ->constrained('edition')
-                ->onDelete('cascade');
-            $table->string('full_name');
-            $table->text('description');
-            $table->string('image_url');
-            $table->string('profession');
+            $table->foreignId('program_id')->constrained('program')->onDelete('cascade');
+            $table->foreignId('intervenant_id')->constrained('intervenant')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('intervenant');
+        Schema::dropIfExists('program_intervenant');
     }
 };

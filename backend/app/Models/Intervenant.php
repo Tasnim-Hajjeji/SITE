@@ -9,9 +9,10 @@ class Intervenant extends Model
     protected $table = 'intervenant';
 
     protected $fillable = [
-        'name',
+        'full_name',
         'description',
-        'photo_url',
+        'profession',
+        'image_url',
         'edition_id',
     ];
 

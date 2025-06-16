@@ -47,8 +47,9 @@ Route::prefix('intervenants')->group(function () {
     Route::get('/edition/{editionId}', [IntervenantController::class, 'getByEdition']);
     Route::get('/{id}', [IntervenantController::class, 'show']);
     Route::post('/', [IntervenantController::class, 'store']);
-    Route::put('/{id}', [IntervenantController::class, 'update']);
+    Route::post('/{id}', [IntervenantController::class, 'update']);
     Route::delete('/{id}', [IntervenantController::class, 'destroy']);
+    Route::post('/add-programs/{id}', [IntervenantController::class, 'addPrograms']);
 });
 
 // Participant Routes
@@ -64,12 +65,13 @@ Route::prefix('participants')->group(function () {
 Route::prefix('programs')->group(function () {
     Route::get('/', [ProgramController::class, 'index']);
     Route::get('/edition/{editionId}', [ProgramController::class, 'getProgramsByEdition']);
-    Route::get('/date', [ProgramController::class, 'getProgramsByDate']);
+    Route::post('/date', [ProgramController::class, 'getProgramsByDate']);
     Route::get('/{id}', [ProgramController::class, 'show']);
     Route::get('/{programId}/intervenants', [ProgramController::class, 'getIntervenantsByProgramId']);
     Route::post('/', [ProgramController::class, 'store']);
     Route::put('/{id}', [ProgramController::class, 'update']);
     Route::delete('/{id}', [ProgramController::class, 'destroy']);
+
 });
 
 // Committee Member Routes
