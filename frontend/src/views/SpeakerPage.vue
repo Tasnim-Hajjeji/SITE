@@ -1,11 +1,10 @@
 <template>
-    <VoicesHeader />
-    <SpeakerCard />
-    
-  </template>
+  <VoicesHeader />
+  <SpeakerCard />    
+</template>
       
-  <script setup>
+<script setup>
   import VoicesHeader from '@/components/VoicesHeader.vue';
   import SpeakerCard from '@/components/SpeakerCard.vue';
-  </script>
+</script>
       
