@@ -19,7 +19,9 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('committee');
             $table->string('role');
-            $table->string('from');
+            $table->string('from_etablissement');
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
             $table->string('image_url')->nullable();
             $table->timestamps();
         });
