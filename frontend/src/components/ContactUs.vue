@@ -30,7 +30,6 @@
   <style scoped>
   .contact-section {
     background-color: #fff;
-    padding: 60px 20px;
     text-align: center;
     color: #1f2937;
     font-family: 'Segoe UI', sans-serif;
@@ -38,15 +37,14 @@
   
   .contact-title {
     font-size: 1.7rem;
-    margin-bottom: 40px;
   }
   
   .contact-info {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 19px;
     align-items: center;
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
   
   .contact-item {
@@ -71,7 +69,8 @@
   }
   
   .contact-footer {
-    margin-top: 50px;
+    margin-top: 40px;
+    margin-bottom: 30px;
     font-size: 0.9rem;
     color: #555;
   }
@@ -95,6 +94,8 @@
     .contact-info {
       flex-direction: row;
       justify-content: center;
+      font-size: 1rem;
+      gap: 50px;
     }
   }
   </style>
