@@ -6,6 +6,10 @@ import SpeakerPage from '@/views/SpeakerPage.vue';
 import HonorCom from '@/views/HonorCom.vue';
 import ScientificCom from '@/views/ScientificCom.vue';
 import Schedule from '@/views/ConferenceSchedule.vue';
+import Admin from '@/views/AdminEditions.vue';
+import AdEdition  from '@/views/AdEdition.vue';
+import AdPartnair from '@/views/AdPartnair.vue';
+import SpeakerAdmin from '@/views/SpeakerAdmin.vue';
 const routes = [
   {
     path: '/',
@@ -48,6 +52,30 @@ const routes = [
     name: 'Schedule',
     component: Schedule,
     meta: { layout: 'default' }
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
+    meta: { layout: 'admin' }
+  },
+  {
+    path: '/admin/edition',
+    name: 'AdEdition',
+    component: AdEdition,
+    meta: { layout: 'admin' }
+  },
+  {
+    path: '/admin/partnair',
+    name: 'AdPartnair',
+    component: AdPartnair,
+    meta: { layout: 'admin' }
+  },
+  {
+    path: '/admin/speaker',
+    name: 'SpeakerAdmin',
+    component: SpeakerAdmin,
+    meta: { layout: 'admin' }
   }
 
 ];
