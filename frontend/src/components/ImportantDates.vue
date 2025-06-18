@@ -34,7 +34,7 @@ const dates = [
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 1.7rem;
   font-weight: bold;
   margin-bottom: 3rem;
 }

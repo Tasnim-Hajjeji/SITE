@@ -91,10 +91,11 @@ export default {
 }
 
 .info-item i {
-    font-size: 1.8rem;
+    font-size: 1rem; /* Réduit depuis 1.8rem */
     margin-bottom: 0.5rem;
     background-color: #0f3b72;
-    padding: 1rem;
+    padding: 0.7rem; /* Réduit depuis 1rem */
     border-radius: 10px;
 }
+
 </style>
