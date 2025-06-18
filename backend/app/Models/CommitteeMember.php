@@ -14,9 +14,11 @@ class CommitteeMember extends Model
         'full_name',
         'committee',
         'role',
-        'from',
+        'from_etablissement',
         'image_url',
         'edition_id',
+        'email',
+        'phone',
     ];
 
     public function edition()

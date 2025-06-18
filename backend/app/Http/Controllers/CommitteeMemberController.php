@@ -26,8 +26,10 @@ class CommitteeMemberController extends Controller
             'full_name' => 'required|string|max:255',
             'committee' => 'required|string|max:255',
             'role' => 'required|string|max:255',
-            'from' => 'required|string|max:255',
+            'from_etablissement' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
             'edition_id' => 'required|exists:edition,id',
         ]);
 
@@ -65,8 +67,10 @@ class CommitteeMemberController extends Controller
             'full_name' => 'sometimes|string|max:255',
             'committee' => 'sometimes|string|max:255',
             'role' => 'sometimes|string|max:255',
-            'from' => 'sometimes|string|max:255',
+            'from_etablisement' => 'sometimes|string|max:255',
             'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'email' => 'sometimes|email|max:255',
+            'phone' => 'sometimes|string|max:20',
             'edition_id' => 'sometimes|exists:edition,id',
         ]);
 
