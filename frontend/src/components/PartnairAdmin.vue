@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-      <h1 class="title">Partners</h1>
+      <h1 class="title">Partners 2024</h1>
   
       <div class="actions">
         <button class="btn add">
