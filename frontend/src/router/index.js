@@ -12,6 +12,9 @@ import AdPartnair from '@/views/AdPartnair.vue';
 import SpeakerAdmin from '@/views/SpeakerAdmin.vue';
 import ParticipantCard from '@/views/ParticipantCardvue.vue';
 import CommittiesAdmin from '@/views/AdCommittees.vue';
+import ProfileSelectionvue from '@/views/ProfileSelectionvue.vue';
+import TunisianFormvue from '@/views/TunisianFormvue.vue';
+import StrangerFormvue from '@/views/StrangerFormvue.vue';
 const routes = [
   {
     path: '/',
@@ -84,6 +87,24 @@ const routes = [
     name: 'ParticipantCard',
     component: ParticipantCard,
     meta: { layout: 'admin' }
+  },
+  {
+    path: '/profile-selection',
+    name: 'ProfileSelection',
+    component: ProfileSelectionvue,
+    meta: { layout: 'default' }
+  },
+  {
+    path: '/tunisian-form',
+    name: 'TunisianForm',
+    component: TunisianFormvue,
+    meta: { layout: 'default' }
+  },
+  {
+    path: '/stranger-form',
+    name: 'StrangerForm',
+    component: StrangerFormvue,
+    meta: { layout: 'default' }
   },
   {
     path: '/admin/committies',
