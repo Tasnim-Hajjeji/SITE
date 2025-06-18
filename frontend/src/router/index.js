@@ -10,6 +10,7 @@ import Admin from '@/views/AdminEditions.vue';
 import AdEdition  from '@/views/AdEdition.vue';
 import AdPartnair from '@/views/AdPartnair.vue';
 import SpeakerAdmin from '@/views/SpeakerAdmin.vue';
+import ParticipantCard from '@/views/ParticipantCardvue.vue';
 const routes = [
   {
     path: '/',
@@ -75,6 +76,12 @@ const routes = [
     path: '/admin/speaker',
     name: 'SpeakerAdmin',
     component: SpeakerAdmin,
+    meta: { layout: 'admin' }
+  },
+  {
+    path: '/admin/participant-card',
+    name: 'ParticipantCard',
+    component: ParticipantCard,
     meta: { layout: 'admin' }
   }
 

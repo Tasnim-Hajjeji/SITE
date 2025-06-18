@@ -28,11 +28,12 @@
           </li>
         </router-link>
   
-        <li :class="{ active: selected === 'participants' }" @click="select('participants')">
+        <router-link to="/admin/participant-card" custom v-slot="{ navigate }">
+          <li :class="{ active: selected === 'participant-card' }" @click="select('participant-card'); navigate()">
           <span class="icon">🧑‍🤝‍🧑</span>
           <span class="text">Participants</span>
         </li>
-  
+        </router-link>
         <li :class="{ active: selected === 'Contact' }" @click="select('Contact')">
           <span class="icon">💬</span>
           <span class="text">Committies</span>
