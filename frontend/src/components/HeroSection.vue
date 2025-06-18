@@ -9,10 +9,15 @@
           “SITE’2025” aims to bring together academicians, researchers, professionals and experts from various fields to share their latest findings, innovations and best practices. It consists of keynotes, oral sessions and poster presentations.
         </p>
         <div class="countdown">
-          <div><span>00 :</span><small>Days</small></div>
-          <div><span>00 :</span><small>Hours</small></div>
-          <div><span>00 :</span><small>Minutes</small></div>
-          <div><span>00</span><small>Seconds</small></div>
+          <template v-if="countdown">
+            <div><span class="time">{{ countdown.days }}</span><small>Days</small></div>
+            <div style="margin-left: -0.3rem;"><span class="time">{{ countdown.hours }}</span><small>Hours</small></div>
+            <div style="margin-left: -0.4rem;"><span class="time">{{ countdown.minutes }}</span><small>Minutes</small></div>
+            <div style="margin-left: -0.7rem;"><span class="time sec">{{ countdown.seconds }}</span><small class="sec">Seconds</small></div>
+          </template>
+          <template v-else>
+            <div>Time is up!</div>
+          </template>
         </div>
         <br>
         <div class="buttons">
@@ -24,10 +29,54 @@
       <div class="image-container">
         <img src="../assets/coeur.png" alt="Heart Image" class="hero-image" />
       </div>
-      <div class="decorative-dots"></div>
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      targetDate: new Date('2025-06-30T00:00:00'),
+      timeRemaining: 0,
+      intervalId: null
+    };
+  },
+  computed: {
+    countdown() {
+      if (this.timeRemaining <= 0) {
+        return null;
+      }
+      const days = Math.floor(this.timeRemaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((this.timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((this.timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((this.timeRemaining % (1000 * 60)) / 1000);
+      return {
+        days: String(days).padStart(2, '0'),
+        hours: String(hours).padStart(2, '0'),
+        minutes: String(minutes).padStart(2, '0'),
+        seconds: String(seconds).padStart(2, '0')
+      };
+    }
+  },
+  mounted() {
+    this.updateCountdown();
+    this.intervalId = setInterval(this.updateCountdown, 1000);
+  },
+  beforeUnmount() {
+    clearInterval(this.intervalId);
+  },
+  methods: {
+    updateCountdown() {
+      const now = new Date();
+      this.timeRemaining = this.targetDate - now;
+      if (this.timeRemaining < 0) {
+        this.timeRemaining = 0;
+      }
+    }
+  }
+};
+</script>
 
 <style scoped>
 .hero {
@@ -94,11 +143,18 @@
   display: flex;
   flex-direction: column;
   align-items: right;
-}
+  span:not(.sec) {
+    &::after{
+    content: ' :';
+  }
+}}
 
 .countdown small {
   font-size: 0.75rem;
   font-weight: normal;
+  &:not(.sec) {
+    margin-right: 1rem;
+  }
 }
 
 .buttons {
