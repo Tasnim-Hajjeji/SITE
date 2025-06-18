@@ -33,14 +33,30 @@
           </div>
         </div>
       </div>
-      <router-link to="/admin/edition" custom v-slot="{ navigate }">
-        <button class="voir-plus" @click="navigate">Voir plus</button>
-      </router-link>
+      <button class="voir-plus" @click="selectEdition(edition.year)">Voir plus</button>
     </div>
   </section>
 </template>
 
 <script setup>
+/* eslint-disable */
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const emit = defineEmits(['editionSelected'])
+
+const selectEdition = (editionId) => {
+  // Store the selected edition ID in localStorage
+  localStorage.setItem('selectedEditionId', editionId.toString())
+  console.log(`Selected Edition ID: ${editionId}`)
+  
+  // Emit event to parent component
+  emit('editionSelected', editionId)
+  
+  router.push('/admin/edition')
+  console.log(`Navigating to edition with ID: ${editionId}`)
+}
+
 const editions = [
   {
     year: 2025,
