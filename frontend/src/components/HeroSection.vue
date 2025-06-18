@@ -32,7 +32,9 @@
 
                     <button class="btn-white">Article submission</button>
                     <button class="btn-whit">Article template</button>
-                    <button class="btn-green">Registration</button>
+                    
+                    <router-link to="/profile-selection" class="btn-green">Registration</router-link>
+                   
                 </div>
 
             </div>

@@ -15,6 +15,9 @@ import CommittiesAdmin from '@/views/AdCommittees.vue';
 import ProfileSelectionvue from '@/views/ProfileSelectionvue.vue';
 import TunisianFormvue from '@/views/TunisianFormvue.vue';
 import StrangerFormvue from '@/views/StrangerFormvue.vue';
+import Registrationvue from '@/views/Registrationvue.vue';
+import RegistrationFinalvue from '@/views/RegistrationFinalvue.vue';
+import RegSuccesvue from '@/views/RegSuccesvue.vue';
 const routes = [
   {
     path: '/',
@@ -110,6 +113,24 @@ const routes = [
     path: '/stranger-form',
     name: 'StrangerForm',
     component: StrangerFormvue,
+    meta: { layout: 'default' }
+  },
+  {
+    path: '/registration',
+    name: 'Registration',
+    component: Registrationvue,
+    meta: { layout: 'default' }
+  },
+  {
+    path: '/registration-final',
+    name: 'RegistrationFinal',
+    component: RegistrationFinalvue,
+    meta: { layout: 'default' } 
+  },
+  {
+    path: '/reg-success',
+    name: 'RegSucces',
+    component: RegSuccesvue,
     meta: { layout: 'default' }
   },
   {

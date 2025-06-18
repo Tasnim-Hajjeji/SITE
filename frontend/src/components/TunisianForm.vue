@@ -58,7 +58,7 @@
         <router-link to="/profile-selection">
           <i class="fas fa-arrow-left"></i>
         </router-link>
-        <router-link to="/next">
+        <router-link to="/registration">
           <i class="fas fa-arrow-right"></i>
         </router-link>
       </div>
