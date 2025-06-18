@@ -4,14 +4,11 @@
 
         <div class="action-buttons">
             <button class="delete-btn">
-                <i class="fas fa-trash"></i> Delete
+                <i class="fas fa-trash"></i> Delete All
             </button>
 
             <button class="add-btn">
                 <i class="fas fa-plus"></i> Add
-            </button>
-            <button class="update-btn">
-                <i class="fas fa-pen"></i> Update
             </button>
         </div><br><br>
 
@@ -23,6 +20,7 @@
             <div class="carousel-track">
                 <div v-for="(image, index) in visibleImages" :key="index" class="image-card">
                     <img :src="image" alt="Gallery photo" />
+                    <button class="hover-button delete-btn">Delete</button>
                 </div>
             </div>
 
@@ -41,11 +39,11 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const images = [
-    'https://i.imgur.com/1.jpg',
-    'https://i.imgur.com/2.jpg',
-    'https://i.imgur.com/3.jpg',
-    'https://i.imgur.com/4.jpg',
-    'https://i.imgur.com/5.jpg',
+    '/gallery/1.webp',
+    '/gallery/2.webp',
+    '/gallery/3.jpeg',
+    '/gallery/4.jpg',
+    '/gallery/5.png',
 ]
 
 const currentIndex = ref(0)
@@ -224,6 +222,7 @@ onUnmounted(() => {
 }
 
 .image-card {
+    position: relative;
     flex: 0 0 auto;
     width: 220px;
     height: auto;
@@ -272,5 +271,33 @@ onUnmounted(() => {
         width: 57px;
         height: 45px;
     }
+}
+
+.hover-button {
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+    z-index: 10;
+    display: none;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* Add any other button styles you want */
+}
+
+.image-card:hover .hover-button {
+    display: block;
+}
+
+.image-card img {
+    position: relative;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+
+.image-card:hover img {
+    opacity: 0.8; /* Optional: slightly dim the image on hover */
 }
 </style>

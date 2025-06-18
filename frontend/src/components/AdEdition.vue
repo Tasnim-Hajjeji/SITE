@@ -24,9 +24,6 @@
       </div>
   
       <div class="card-body">
-        <div class="card-left">
-          <img class="speaker-img" :src="image" alt="speaker" />
-        </div>
   
         <div class="card-right">
           <h2>SITE 2025</h2>
@@ -63,7 +60,6 @@
   <script setup>
   import { ref } from 'vue';
   
-  const image = '../assets/i1.jpeg'; // Remplacer par ton image réelle
   const dropdownOpen = ref(false);
   
   const toggleDropdown = () => {
@@ -76,7 +72,7 @@
   };
   </script>
   
-  <style scoped>
+<style scoped>
   @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
   
   .conference-card {

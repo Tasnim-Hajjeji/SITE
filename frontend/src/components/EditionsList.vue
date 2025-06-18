@@ -60,19 +60,19 @@ const selectEdition = (editionId) => {
 const editions = [
   {
     year: 2025,
-    image: require('@/assets/logo.png'),
+    image: require('@/assets/logosite.png'),
   },
   {
     year: 2024,
-    image: require('@/assets/logo.png'),
+    image: require('@/assets/logosite.png'),
   },
   {
     year: 2023,
-    image: require('@/assets/logo.png'),
+    image: require('@/assets/logosite.png'),
   },
   {
     year: 2022,
-    image: require('@/assets/logo.png'),
+    image: require('@/assets/logosite.png'),
   },
 ];
 </script>
