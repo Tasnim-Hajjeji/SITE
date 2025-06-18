@@ -1,14 +1,16 @@
 <template>
   <div class="important-dates">
-    <h2 class="title">
-      Important dates
-    </h2>
+    <h2 class="title">Important dates</h2>
     <div class="timeline">
-      <div class="timeline-item left" v-for="(item, index) in dates" :key="index"
-        :class="{ left: index % 2 === 0, right: index % 2 !== 0 }">
+      <div
+        class="timeline-item"
+        v-for="(item, index) in dates"
+        :key="index"
+        :class="{ left: index % 2 === 0, right: index % 2 !== 0 }"
+      >
         <div class="content">
-          <div class="text-box">{{ item.text }}</div>
           <div class="date-circle">{{ item.date }}</div>
+          <div class="text-box">{{ item.text }}</div>
         </div>
       </div>
     </div>
@@ -74,7 +76,7 @@ const dates = [
 }
 
 .text-box {
-  padding: 1rem 1rem;
+  padding: 1rem;
   color: #333;
   font-size: 1rem;
   min-width: 280px;
@@ -88,9 +90,9 @@ const dates = [
 }
 
 .date-circle {
-  padding: 0.3rem 0.3rem;
-  width: 55px;
-  height: 55px;
+  padding: 0.3rem;
+  width: 40px;
+  height: 35px;
   background-color: #bcd5e6;
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
   border-radius: 50%;
@@ -98,52 +100,45 @@ const dates = [
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.7rem;
   color: #333;
-  margin: 0.5rem 0.5rem;
+  margin: 0.5rem;
 }
 
+/* ✅ Responsive styling: date left, text right */
 @media (max-width: 768px) {
-
   .timeline-item,
   .timeline-item.right {
     justify-content: center !important;
   }
 
   .content {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    text-align: center;
+    text-align: left;
     border-radius: 30px;
-    padding: 0.2rem;
+    padding: 0.5rem;
     width: 90%;
     max-width: 350px;
     margin: 0.2rem;
-  }
-
-  .text-box {
-    min-width: unset;
-    width: 100%;
-    padding: 0.2rem;
-    font-size: 1rem;
-    color: #333;
-  }
-
-  .date-circle {
-    width: 55px;
-    height: 55px;
-    margin-bottom: 0.5rem;
+    gap: 0.5rem;
   }
 
   .date-circle {
     order: 1;
-    /* Affiché en premier */
+    width: 40px;
+    height: 40px;
+    font-size: 0.6rem;
+    margin: 0;
   }
 
   .text-box {
     order: 2;
-    /* Affiché en deuxième */
+    padding: 0.1rem;
+    font-size: 0.9rem;
+    color: #333;
+    text-align: left;
+    width: auto;
   }
-
 }
 </style>
