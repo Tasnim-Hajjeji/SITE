@@ -3,38 +3,39 @@
       <br><br><br>
       <ul>
         <router-link to="/admin" custom v-slot="{ navigate }">
-          <li :class="{ active: selected === 'Dashbord' }" @click="select('Dashbord'); navigate()">
+          <li :class="{ active: selected === 'Dashbord' }" @click="handleNavigation('Dashbord', navigate)">
             <span class="icon">🏠</span>
             <span class="text">Editions</span>
           </li>
         </router-link>
   
-        <li :class="{ active: selected === 'Sponsors' }" @click="select('Sponsors')">
+        <li :class="{ active: selected === 'Sponsors' }" @click="handleNavigation('Sponsors')">
           <span class="icon">💸</span>
           <span class="text">Sponsors</span>
         </li>
   
         <router-link to="/admin/partnair" custom v-slot="{ navigate }">
-          <li :class="{ active: selected === 'Partenaires' }" @click="select('Partenaires'); navigate()">
+          <li :class="{ active: selected === 'Partenaires' }" @click="handleNavigation('Partenaires', navigate)">
             <span class="icon">👤</span>
             <span class="text">Partners</span>
           </li>
         </router-link>
   
         <router-link to="/admin/speaker" custom v-slot="{ navigate }">
-          <li :class="{ active: selected === 'Intervenants' }" @click="select('Intervenants'); navigate()">
+          <li :class="{ active: selected === 'Intervenants' }" @click="handleNavigation('Intervenants', navigate)">
             <span class="icon">🧑‍🏫</span>
             <span class="text">Speakers</span>
           </li>
         </router-link>
   
         <router-link to="/admin/participant-card" custom v-slot="{ navigate }">
-          <li :class="{ active: selected === 'participant-card' }" @click="select('participant-card'); navigate()">
+          <li :class="{ active: selected === 'participant-card' }" @click="handleNavigation('participant-card', navigate)">
           <span class="icon">🧑‍🤝‍🧑</span>
           <span class="text">Participants</span>
         </li>
         </router-link>
-        <li :class="{ active: selected === 'Contact' }" @click="select('Contact')">
+        
+        <li :class="{ active: selected === 'Contact' }" @click="handleNavigation('Contact')">
           <span class="icon">💬</span>
           <span class="text">Committies</span>
         </li>
@@ -44,13 +45,36 @@
   
   <script setup>
   import { ref, defineExpose } from 'vue'
+  import { useRouter } from 'vue-router'
   
+  const router = useRouter()
   const selected = ref('Dashbord')
   const isOpen = ref(false)
   
   const select = (item) => {
     selected.value = item
     if (window.innerWidth < 768) isOpen.value = false
+  }
+  const showEditionAlert = () => {
+    alert('Please select an edition first before navigating to other sections.')
+  }
+  
+  const handleNavigation = (item, navigate = null) => {
+    const selectedEditionId = localStorage.getItem('selectedEditionId')
+    
+    // If no edition is selected, always go to editions list
+    if (!selectedEditionId) {
+      showEditionAlert()
+      select('Dashbord')
+      router.push('/admin')
+      return
+    }
+    
+    // If edition is selected, proceed with normal navigation
+    select(item)
+    if (navigate) {
+      navigate()
+    }
   }
   
   const toggleSidebar = () => {
@@ -141,4 +165,3 @@
     }
   }
   </style>
-  
