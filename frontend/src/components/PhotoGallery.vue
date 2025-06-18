@@ -269,7 +269,7 @@ onUnmounted(() => {
 @media (max-width: 768px) {
 
     .nav-btn {
-        width: 55px;
+        width: 57px;
         height: 45px;
     }
 }

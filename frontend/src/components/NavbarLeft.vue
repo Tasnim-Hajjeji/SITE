@@ -1,63 +1,66 @@
 <template>
     <nav :class="['sidebar', { open: isOpen }]">
-
-        <br><br><br>
-        <ul>
-            <router-link to="/admin">
-                <li :class="{ active: selected === 'Dashbord' }" @click="select('Dashbord')">
-                    <span class="icon">🏠</span>
-                    <span class="text">Editions</span>
-                </li>
-            </router-link>
-            <li :class="{ active: selected === 'Sponsors' }" @click="select('Sponsors')">
-                <span class="icon">💸</span>
-                <span class="text">Sponsors</span>
-            </li>
-            <router-link to="/admin/partnair">
-                <li :class="{ active: selected === 'Partenaires' }" @click="select('Partenaires')">
-                    <span class="icon">👤</span>
-                    <span class="text">Partners</span>
-                </li>
-            </router-link>
-            <router-link to="/admin/speaker">
-                <li :class="{ active: selected === 'Intervenants' }" @click="select('Intervenants')">
-                    <span class="icon">🧑‍🏫</span>
-                    <span class="text">Speakers</span>
-                </li>
-            </router-link>
-            <li :class="{ active: selected === 'participants' }" @click="select('participants')">
-                <span class="icon">🧑‍🤝‍🧑</span>
-                <span class="text">participants</span>
-            </li>
-            <li :class="{ active: selected === 'Contact' }" @click="select('Contact')">
-                <span class="icon">💬</span>
-                <span class="text">Committies</span>
-            </li>
-
-        </ul>
+      <br><br><br>
+      <ul>
+        <router-link to="/admin" custom v-slot="{ navigate }">
+          <li :class="{ active: selected === 'Dashbord' }" @click="select('Dashbord'); navigate()">
+            <span class="icon">🏠</span>
+            <span class="text">Editions</span>
+          </li>
+        </router-link>
+  
+        <li :class="{ active: selected === 'Sponsors' }" @click="select('Sponsors')">
+          <span class="icon">💸</span>
+          <span class="text">Sponsors</span>
+        </li>
+  
+        <router-link to="/admin/partnair" custom v-slot="{ navigate }">
+          <li :class="{ active: selected === 'Partenaires' }" @click="select('Partenaires'); navigate()">
+            <span class="icon">👤</span>
+            <span class="text">Partners</span>
+          </li>
+        </router-link>
+  
+        <router-link to="/admin/speaker" custom v-slot="{ navigate }">
+          <li :class="{ active: selected === 'Intervenants' }" @click="select('Intervenants'); navigate()">
+            <span class="icon">🧑‍🏫</span>
+            <span class="text">Speakers</span>
+          </li>
+        </router-link>
+  
+        <li :class="{ active: selected === 'participants' }" @click="select('participants')">
+          <span class="icon">🧑‍🤝‍🧑</span>
+          <span class="text">Participants</span>
+        </li>
+  
+        <li :class="{ active: selected === 'Contact' }" @click="select('Contact')">
+          <span class="icon">💬</span>
+          <span class="text">Committies</span>
+        </li>
+      </ul>
     </nav>
-</template>
-
-<script setup>
-import { ref, defineExpose } from 'vue'
-
-const selected = ref('Dashbord')
-const isOpen = ref(false)
-
-const select = (item) => {
+  </template>
+  
+  <script setup>
+  import { ref, defineExpose } from 'vue'
+  
+  const selected = ref('Dashbord')
+  const isOpen = ref(false)
+  
+  const select = (item) => {
     selected.value = item
     if (window.innerWidth < 768) isOpen.value = false
-}
-
-const toggleSidebar = () => {
+  }
+  
+  const toggleSidebar = () => {
     isOpen.value = !isOpen.value
-}
-
-defineExpose({ toggleSidebar, isOpen })
-</script>
-
-<style scoped>
-.sidebar {
+  }
+  
+  defineExpose({ toggleSidebar, isOpen })
+  </script>
+  
+  <style scoped>
+  .sidebar {
     width: 220px;
     background-color: white;
     height: 100vh;
@@ -69,85 +72,72 @@ defineExpose({ toggleSidebar, isOpen })
     transform: translateX(-100%);
     transition: transform 0.3s ease-in-out;
     z-index: 999;
-    text-decoration: none;
-}
-
-/* Sidebar ouverte */
-.sidebar.open {
+  }
+  
+  /* Sidebar ouverte */
+  .sidebar.open {
     transform: translateX(0);
-    text-decoration: none;
-}
-
-ul {
+  }
+  
+  ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    text-decoration: none;
-}
-
-li {
+  }
+  
+  li {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #000000;
+    color: #000;
     opacity: 0.9;
     padding: 0.9rem 1.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 0.95rem;
-    text-decoration: none;
-}
-
-li:hover {
+  }
+  
+  li:hover {
     opacity: 1;
-}
-
-li.active {
+  }
+  
+  li.active {
     background-color: #265985;
     color: white;
     border-top-left-radius: 30px;
     border-bottom-left-radius: 30px;
     font-weight: 500;
-    text-decoration: none;
-}
-
-li.active .icon {
-    color: #265985;
-    text-decoration: none;
-}
-
-.icon {
+  }
+  
+  .icon {
     font-size: 1.1rem;
     display: flex;
     align-items: center;
-    text-decoration: none;
-}
-
-.text {
+  }
+  
+  .text {
     text-transform: capitalize;
     font-size: 0.95rem;
-    text-decoration: none;
-
-}
-
-router-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-@media (min-width: 768px) {
+  }
+  
+  @media (min-width: 768px) {
     .sidebar {
-        transform: translateX(0);
-        background-color: #265985;
+      transform: translateX(0);
+      background-color: #265985;
     }
-
+  
     li {
-        color: white;
+      color: white;
     }
-
+  
     li.active {
-        background-color: white;
-        color: #265985;
+      background-color: white;
+      color: #265985;
     }
-}
-</style>
+  
+    li.active .icon {
+      color: #265985;
+    }
+  }
+  </style>
+  
