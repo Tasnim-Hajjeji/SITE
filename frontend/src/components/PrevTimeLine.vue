@@ -46,7 +46,7 @@
         </div>
       </div>
   
-      <button class="download-btn">Download The Program</button>
+      <!-- <button class="download-btn">Download The Program</button> -->
         
     </div>
   </template>
