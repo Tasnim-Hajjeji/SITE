@@ -7,7 +7,7 @@ import HonorCom from '@/views/HonorCom.vue';
 import ScientificCom from '@/views/ScientificCom.vue';
 import Schedule from '@/views/ConferenceSchedule.vue';
 import Admin from '@/views/AdminEditions.vue';
-import AdEdition  from '@/views/AdEdition.vue';
+import AdEdition from '@/views/AdEdition.vue';
 import AdPartnair from '@/views/AdPartnair.vue';
 import SpeakerAdmin from '@/views/SpeakerAdmin.vue';
 import ParticipantCard from '@/views/ParticipantCardvue.vue';
@@ -20,9 +20,9 @@ const routes = [
     path: '/',
     name: 'HomeView',
     component: HomeView,
-    meta:{layout :'default'}
+    meta: { layout: 'default' }
   },
-  { 
+  {
     path: '/previous-editions',
     name: 'PreviousEditions',
     component: PreviousEditions,
@@ -89,6 +89,12 @@ const routes = [
     meta: { layout: 'admin' }
   },
   {
+    path: '/admin/committies',
+    name: 'Committees',
+    component: CommittiesAdmin,
+    meta: { layout: 'admin' }
+  },
+  {
     path: '/profile-selection',
     name: 'ProfileSelection',
     component: ProfileSelectionvue,
@@ -112,7 +118,7 @@ const routes = [
     component: CommittiesAdmin,
     meta: { layout: 'admin' }
   }
-  
+
 
 ];
 
