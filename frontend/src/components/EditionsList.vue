@@ -97,7 +97,9 @@ const editions = [
 }
 
 .new-edition-btn:hover {
-  background-color: #eae9e9;
+  border-color: #265985;
+  color: #265985;
+  background-color: #fff;
   transform: scale(1.05);
 }
 
