@@ -91,6 +91,9 @@
         <div v-if="tooltip.show" class="tooltip" :style="{ top: tooltip.y + 'px', left: tooltip.x + 'px' }">
             {{ tooltip.text }}
         </div>
+        <div v-if="toast.show" class="toast-notification" :class="toast.type">
+            {{ toast.message }}
+        </div>
     </div>
 </template>
 
@@ -108,6 +111,11 @@ export default {
                 text: '',
                 x: 0,
                 y: 0
+            },
+            toast: {
+                show: false,
+                message: '',
+                type: '' // 'success' or 'error'
             },
             members: [
                 {
@@ -228,11 +236,29 @@ export default {
         hideTooltip() {
             this.tooltip.show = false;
         },
-        contactMember(member, type) {
-            if (type === 'phone') {
-                window.open(`tel:${member.phone}`);
-            } else if (type === 'email') {
-                window.open(`mailto:${member.email}`);
+        async showToast(message, type = 'success') {
+            this.toast.message = message;
+            this.toast.type = type;
+            this.toast.show = true;
+            setTimeout(() => {
+                this.toast.show = false;
+            }, 3000);
+        },
+        async contactMember(member, type) {
+            try {
+                let textToCopy = '';
+                if (type === 'phone') {
+                    textToCopy = member.phone;
+                } else if (type === 'email') {
+                    textToCopy = member.email;
+                }
+
+                await navigator.clipboard.writeText(textToCopy);
+                this.showToast(`${type === 'phone' ? 'Phone number' : 'Email'} copied to clipboard!`);
+
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                this.showToast('Failed to copy to clipboard', 'error');
             }
         },
         editMember(member) {
@@ -354,8 +380,8 @@ export default {
 }
 
 .members-table {
-  border-collapse: separate;
-  border-spacing: 0;
+    border-collapse: separate;
+    border-spacing: 0;
     width: 100%;
 }
 
@@ -378,26 +404,32 @@ export default {
 }
 
 .member-row:hover {
-  background-color: #F9FAFB;
+    background-color: #F9FAFB;
 }
 
 .member-row td {
     vertical-align: middle;
 }
+
 .members-table th,
 .members-table td {
-  padding: 16px 20px;
-  border-bottom: 1px solid #E5E7EB;
-  vertical-align: middle;
+    padding: 16px 20px;
+    border-bottom: 1px solid #E5E7EB;
+    vertical-align: middle;
 }
+
 .name-cell {
-  display: table-cell;       /* ← restores default cell behavior */
-  vertical-align: middle;
-  /* padding is inherited from the generic td rule above */
+    display: table-cell;
+    /* ← restores default cell behavior */
+    vertical-align: middle;
+    /* padding is inherited from the generic td rule above */
 }
+
 .name-cell .member-avatar {
-  margin-right: 12px;        /* ← simple spacing inside the cell */
+    margin-right: 12px;
+    /* ← simple spacing inside the cell */
 }
+
 .member-avatar {
     width: 40px;
     height: 40px;
@@ -454,16 +486,18 @@ export default {
     min-width: 100px;
 }
 
-.actions-cell{
+.actions-cell {
     min-width: 100px;
     margin-top: 35px;
 }
+
 .contact .contact-wrapper,
 .actions-cell {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;  /* or flex-start, if you like them flushed left */
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    /* or flex-start, if you like them flushed left */
 }
 
 .contact-btn {
@@ -543,6 +577,35 @@ export default {
     white-space: nowrap;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.toast-notification.error {
+    background-color: #F44336;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Responsive Design */
