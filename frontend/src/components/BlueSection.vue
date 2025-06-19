@@ -1,35 +1,35 @@
 <template>
-    <section class="blue-section">
-        <div class="top-curve"></div>
-        <br><br><br><br>
-        <h2 class="section-title">About SITE 2025</h2><br>
-        <div class="info-grid">
-            <div class="info-item">
-                <i class="fas fa-calendar-alt"></i>
-                <p>October 24–26, 2025</p>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <p>Hammamet, Tunisia</p>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-users"></i>
-                <p>Academics, researchers, professionals, experts</p>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-lightbulb"></i>
-                <p>Share findings, innovations and best practices</p>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-microphone"></i>
-                <p>Keynotes, oral sessions, poster presentations</p>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-globe"></i>
-                <p>Promote sustainable development & interdisciplinary</p>
-            </div>
-        </div>
-    </section>
+  <section class="blue-section">
+    <div class="top-curve"></div>
+    <br><br><br><br>
+    <h2 class="section-title">{{ $t('blueSection.title') }}</h2><br>
+    <div class="info-grid">
+      <div class="info-item">
+        <i class="fas fa-calendar-alt"></i>
+        <p>{{ $t('blueSection.items.date') }}</p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <p>{{ $t('blueSection.items.location') }}</p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-users"></i>
+        <p>{{ $t('blueSection.items.participants') }}</p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-lightbulb"></i>
+        <p>{{ $t('blueSection.items.purpose') }}</p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-microphone"></i>
+        <p>{{ $t('blueSection.items.activities') }}</p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-globe"></i>
+        <p>{{ $t('blueSection.items.goal') }}</p>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script>

@@ -12,7 +12,8 @@ class Edition extends Model
 
     protected $fillable = [
         'name',
-        'description',
+        'description_fr',
+        'description_en',
         'start_date',
         'end_date',
         'place',

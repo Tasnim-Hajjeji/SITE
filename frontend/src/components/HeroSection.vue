@@ -2,41 +2,33 @@
     <section class="hero">
         <div class="content">
             <div class="text-content">
-                <h1>Welcome to <span class="blue">SITE 2025</span></h1>
-                <h2>Step into the future of sustainable innovation !</h2>
-                <p>
-                    The third edition of the international conference on Smart Industry, Technology and
-                    Environment<br />
-                    “SITE’2025” aims to bring together academicians, researchers, professionals and experts from various
-                    fields to share their latest findings, innovations and best practices. It consists of keynotes, oral
-                    sessions and poster presentations.
-                </p>
+                <h1>{{ $t('hero.welcome') }} <span class="blue">SITE 2025</span></h1>
+                <h2>{{ $t('hero.subtitle') }}</h2>
+                <p>{{ $t('hero.description') }}</p>
+
                 <div class="countdown">
                     <template v-if="countdown">
-                        <div><span class="time">{{ countdown.days }}</span><small>Days</small></div>
-                        <div style="margin-left: -0.3rem;"><span class="time">{{ countdown.hours
-                                }}</span><small>Hours</small></div>
-                        <div style="margin-left: -0.4rem;"><span class="time">{{ countdown.minutes
-                                }}</span><small>Minutes</small></div>
+                        <div><span class="time">{{ countdown.days }}</span><small>{{ $t('hero.countdown.days')
+                                }}</small></div>
+                        <div style="margin-left: -0.3rem;"><span class="time">{{ countdown.hours }}</span><small>{{
+                                $t('hero.countdown.hours') }}</small></div>
+                        <div style="margin-left: -0.4rem;"><span class="time">{{ countdown.minutes }}</span><small>{{
+                            $t('hero.countdown.minutes') }}</small></div>
                         <div style="margin-left: -0.7rem;"><span class="time sec">{{ countdown.seconds }}</span><small
-                                class="sec">Seconds</small></div>
+                                class="sec">{{ $t('hero.countdown.seconds') }}</small></div>
                     </template>
                     <template v-else>
-                        <div>Time is up!</div>
+                        <div>{{ $t('hero.countdown.timeUp') }}</div>
                     </template>
                 </div>
-                <br>
+
                 <div class="buttons">
-
-                    <a href="#date" class="btn-blue">Important dates</a>
-
-                    <button class="btn-white">Article submission</button>
-                    <button class="btn-whit">Article template</button>
-                    
-                    <router-link to="/profile-selection" class="btn-green">Registration</router-link>
-                   
+                    <a href="#date" class="btn-blue">{{ $t('hero.buttons.importantDates') }}</a>
+                    <button class="btn-white">{{ $t('hero.buttons.articleSubmission') }}</button>
+                    <button class="btn-whit">{{ $t('hero.buttons.articleTemplate') }}</button>
+                    <router-link to="/profile-selection" class="btn-green">{{ $t('hero.buttons.registration')
+                        }}</router-link>
                 </div>
-
             </div>
             <div class="image-container">
                 <img src="../assets/coeur.png" alt="Heart Image" class="hero-image" />
@@ -244,6 +236,7 @@ a {
     line-height: 1.6;
     color: #444;
 }
+
 .btn-blue {
     background-color: #005a90;
 }
@@ -262,12 +255,16 @@ a {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-decoration: none;
 }
+
 .buttons {
-  display: flex;
-  flex-wrap: wrap; /* optionnel : va à la ligne si trop étroit */
-  justify-content: center;
-  gap: 0.5rem; /* espace entre les boutons */
+    display: flex;
+    flex-wrap: wrap;
+    /* optionnel : va à la ligne si trop étroit */
+    justify-content: center;
+    gap: 0.5rem;
+    /* espace entre les boutons */
 }
+
 .buttons button {
     margin: 0.5rem;
     padding: 0.6rem 1.2rem;
@@ -392,6 +389,7 @@ a {
     100% {
         transform: scale(1);
     }
+
     0% {
         transform: scale(1);
     }
@@ -445,6 +443,7 @@ a {
         justify-content: center;
         padding: 1rem;
     }
+
     .hero {
         justify-content: center;
         padding: 1rem;
@@ -456,6 +455,7 @@ a {
         transform: translateX(0);
         /* Réinitialise le décalage sur mobile */
     }
+
     .content {
         flex-direction: column;
         text-align: center;
@@ -466,18 +466,20 @@ a {
     .text-content {
         max-width: 100%;
     }
+
     .text-content {
         max-width: 100%;
     }
 
     .image-container {
-       display: none;
+        display: none;
     }
 
     .decorative-dots {
         display: none;
         /* Masque les points sur mobile pour simplicité */
     }
+
     .decorative-dots {
         display: none;
         /* Masque les points sur mobile pour simplicité */
@@ -486,6 +488,7 @@ a {
     .hero h1 {
         font-size: 2rem;
     }
+
     .hero h1 {
         font-size: 2rem;
     }
@@ -493,6 +496,7 @@ a {
     .hero h2 {
         font-size: 1.1rem;
     }
+
     .hero h2 {
         font-size: 1.1rem;
     }
@@ -500,6 +504,7 @@ a {
     .hero p {
         font-size: 0.8rem;
     }
+
     .hero p {
         font-size: 0.8rem;
     }

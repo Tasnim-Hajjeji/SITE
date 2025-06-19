@@ -1,6 +1,6 @@
 <template>
     <section class="contact-section">
-      <h2 class="contact-title">Contact us</h2>
+      <h2 class="contact-title">{{ $t('footer.contact') }}</h2>
   
       <div class="contact-info fade-in">
         <div class="contact-item">

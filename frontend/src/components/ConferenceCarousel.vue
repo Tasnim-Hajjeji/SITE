@@ -1,12 +1,12 @@
 <template>
     <section class="carousel-container">
       <h2 class="carousel-title">
-        Conference Highlights from <span class="highlight">Previous Years</span> !
+        {{$t('previousEditions.title')}} <span class="highlight">{{$t('previousEditions.highlight')}}</span> !
       </h2>
       <p class="carousel-subtitle">
-        From inspiring talks to vibrant exchanges, each edition brought something unique.
+        {{$t('previousEditions.carousel_subtitle_1')}}
         <br />
-        Relive the highlights through photos and memories.
+        {{$t('previousEditions.carousel_subtitle_2')}}
       </p>
   
       <div class="carousel-wrapper">
@@ -18,7 +18,7 @@
             <h3>{{ slides[currentIndex].title }}</h3>
             <p>{{ slides[currentIndex].description }}</p>
             <router-link to="/previous-editions/edition" class="carousel-button">
-              {{ slides[currentIndex].buttonText }}
+              {{ $t('previousEditions.button') }}
               <span>➜</span></router-link>
             
 

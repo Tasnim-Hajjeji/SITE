@@ -1,70 +1,74 @@
 <template>
-    <div class="topics-carousel">
-        <h1 class="title">Topics</h1>
-        <div class="topics">
-            <div v-for="(topic, index) in visibleTopics" :key="topic.id"
-                :class="['topic-card', { active: index === 1 }]">
-                <div class="number">{{ topic.id }}</div>
-                <h2 style="font-size: 1.1rem;">{{ topic.title }}</h2>
-                <p style="font-size: 0.8rem;">{{ topic.description }}</p>
-            </div>
-        </div>
-        <div class="controls">
-            <button @click="prev">&#8592;</button>
-            <button @click="next">&#8594;</button>
-        </div>
+  <div class="topics-carousel">
+    <h1 class="title">{{ $t('topics.title') }}</h1>
+    <div class="topics">
+      <div v-for="(topic, index) in visibleTopics" :key="topic.id"
+          :class="['topic-card', { active: index === 1 }]">
+        <div class="number">{{ topic.id }}</div>
+        <h2 style="font-size: 1.1rem;">{{ $t(`topics.items.${topic.id-1}.title`) }}</h2>
+        <p style="font-size: 0.8rem;">{{ $t(`topics.items.${topic.id-1}.description`) }}</p>
+      </div>
     </div>
+    <div class="controls">
+      <button @click="prev">&#8592;</button>
+      <button @click="next">&#8594;</button>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const topics = [
+const { t } = useI18n();
+
+const topics = computed(() => {
+  return [
     {
-        id: '01',
-        title: 'Economy, management and Entrepreneurship',
-        description: 'Marketing digital, Finance, Management, Block chain, E-commerce …',
+      id: '01',
+      title: t('topics.items.0.title'),
+      description: t('topics.items.0.description')
     },
     {
-        id: '02',
-        title: 'Engineering innovation',
-        description: 'Smart factory, Robotics, Cybersecurity, AI, Materials, Energy management, Cloud computing, Big Data, Additive manufacturing, Machine Learning, Embedded systems …',
+      id: '02',
+      title: t('topics.items.1.title'),
+      description: t('topics.items.1.description')
     },
     {
-        id: '03',
-        title: 'Processes, Environment and Sustainable Development',
-        description: 'Agro-industry 4.0, Chemical process, Renewable energy, Smart Waste Management, Biotreatment, Sensors in Bio-industry, Pharmaceutic process …',
+      id: '03',
+      title: t('topics.items.2.title'),
+      description: t('topics.items.2.description')
     },
     {
-        id: '04',
-        title: 'New Technologies',
-        description: 'AR/VR, IoT, Quantum computing, Edge computing, Web3…',
+      id: '04',
+      title: t('topics.items.3.title'),
+      description: t('topics.items.3.description')
     },
     {
-        id: '05',
-        title: 'Social Impact',
-        description: 'Tech for good, Education, HealthTech, CivicTech…',
+      id: '05',
+      title: t('topics.items.4.title'),
+      description: t('topics.items.4.description')
     }
-];
+  ];
+});
 
-const activeIndex = ref(1); // le milieu
+const activeIndex = ref(1);
 
-// t7ott 3 topics: el active + eli 9ablou + eli baadou
 const visibleTopics = computed(() => {
-    const start = (activeIndex.value - 1 + topics.length) % topics.length;
-    return [
-        topics[start],
-        topics[(start + 1) % topics.length],
-        topics[(start + 2) % topics.length],
-    ];
+  const start = (activeIndex.value - 1 + topics.value.length) % topics.value.length;
+  return [
+    topics.value[start],
+    topics.value[(start + 1) % topics.value.length],
+    topics.value[(start + 2) % topics.value.length],
+  ];
 });
 
 const next = () => {
-    activeIndex.value = (activeIndex.value + 1) % topics.length;
+  activeIndex.value = (activeIndex.value + 1) % topics.value.length;
 };
 
 const prev = () => {
-    activeIndex.value = (activeIndex.value - 1 + topics.length) % topics.length;
+  activeIndex.value = (activeIndex.value - 1 + topics.value.length) % topics.value.length;
 };
 </script>
 

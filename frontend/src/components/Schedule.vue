@@ -1,9 +1,9 @@
 <template>
     <section class="schedule-section">
       <div class="schedule-header">
-        <h2>Conference <span class="highlight">Schedule</span></h2>
+        <h2>{{ $t('schedule.title') }} <span class="highlight">{{ $t('schedule.sched') }}</span></h2>
         <p>
-          Explore the full 3-day schedule of our conference, including keynotes, workshops, sessions, and networking moments.
+          {{ $t('schedule.description') }}
         </p>
       </div>
   
