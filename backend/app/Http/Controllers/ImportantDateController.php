@@ -22,8 +22,10 @@ class ImportantDateController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title_fr' => 'required|string|max:255',
+            'title_en' => 'required|string|max:255',
+            'description_fr' => 'required|string',
+            'description_en' => 'required|string',
             'date' => 'required|date',
             'edition_id' => 'required|exists:edition,id',
         ]);
@@ -50,8 +52,10 @@ class ImportantDateController extends Controller
         $date = ImportantDate::findOrFail($id);
 
         $validated = $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
+            'title_fr' => 'sometimes|string|max:255',
+            'title_en' => 'sometimes|string|max:255',
+            'description_fr' => 'sometimes|string',
+            'description_en' => 'sometimes|string',
             'date' => 'sometimes|date',
             'edition_id' => 'sometimes|exists:edition,id',
         ]);

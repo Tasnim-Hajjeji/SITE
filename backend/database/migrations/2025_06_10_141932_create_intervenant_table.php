@@ -17,9 +17,11 @@ return new class extends Migration
                 ->constrained('edition')
                 ->onDelete('cascade');
             $table->string('full_name');
-            $table->text('description');
+            $table->text('description_fr');
+            $table->text('description_en');
             $table->string('image_url');
-            $table->string('profession');
+            $table->string('profession_fr');
+            $table->string('profession_en');
             $table->timestamps();
         });
     }

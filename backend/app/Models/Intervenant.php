@@ -10,8 +10,10 @@ class Intervenant extends Model
 
     protected $fillable = [
         'full_name',
-        'description',
-        'profession',
+        'description_fr',
+        'description_en',
+        'profession_fr',
+        'profession_en',
         'image_url',
         'edition_id',
     ];

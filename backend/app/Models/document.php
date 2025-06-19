@@ -9,8 +9,10 @@ class document extends Model
      protected $table = 'document';
 
     protected $fillable = [
-        'name',
-        'description',
+        'name_fr',
+        'name_en',
+        'description_fr',
+        'description_en',
         'url',
         'edition_id',
     ];

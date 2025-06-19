@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('important_dates', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->string('title');
-            $table->string('description')->nullable();
+            $table->string('title_fr');
+            $table->string('title_en');
+            $table->string('description_fr')->nullable();
+            $table->string('description_en')->nullable();
             $table->foreignId('edition_id')
                 ->constrained('edition')
                 ->onDelete('cascade');

@@ -9,8 +9,10 @@ class Program extends Model
     protected $table = 'program';
 
     protected $fillable = [
-        'name',
-        'description',
+        'name_fr',
+        'name_en',
+        'description_fr',
+        'description_en',
         'time_start',
         'time_end',
         'edition_id',

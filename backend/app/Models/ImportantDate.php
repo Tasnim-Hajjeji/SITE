@@ -9,8 +9,10 @@ class ImportantDate extends Model
     protected $table = 'important_dates';
 
     protected $fillable = [
-        'title',
-        'description',
+        'title_fr',
+        'title_en',
+        'description_fr',
+        'description_en',
         'date',
         'edition_id',
     ];

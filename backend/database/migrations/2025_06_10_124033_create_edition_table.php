@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('edition', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description')->nullable();
+            $table->text('description_fr')->nullable();
+            $table->text('description_en')->nullable();
             $table->date('start_date');
             $table->date('end_date');
             $table->json('images_url')->nullable();

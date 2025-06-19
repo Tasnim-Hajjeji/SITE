@@ -28,8 +28,10 @@ class IntervenantController extends Controller
         try {
             $validated = $request->validate([
                 'full_name' => 'required|string|max:255',
-                'description' => 'sometimes|string|nullable',
-                'profession' => 'required|string',
+                'description_fr' => 'sometimes|string|nullable',
+                'description_en' => 'sometimes|string|nullable',
+                'profession_fr' => 'required|string',
+                'profession_en' => 'required|string',
                 'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
                 'edition_id' => 'required|exists:edition,id',
                 'program_ids' => 'sometimes|array',
@@ -82,8 +84,10 @@ class IntervenantController extends Controller
 
             $validated = $request->validate([
                 'full_name' => 'sometimes|string|max:255',
-                'description' => 'sometimes|string|nullable',
-                'profession' => 'sometimes|string',
+                'description_fr' => 'sometimes|string|nullable',
+                'description_en' => 'sometimes|string|nullable',
+                'profession_fr' => 'sometimes|string',
+                'profession_en' => 'sometimes|string',
                 'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:8192',
                 'edition_id' => 'sometimes|exists:edition,id',
                 'program_ids' => 'sometimes|array',

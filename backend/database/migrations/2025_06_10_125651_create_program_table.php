@@ -16,8 +16,10 @@ return new class extends Migration
             $table->foreignId('edition_id')
                 ->constrained('edition')
                 ->onDelete('cascade');
-            $table->string('name');
-            $table->string('description');
+            $table->string('name_fr');
+            $table->string('name_en');
+            $table->string('description_fr')->nullable();
+            $table->string('description_en')->nullable();
             $table->dateTime('time_start');
             $table->dateTime('time_end');
             $table->timestamps();

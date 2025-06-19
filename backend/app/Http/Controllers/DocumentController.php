@@ -23,8 +23,10 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'name_fr' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
+            'description_fr' => 'required|string',
+            'description_en' => 'required|string',
             'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:5120',
             'edition_id' => 'nullable|exists:edition,id',
         ]);
@@ -74,8 +76,10 @@ class DocumentController extends Controller
         $document = Document::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
+            'name_fr' => 'sometimes|string|max:255',
+            'name_en' => 'sometimes|string|max:255',
+            'description_fr' => 'sometimes|string',
+            'description_en' => 'sometimes|string',
             'file' => 'sometimes|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:5120',
             'edition_id' => 'nullable|exists:edition,id',
         ]);

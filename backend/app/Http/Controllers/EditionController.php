@@ -26,7 +26,8 @@ class EditionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'description' => 'sometimes|string|nullable',
+            'description_fr' => 'sometimes|string|nullable',
+            'description_en' => 'sometimes|string|nullable',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'place' => 'required|string|max:255',
@@ -80,7 +81,8 @@ class EditionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string|nullable',
+            'description_fr' => 'sometimes|string|nullable',
+            'description_en' => 'sometimes|string|nullable',
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after_or_equal:start_date',
             'place' => 'sometimes|string|max:255',
