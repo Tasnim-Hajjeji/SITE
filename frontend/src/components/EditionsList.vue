@@ -1,83 +1,261 @@
 <template>
   <section class="editions-section">
+    <!-- Header -->
     <div class="header">
       <h2>Editions</h2>
-      <button class="new-edition-btn">
+      <button class="new-edition-btn" @click="showModal = true">
         <span>➕</span> New Edition
       </button>
     </div>
 
+    <!-- Edition Cards -->
     <div class="edition-card" v-for="edition in editions" :key="edition.year">
       <img class="edition-image" :src="edition.image" alt="Edition image" />
 
       <div class="edition-info">
         <div class="title-status">
           <h3>Site {{ edition.year }}</h3>
-          <span class="status">En Cours</span>
+          <span class="status">In Progress</span>
         </div>
 
         <div class="details">
           <div class="detail">
             <i class="icon">📍</i>
             <div>
-              <strong>Place</strong>
-              <p>Hammamet</p>
+              <strong>Location</strong>
+              <p>{{ edition.place }}</p>
             </div>
           </div>
           <div class="detail">
             <i class="icon">🕒</i>
             <div>
-              <strong>Date</strong>
-              <p>24 October</p>
+              <strong>Start Date</strong>
+              <p>{{ edition.start_date }}</p>
             </div>
           </div>
         </div>
       </div>
-      <button class="voir-plus" @click="selectEdition(edition.year)">Voir plus</button>
+      <button class="voir-plus" @click="selectEdition(edition.year)">See More</button>
+    </div>
+
+    <!-- Modal -->
+    <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
+      <div class="modal-content">
+        <h3>Create New Edition</h3>
+        <form @submit.prevent="submitEdition">
+          <label>
+            Edition Name:
+            <input
+              type="text"
+              name="name"
+              v-model="form.name"
+              required
+            />
+          </label>
+
+          <label>
+            Description (English):
+            <textarea
+              rows="2"
+              name="description_en"
+              v-model="form.description_en"
+              required
+            ></textarea>
+          </label>
+
+          <label>
+            Description (French):
+            <textarea
+              rows="2"
+              name="description_fr"
+              v-model="form.description_fr"
+              required
+            ></textarea>
+          </label>
+
+          <label>
+            Location:
+            <input
+              type="text"
+              name="place"
+              v-model="form.place"
+              required
+            />
+          </label>
+
+          <label>
+            Start Date:
+            <input
+              type="date"
+              name="start_date"
+              v-model="form.start_date"
+              required
+            />
+          </label>
+
+          <label>
+            End Date:
+            <input
+              type="date"
+              name="end_date"
+              v-model="form.end_date"
+              required
+            />
+          </label>
+
+          <div class="modal-actions">
+            <button type="submit">Save</button>
+            <button type="button" @click="showModal = false">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
   </section>
 </template>
 
 <script setup>
-/* eslint-disable */
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const emit = defineEmits(['editionSelected'])
+const showModal = ref(false)
+
+const form = ref({
+  name: '',
+  description_en: '',
+  description_fr: '',
+  place: '',
+  start_date: '',
+  end_date: ''
+})
+
+const editions = ref([
+  { year: 2025, image: require('@/assets/logosite.png') },
+  { year: 2024, image: require('@/assets/logosite.png') },
+  { year: 2023, image: require('@/assets/logosite.png') },
+  { year: 2022, image: require('@/assets/logosite.png') },
+])
 
 const selectEdition = (editionId) => {
-  // Store the selected edition ID in localStorage
   localStorage.setItem('selectedEditionId', editionId.toString())
-  console.log(`Selected Edition ID: ${editionId}`)
-  
-  // Emit event to parent component
-  emit('editionSelected', editionId)
-  
   router.push('/admin/edition')
-  console.log(`Navigating to edition with ID: ${editionId}`)
 }
 
-const editions = [
-  {
-    year: 2025,
-    image: require('@/assets/logosite.png'),
-  },
-  {
-    year: 2024,
-    image: require('@/assets/logosite.png'),
-  },
-  {
-    year: 2023,
-    image: require('@/assets/logosite.png'),
-  },
-  {
-    year: 2022,
-    image: require('@/assets/logosite.png'),
-  },
-];
+const submitEdition = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/api/editions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(form.value),
+    })
+
+    if (!response.ok) throw new Error('Failed to create edition.')
+
+    await response.json()
+
+    editions.value.unshift({
+      year: new Date(form.value.start_date).getFullYear(),
+      image: require('@/assets/logosite.png'),
+      place: form.value.place,
+      start_date: form.value.start_date
+    })
+
+    form.value = {
+      name: '',
+      description_en: '',
+      description_fr: '',
+      place: '',
+      start_date: '',
+      end_date: ''
+    }
+
+    showModal.value = false
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
 </script>
 
 <style scoped>
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeInOverlay 0.3s ease;
+}
+.modal-content {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  animation: scaleIn 0.3s ease;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+.modal-content h3 {
+  margin-bottom: 1rem;
+  color: #265985;
+}
+.modal-content label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.modal-actions button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.modal-actions button[type="submit"] {
+  background: #265985;
+  color: white;
+}
+.modal-actions button[type="button"] {
+  background: #ccc;
+  color: black;
+}
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .editions-section {
   font-family: 'Segoe UI', sans-serif;
   width: 100%;
