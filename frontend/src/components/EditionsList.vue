@@ -1,80 +1,137 @@
 <template>
   <section class="editions-section">
+    <!-- Header -->
     <div class="header">
       <h2>Editions</h2>
-      <button class="new-edition-btn">
+      <button class="new-edition-btn" @click="showModal = true">
         <span>➕</span> New Edition
       </button>
     </div>
 
-    <div class="edition-card" v-for="edition in editions" :key="edition.year">
-      <img class="edition-image" :src="edition.image" alt="Edition image" />
-
+    <!-- Edition Cards -->
+    <div class="edition-card" v-for="edition in editions" :key="edition.name">
+      <img class="edition-image" :src="edition.images_url" alt="Edition image" />
       <div class="edition-info">
         <div class="title-status">
-          <h3>Site {{ edition.year }}</h3>
+          <h3>{{ edition.name }}</h3>
           <span class="status">En Cours</span>
         </div>
-
         <div class="details">
           <div class="detail">
             <i class="icon">📍</i>
             <div>
               <strong>Place</strong>
-              <p>Hammamet</p>
+              <p>{{ edition.place }}</p>
             </div>
           </div>
           <div class="detail">
             <i class="icon">🕒</i>
             <div>
               <strong>Date</strong>
-              <p>24 October</p>
+              <p>{{ edition.start_date }} → {{ edition.end_date }}</p>
             </div>
           </div>
         </div>
       </div>
-      <button class="voir-plus" @click="selectEdition(edition.year)">Voir plus</button>
+      <button class="voir-plus" @click="selectEdition(edition.name)">Voir plus</button>
+    </div>
+
+    <!-- Modal -->
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal">
+        <h2>New Edition</h2>
+        <form @submit.prevent="addEdition">
+          <input type="text" v-model="newEdition.name" name="name" placeholder="Name" required />
+          <textarea v-model="newEdition.description_fr" name="description_fr" placeholder="Description FR" required></textarea>
+          <textarea v-model="newEdition.description_en" name="description_en" placeholder="Description EN" required></textarea>
+          <input type="date" v-model="newEdition.start_date" name="start_date" required />
+          <input type="date" v-model="newEdition.end_date" name="end_date" required />
+          <input type="text" v-model="newEdition.place" name="place" placeholder="Place" required />
+
+          <!-- Input fichier image -->
+          <input
+            type="file"
+            accept="image/*"
+            @change="onImageSelected"
+            required
+          />
+
+          <div class="modal-actions">
+            <button type="submit" class="add-btn">Add</button>
+            <button type="button" class="cancel-btn" @click="closeModal">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
   </section>
 </template>
 
 <script setup>
-/* eslint-disable */
+/* eslint-disable no-undef */
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const router = useRouter()
 const emit = defineEmits(['editionSelected'])
+const router = useRouter()
+const showModal = ref(false)
+
+const editions = ref([
+  {
+    name: 'SITE 2025',
+    description_fr: 'Description en français',
+    description_en: 'Description in English',
+    start_date: '2025-10-24',
+    end_date: '2025-10-26',
+    place: 'Hammamet',
+    images_url: require('@/assets/logosite.png'),
+  },
+  {
+    name: 'SITE 2024',
+    description_fr: 'Description en français',
+    description_en: 'Description in English',
+    start_date: '2024-10-20',
+    end_date: '2024-10-22',
+    place: 'Hammamet',
+    images_url: require('@/assets/logosite.png'),
+  },
+])
+
+const newEdition = ref({
+  name: '',
+  description_fr: '',
+  description_en: '',
+  start_date: '',
+  end_date: '',
+  place: '',
+  images_url: '', // stockera data URL base64 de l’image
+})
 
 const selectEdition = (editionId) => {
-  // Store the selected edition ID in localStorage
-  localStorage.setItem('selectedEditionId', editionId.toString())
-  console.log(`Selected Edition ID: ${editionId}`)
-  
-  // Emit event to parent component
+  localStorage.setItem('selectedEditionId', editionId)
   emit('editionSelected', editionId)
-  
   router.push('/admin/edition')
-  console.log(`Navigating to edition with ID: ${editionId}`)
 }
 
-const editions = [
-  {
-    year: 2025,
-    image: require('@/assets/logosite.png'),
-  },
-  {
-    year: 2024,
-    image: require('@/assets/logosite.png'),
-  },
-  {
-    year: 2023,
-    image: require('@/assets/logosite.png'),
-  },
-  {
-    year: 2022,
-    image: require('@/assets/logosite.png'),
-  },
-];
+const onImageSelected = (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    newEdition.value.images_url = e.target.result // data URL base64
+  }
+  reader.readAsDataURL(file)
+}
+
+const addEdition = () => {
+  editions.value.unshift({ ...newEdition.value })
+  closeModal()
+}
+
+const closeModal = () => {
+  showModal.value = false
+  Object.keys(newEdition.value).forEach(key => (newEdition.value[key] = ''))
+}
 </script>
 
 <style scoped>
@@ -228,6 +285,74 @@ const editions = [
 .voir-plus:hover {
   background: #1e4b6b;
   transform: translateY(-2px);
+}
+
+/* === MODAL === */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 9px 40px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.4s ease;
+}
+
+.modal h2 {
+  margin-bottom: 1rem;
+  color: #265985;
+}
+
+.modal input,
+.modal textarea {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.modal textarea {
+  resize: vertical;
+  height: 80px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.add-btn {
+  background: #265985;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ccc;
+  color: #333;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 /* RESPONSIVE */

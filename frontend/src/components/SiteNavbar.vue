@@ -51,7 +51,7 @@ const currentLanguage = ref(locale.value);
 const switchLanguage = (lang) => {
   currentLanguage.value = lang;
   locale.value = lang;
-  localStorage.setItem('userLanguage', lang);
+  document.cookie = `userLanguage=${lang}; path=/;`;
 };
 </script>
 

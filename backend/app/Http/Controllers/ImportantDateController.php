@@ -27,7 +27,7 @@ class ImportantDateController extends Controller
             'description_fr' => 'required|string',
             'description_en' => 'required|string',
             'date' => 'required|date',
-            'edition_id' => 'required|exists:edition,id',
+            'edition_id' => 'required|exists:editions,id',
         ]);
 
         $date = ImportantDate::create($validated);
@@ -85,5 +85,19 @@ class ImportantDateController extends Controller
             ->get();
 
         return response()->json($dates);
+    }
+
+    public function getLatestCountdownDate($editionId)
+    {
+        $latestDate = ImportantDate::where('edition_id', $editionId)
+            ->where('date', '>', now()->toDateString())
+            ->orderBy('date', 'asc')
+            ->first();
+
+        if ($latestDate) {
+            return response()->json($latestDate);
+        } else {
+            return response()->json(['message' => 'No upcoming important dates found'], 404);
+        }
     }
 }
