@@ -9,6 +9,7 @@ use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\FormPricesController;
+use App\Http\Controllers\SponsorController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,7 @@ Route::prefix('important-dates')->group(function () {
     Route::post('/', [ImportantDateController::class, 'store']);
     Route::put('/{id}', [ImportantDateController::class, 'update']);
     Route::delete('/{id}', [ImportantDateController::class, 'destroy']);
+    Route::get('/{editionId}/countdown', [ImportantDateController::class, 'getLatestCountdownDate']);
 });
 
 // Intervenant Routes
@@ -110,4 +112,13 @@ Route::prefix('form-prices')->group(function () {
     Route::post('/', [FormPricesController::class, 'store']);
     Route::put('/{id}', [FormPricesController::class, 'update']);
     Route::delete('/{id}', [FormPricesController::class, 'destroy']);
+});
+// Sponsor Routes
+Route::prefix('sponsors')->group(function () {
+    Route::get('/', [SponsorController::class, 'index']);
+    Route::get('/edition/{editionId}', [SponsorController::class, 'getByEdition']);
+    Route::get('/{id}', [SponsorController::class, 'show']);
+    Route::post('/', [SponsorController::class, 'store']);
+    Route::put('/{id}', [SponsorController::class, 'update']);
+    Route::delete('/{id}', [SponsorController::class, 'destroy']);
 });
