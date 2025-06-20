@@ -2,16 +2,16 @@
     <section class="hero">
         <div class="content">
             <div class="text-content">
-                <h1>{{ $t('hero.welcome') }} <span class="blue">SITE 2025</span></h1>
+                <h1>{{ $t('hero.welcome') }} <span class="blue">{{ editionData.name }}</span></h1>
                 <h2>{{ $t('hero.subtitle') }}</h2>
-                <p>{{ $t('hero.description') }}</p>
+                <p>{{ currentDescription }}</p>
 
                 <div class="countdown">
                     <template v-if="countdown">
                         <div><span class="time">{{ countdown.days }}</span><small>{{ $t('hero.countdown.days')
-                                }}</small></div>
+                        }}</small></div>
                         <div style="margin-left: -0.3rem;"><span class="time">{{ countdown.hours }}</span><small>{{
-                                $t('hero.countdown.hours') }}</small></div>
+                            $t('hero.countdown.hours') }}</small></div>
                         <div style="margin-left: -0.4rem;"><span class="time">{{ countdown.minutes }}</span><small>{{
                             $t('hero.countdown.minutes') }}</small></div>
                         <div style="margin-left: -0.7rem;"><span class="time sec">{{ countdown.seconds }}</span><small
@@ -27,7 +27,7 @@
                     <button class="btn-white">{{ $t('hero.buttons.articleSubmission') }}</button>
                     <button class="btn-whit">{{ $t('hero.buttons.articleTemplate') }}</button>
                     <router-link to="/profile-selection" class="btn-green">{{ $t('hero.buttons.registration')
-                        }}</router-link>
+                    }}</router-link>
                 </div>
             </div>
             <div class="image-container">
@@ -38,14 +38,17 @@
 </template>
 
 <script>
+import EditionService from '@/services/EditionService';
 export default {
     data() {
         return {
             targetDate: new Date('2025-06-30T00:00:00'),
             timeRemaining: 0,
-            intervalId: null
+            intervalId: null,
+            editionData: {}
         };
     },
+
     computed: {
         countdown() {
             if (this.timeRemaining <= 0) {
@@ -61,11 +64,19 @@ export default {
                 minutes: String(minutes).padStart(2, '0'),
                 seconds: String(seconds).padStart(2, '0')
             };
-        }
+        },
+        currentDescription() {
+            if (!this.editionData) return '';
+            return this.$i18n.locale === 'fr'
+                ? this.editionData.description_fr
+                : this.editionData.description_en;
+        },
+        
     },
     mounted() {
         this.updateCountdown();
         this.intervalId = setInterval(this.updateCountdown, 1000);
+        this.loadEdition();
     },
     beforeUnmount() {
         clearInterval(this.intervalId);
@@ -77,7 +88,17 @@ export default {
             if (this.timeRemaining < 0) {
                 this.timeRemaining = 0;
             }
-        }
+        },
+        async loadEdition() {
+            try {
+                const response = await EditionService.getCurrentEdition();
+                this.editionData = response.data;
+                console.log('Edition data fetched:', this.editionData);
+            } catch (error) {
+                console.error('Error fetching edition data:', error);
+            }
+        },
+        
     }
 };
 </script>

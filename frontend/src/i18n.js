@@ -28,6 +28,7 @@ const messages = {
                 hours: 'Hours',
                 minutes: 'Minutes',
                 seconds: 'Seconds',
+                timeUp: 'Time is up!'
             }
         },
         blueSection: {
@@ -115,6 +116,7 @@ const messages = {
                 hours: 'Heures',
                 minutes: 'Minutes',
                 seconds: 'Secondes',
+                timeUp: 'Le temps est écoulé !'
             }
         },
         blueSection: {
