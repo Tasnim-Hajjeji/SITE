@@ -177,7 +177,13 @@ const messages = {
     }
 };
 
-const savedLanguage = localStorage.getItem('userLanguage');
+const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+};
+const savedLanguage = getCookie('userLanguage');
 const browserLanguage = navigator.language.split('-')[0];
 const defaultLanguage = savedLanguage || (['en', 'fr'].includes(browserLanguage) ? browserLanguage : 'en');
 
