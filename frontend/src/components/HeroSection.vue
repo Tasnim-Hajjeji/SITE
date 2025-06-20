@@ -9,7 +9,7 @@
                 <div class="countdown">
                     <template v-if="countdown">
                         <div><span class="time">{{ countdown.days }}</span><small>{{ $t('hero.countdown.days')
-                        }}</small></div>
+                                }}</small></div>
                         <div style="margin-left: -0.3rem;"><span class="time">{{ countdown.hours }}</span><small>{{
                             $t('hero.countdown.hours') }}</small></div>
                         <div style="margin-left: -0.4rem;"><span class="time">{{ countdown.minutes }}</span><small>{{
@@ -27,7 +27,7 @@
                     <button class="btn-white">{{ $t('hero.buttons.articleSubmission') }}</button>
                     <button class="btn-whit">{{ $t('hero.buttons.articleTemplate') }}</button>
                     <router-link to="/profile-selection" class="btn-green">{{ $t('hero.buttons.registration')
-                    }}</router-link>
+                        }}</router-link>
                 </div>
             </div>
             <div class="image-container">
@@ -38,14 +38,19 @@
 </template>
 
 <script>
-import EditionService from '@/services/EditionService';
+// import EditionService from '@/services/EditionService';
 export default {
+    props: {
+        editionData: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
             targetDate: new Date('2025-06-30T00:00:00'),
             timeRemaining: 0,
             intervalId: null,
-            editionData: {}
         };
     },
 
@@ -71,12 +76,12 @@ export default {
                 ? this.editionData.description_fr
                 : this.editionData.description_en;
         },
-        
+
     },
     mounted() {
         this.updateCountdown();
         this.intervalId = setInterval(this.updateCountdown, 1000);
-        this.loadEdition();
+        // this.loadEdition();
     },
     beforeUnmount() {
         clearInterval(this.intervalId);
@@ -89,16 +94,16 @@ export default {
                 this.timeRemaining = 0;
             }
         },
-        async loadEdition() {
-            try {
-                const response = await EditionService.getCurrentEdition();
-                this.editionData = response.data;
-                console.log('Edition data fetched:', this.editionData);
-            } catch (error) {
-                console.error('Error fetching edition data:', error);
-            }
-        },
-        
+        // async loadEdition() {
+        //     try {
+        //         const response = await EditionService.getCurrentEdition();
+        //         this.editionData = response.data;
+        //         console.log('Edition data fetched:', this.editionData);
+        //     } catch (error) {
+        //         console.error('Error fetching edition data:', error);
+        //     }
+        // },
+
     }
 };
 </script>
