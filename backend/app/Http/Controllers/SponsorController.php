@@ -22,25 +22,30 @@ class SponsorController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'adresse' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'description' => 'required|string',
-            'logo' => 'required|image', // Assuming logo is an image file
-            'edition_id' => 'required|exists:edition,id',
-        ]);
-        unset($validated['logo']); // Remove logo from validation array
-        if($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('sponsors');
-            $validated['logo'] = Storage::url($path); // Store the path of the uploaded logo
-        } else {
-            return response()->json(['error' => 'Logo is required'], 422);
+        try{
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'adresse' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'required|string|max:20',
+                'description' => 'required|string',
+                'logo' => 'required|image|', // Assuming logo is an image file
+                'edition_id' => 'required|exists:edition,id',
+            ]);
+            unset($validated['logo']); // Remove logo from validation array
+            if($request->hasFile('logo')) {
+                $path = $request->file('logo')->store('sponsors', 'public'); // Store the logo in the 'public' disk
+                $validated['logo'] = $path; // Store the path of the uploaded logo
+            } else {
+                return response()->json(['error' => 'Logo is required'], 422);
+            }
+            
+            $sponsor = Sponsor::create($validated);
+            return response()->json($sponsor, 201);
+        }catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create sponsor: ' . $e->getMessage()], 500);
         }
-        
-        $sponsor = Sponsor::create($validated);
-        return response()->json($sponsor, 201);
     }
 
     /**
@@ -85,7 +90,7 @@ class SponsorController extends Controller
             }
             unset($validated['logo']); // Remove logo from validation array
             $path = $request->file('logo')->store('sponsors');
-            $validated['logo'] = Storage::url($path);
+            $validated['logo'] = $path;
         }
 
         $sponsor->update($validated);
@@ -109,7 +114,11 @@ class SponsorController extends Controller
 
     public function getSponsorsByEdition($editionId)
     {
-        $sponsors = Sponsor::where('edition_id', $editionId)->get();
-        return response()->json($sponsors);
+        try{
+            $sponsors = Sponsor::where('edition_id', $editionId)->get();
+            return response()->json($sponsors);
+        }catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve sponsors: ' . $e->getMessage()], 500);
+        }
     }
 }

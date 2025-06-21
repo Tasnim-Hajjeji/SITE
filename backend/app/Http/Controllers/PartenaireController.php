@@ -22,20 +22,25 @@ class PartenaireController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
-            'edition_id' => 'required|exists:edition,id',
-        ]);
-        unset($validated['image']); // Remove image from validation array
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('partenaires');
-            $validated['image_url'] = Storage::url($path);
-        }
+        try{
 
-        $partenaire = Partenaire::create($validated);
-        return response()->json($partenaire, 201);
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
+                'edition_id' => 'required|exists:edition,id',
+            ]);
+            unset($validated['image']); // Remove image from validation array
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('partenaires', 'public');
+                $validated['image_url'] = $path;
+            }
+    
+            $partenaire = Partenaire::create($validated);
+            return response()->json($partenaire, 201);
+        }catch (\Exception $e) {
+            return response()->json(['error' => 'Partenaire'.$e->getMessage()], 404);
+        }
     }
 
     /**
@@ -75,7 +80,7 @@ class PartenaireController extends Controller
                 }
 
                 $path = $request->file('image')->store('partenaires');
-                $validated['image_url'] = Storage::url($path);
+                $validated['image_url'] = $path;
             }
 
             $partenaire->update($validated);

@@ -1,24 +1,68 @@
 <template>
   <div class="partners-section">
     <div class="section-title">
-      <h2>Our Partners</h2>
+      <h2>{{ $t('partners.title') }}</h2>
     </div>
     <div class="carousel" @mouseover="isHovered = true" @mouseleave="isHovered = false">
       <div class="carousel-track" :class="{ paused: isHovered }">
-        <div v-for="(logo, index) in duplicatedLogos" :key="index" class="logo">
-          <img :src="require(`@/assets/partenaire${index % 9 + 1}.png`)" alt="Partner" />
+        <div v-for="(partner, index) in duplicatedPartners" :key="partner.id + '-' + index" class="logo">
+          <img :src="getImageUrl(partner.image_url)" :alt="partner.name" />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script>
+import PartenaireService from '@/services/PartenaireService';
 
-const logos = Array.from({ length: 9 }, (_, i) => `/assets/partenaire${i + 1}.png`) // Génère les chemins
-const duplicatedLogos = [...logos, ...logos] // Duplique la liste pour le défilement continu
-const isHovered = ref(false)
+export default {
+  name: 'PartnersCarousel',
+  props: {
+    editionId: {
+      type: Number,
+      required: true
+    }
+  },
+  data() {
+    return {
+      isHovered: false,
+      partners: []
+    };
+  },
+  computed: {
+    duplicatedPartners() {
+      // Duplicate the array for seamless looping
+      return [...this.partners, ...this.partners];
+    }
+  },
+  async mounted() {
+    await this.fetchPartners();
+  },
+  methods: {
+    async fetchPartners() {
+      try {
+        const response = await PartenaireService.getPartenairesByEdition(this.editionId);
+        this.partners = response.data;
+      } catch (error) {
+        console.error('Error fetching partners:', error);
+      }
+    },
+    getImageUrl(imagePath) {
+      return `http://localhost:8000/storage/${imagePath}`;
+    },
+  },
+   watch: {
+    editionId: {
+      immediate: true,
+      handler(newId) {
+        if (newId) {
+          this.fetchPartners();
+        }
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>

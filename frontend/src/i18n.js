@@ -87,6 +87,12 @@ const messages = {
             carousel_subtitle_2:' Relive the highlights through photos and memories.',
             button:'See More'
 
+        },
+        partners: {
+            title:'Our Partners',
+        },
+        sponsors:{
+            title: 'Our Sponsors',
         }
     },
     fr: {
@@ -174,6 +180,12 @@ const messages = {
             carousel_subtitle_1: 'Des discours inspirants aux échanges vibrants, chaque édition a apporté quelque chose d\'unique.',
             carousel_subtitle_2: 'Revivez les moments forts à travers des photos et des souvenirs.',
             button: 'Voir plus'
+        },
+        partners: {
+            title: 'Nos Partenaires',
+        },
+        sponsors: {
+            title: 'Nos Sponsors',
         }
 
     }

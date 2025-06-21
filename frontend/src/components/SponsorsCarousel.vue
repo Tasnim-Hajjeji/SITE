@@ -1,24 +1,68 @@
 <template>
   <div class="partners-section">
     <div class="section-title">
-      <h2>Our Sponsors</h2>
+      <h2>{{ $t('sponsors.title') }}</h2>
     </div>
     <div class="carousel" @mouseover="isHovered = true" @mouseleave="isHovered = false">
       <div class="carousel-track" :class="{ paused: isHovered }">
-        <div v-for="(logo, index) in duplicatedLogos" :key="index" class="logo">
-          <img :src="require(`@/assets/partenaire${index % 9 + 1}.png`)" alt="Sponsor logo" />
+        <div v-for="(sponsor, index) in duplicatedSponsors" :key="sponsor.id + '-' + index" class="logo">
+          <img :src="getImageUrl(sponsor.logo)" alt="Sponsor logo" />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
 
-const logos = Array.from({ length: 9 }, (_, i) => `/assets/partenaire${i + 1}.png`) // Génère les chemins
-const duplicatedLogos = [...logos, ...logos] // Duplique la liste pour le défilement continu
-const isHovered = ref(false)
+<script>
+import SponsorService from '@/services/SponsorService';
+export default {
+  name: 'SponsorsCarousel',
+  props: {
+    editionId: {
+      type: Number,
+      required: true
+    }
+  },
+  data() {
+    return {
+      isHovered: false,
+      sponsors: []
+    };
+  },
+  computed: {
+    duplicatedSponsors() {
+      // Duplicate the array for seamless looping
+      return [...this.sponsors, ...this.sponsors];
+    }
+  },
+  async mounted() {
+    await this.fetchSponsors();
+  },
+  methods: {
+    async fetchSponsors() {
+      try {
+        const response = await SponsorService.getSponsorsByEdition(this.editionId);
+        this.sponsors = response.data;
+      } catch (error) {
+        console.error('Error fetching sponsors:', error);
+      }
+    },
+    getImageUrl(imagePath) {
+      return `http://localhost:8000/storage/${imagePath}`;
+    },
+  },
+   watch: {
+    editionId: {
+      immediate: true,
+      handler(newId) {
+        if (newId) {
+          this.fetchSponsors();
+        }
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
