@@ -7,6 +7,7 @@
   <div id="date">
     <ImportantDates :edition-id="editionData?.id" />
   </div>
+ 
 </template>
 
 <script setup>
