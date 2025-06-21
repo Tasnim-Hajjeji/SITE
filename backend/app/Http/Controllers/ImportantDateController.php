@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ImportantDate;
 use Illuminate\Http\Request;
 
+use function Pest\Laravel\call;
+
 class ImportantDateController extends Controller
 {
     /**
@@ -21,18 +23,23 @@ class ImportantDateController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title_fr' => 'required|string|max:255',
-            'title_en' => 'required|string|max:255',
-            'description_fr' => 'required|string',
-            'description_en' => 'required|string',
-            'date' => 'required|date',
-            'edition_id' => 'required|exists:editions,id',
-        ]);
+        try{
 
-        $date = ImportantDate::create($validated);
-
-        return response()->json($date, 201);
+            $validated = $request->validate([
+                'title_fr' => 'required|string|max:255',
+                'title_en' => 'required|string|max:255',
+                'description_fr' => 'sometimes|string',
+                'description_en' => 'sometimes|string',
+                'date' => 'required|date',
+                'edition_id' => 'required|exists:edition,id',
+            ]);
+    
+            $date = ImportantDate::create($validated);
+    
+            return response()->json($date, 201);
+        }catch(\Exception $e){
+            return response()->json(['error' => 'An error occurred while creating the important date.'.$e->getMessage()], 500);
+        }
     }
 
     /**

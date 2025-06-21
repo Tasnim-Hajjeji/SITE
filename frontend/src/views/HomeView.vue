@@ -5,7 +5,7 @@
   <PartnersCarousel :edition-id="editionData?.id" />
   <SponsorsCarousel :edition-id="editionData?.id" />
   <div id="date">
-    <ImportantDates :edition-data="editionData" />
+    <ImportantDates :edition-id="editionData?.id" />
   </div>
 </template>
 

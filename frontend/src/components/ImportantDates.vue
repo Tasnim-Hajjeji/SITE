@@ -2,28 +2,78 @@
   <div class="important-dates">
     <h2 class="title">Important dates</h2>
     <div class="timeline">
-      <div
-        class="timeline-item"
-        v-for="(item, index) in dates"
-        :key="index"
-        :class="{ left: index % 2 === 0, right: index % 2 !== 0 }"
-      >
+      <div class="timeline-item" v-for="(dateItem, index) in formattedDates" :key="dateItem.id || index"
+        :class="{ left: index % 2 === 0, right: index % 2 !== 0 }">
         <div class="content">
-          <div class="date-circle">{{ item.date }}</div>
-          <div class="text-box">{{ item.text }}</div>
+          <div class="date-circle">{{ dateItem.formattedDate }}</div>
+          <div class="text-box">{{ currentLocale === 'fr' ? dateItem.title_fr : dateItem.title_en }}</div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-const dates = [
-  { date: '01 / 07', text: 'Submission Deadline (Extended abstract)' },
-  { date: '02 / 07', text: 'Acceptance notification' },
-  { date: '03 / 07', text: 'Registration Deadline' },
-  { date: '04 / 07', text: 'Full paper submission deadline' }
-];
+<script>
+import ImportantDateService from '@/services/ImportantDatesService';
+export default {
+  name: 'ImportantDates',
+  props: {
+    editionId: {
+      type: Number,
+      required: true
+    }
+  },
+  data() {
+    return {
+      dates: []
+    };
+  },
+  computed: {
+    formattedDates() {
+      return this.dates.map(item => {
+        const dateObj = new Date(item.date);
+        return {
+          ...item,
+          formattedDate: this.formatDayMonth(dateObj)
+        };
+      }).sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date
+    },
+
+    currentLocale() {
+      return this.$i18n.locale;
+    },
+  },
+  mounted() {
+    this.fetchImportantDates();
+  },
+  methods: {
+    async fetchImportantDates() {
+      try {
+        const response = await ImportantDateService.getDatesByEdition(this.editionId);
+        this.dates = response.data;
+      } catch (error) {
+        console.error('Error fetching edition dates:', error);
+      }
+    },
+    formatDayMonth(date) {
+      // Returns format like "24 / 10" (day / month)
+      const day = date.getDate();
+      const month = date.getMonth() + 1; // Months are 0-indexed
+
+      return `${day} / ${month}`;
+    }
+  },
+  watch: {
+    editionId: {
+      immediate: true,
+      handler(newId) {
+        if (newId) {
+          this.fetchImportantDates();
+        }
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -107,6 +157,7 @@ const dates = [
 
 /* ✅ Responsive styling: date left, text right */
 @media (max-width: 768px) {
+
   .timeline-item,
   .timeline-item.right {
     justify-content: center !important;
