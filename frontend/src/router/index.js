@@ -18,6 +18,8 @@ import StrangerFormvue from '@/views/StrangerFormvue.vue';
 import Registrationvue from '@/views/Registrationvue.vue';
 import RegistrationFinalvue from '@/views/RegistrationFinalvue.vue';
 import RegSuccesvue from '@/views/RegSuccesvue.vue';
+import PageSponsorvue from '@/views/PageSponsorvue.vue';
+import SponsorAdminvue from '@/views/SponsorAdminvue.vue';
 const routes = [
   {
     path: '/',
@@ -140,8 +142,19 @@ const routes = [
     name: 'Committees',
     component: CommittiesAdmin,
     meta: { layout: 'admin' }
+  },
+  {
+    path: '/sponsor',
+    name: 'PageSponsor',    
+    component: PageSponsorvue,
+    meta: { layout: 'default' }
+  },
+  {
+    path: '/admin/sponsor',
+    name: 'SponsorAdmin', 
+    component: SponsorAdminvue,
+    meta: { layout: 'admin' }
   }
-
 
 ];
 

@@ -9,10 +9,13 @@
         </li>
       </router-link>
 
-      <li :class="{ active: selected === 'Sponsors' }" @click="handleNavigation('Sponsors')">
+      <router-link to="/admin/sponsor" custom v-slot="{ navigate }">
+        <li :class="{ active: selected === 'Sponsors' }" @click="handleNavigation('Sponsors', navigate)">
         <span class="icon">💸</span>
         <span class="text">Sponsors</span>
       </li>
+      </router-link>
+      
 
       <router-link to="/admin/partnair" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Partenaires' }" @click="handleNavigation('Partenaires', navigate)">
