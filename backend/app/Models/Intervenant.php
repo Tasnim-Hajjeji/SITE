@@ -27,4 +27,8 @@ class Intervenant extends Model
     {
         return $this->belongsToMany(Program::class, 'program_intervenant', 'intervenant_id', 'program_id');
     }
+    public function keynotes()
+    {
+        return $this->morphMany(Keynote::class, 'speakerable');
+    }
 }

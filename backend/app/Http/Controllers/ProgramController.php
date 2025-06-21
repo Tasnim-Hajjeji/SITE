@@ -21,18 +21,25 @@ class ProgramController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'time_start' => 'required|date_format:Y-m-d H:i:s',
-            'time_end' => 'required|date_format:Y-m-d H:i:s',
-            'edition_id' => 'required|exists:edition,id',
-        ]);
+        try{
 
-        
-        $program = Program::create($validated);
-
-        return response()->json($program, 201);
+            $validated = $request->validate([
+                'name_fr' => 'required|string|max:255',
+                'name_en' => 'required|string|max:255',
+                'description_fr' => 'sometimes|string',
+                'description_en' => 'sometimes|string',
+                'time_start' => 'required|date_format:Y-m-d H:i:s',
+                'time_end' => 'required|date_format:Y-m-d H:i:s',
+                'edition_id' => 'required|exists:edition,id',
+            ]);
+    
+            
+            $program = Program::create($validated);
+    
+            return response()->json($program, 201);
+        }catch (\Exception $e) {
+            return response()->json(['error' => 'Error while creating program: '.$e->getMessage()], 500);
+        }
     }
 
     /**
@@ -54,8 +61,10 @@ class ProgramController extends Controller
             $program = Program::findOrFail($id);
     
             $validated = $request->validate([
-                'name' => 'sometimes|string|max:255',
-                'description' => 'sometimes|string',
+                'name_fr' => 'sometimes|string|max:255',
+                'name_en' => 'sometimes|string|max:255',
+                'description_fr' => 'sometimes|string',
+                'description_en' => 'sometimes|string',
                 'time_start' => 'sometimes|date_format:Y-m-d H:i:s',
                 'time_end' => 'sometimes|date_format:Y-m-d H:i:s',
                 'edition_id' => 'sometimes|exists:edition,id',
