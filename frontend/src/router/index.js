@@ -68,7 +68,7 @@ const routes = [
     meta: { layout: 'admin' }
   },
   {
-    path: '/admin/edition',
+    path: '/admin/edition/:editionId',
     name: 'AdEdition',
     component: AdEdition,
     meta: { layout: 'admin' }

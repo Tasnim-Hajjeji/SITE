@@ -2,63 +2,81 @@
   <section class="editions-section">
     <!-- Header -->
     <div class="header">
-      <h2>Editions</h2>
+      <h2>Éditions</h2>
       <button class="new-edition-btn" @click="showModal = true">
-        <span>➕</span> New Edition
+        <span>➕</span> Nouvelle Édition
       </button>
     </div>
 
+    <!-- Loading State -->
+    <div v-if="isLoading" class="loading">
+      Chargement en cours...
+    </div>
+
+    <!-- Error State -->
+    <div v-if="error" class="error">
+      Erreur de chargement: {{ error }}
+    </div>
+
     <!-- Edition Cards -->
-    <div class="edition-card" v-for="edition in editions" :key="edition.name">
-      <img class="edition-image" :src="edition.images_url" alt="Edition image" />
-      <div class="edition-info">
-        <div class="title-status">
-          <h3>{{ edition.name }}</h3>
-          <span class="status">En Cours</span>
-        </div>
-        <div class="details">
-          <div class="detail">
-            <i class="icon">📍</i>
-            <div>
-              <strong>Place</strong>
-              <p>{{ edition.place }}</p>
+    <div v-if="!isLoading && !error">
+      <div class="edition-card" v-for="edition in editions" :key="edition.id">
+        <img src="@/assets/logosite.png"  class="edition-image"/>
+        <div class="edition-info">
+          <div class="title-status">
+            <h3>{{ edition.name }}</h3>
+            <span class="status" :class="{
+              'current': isCurrentEdition(edition),
+              'past': !isCurrentEdition(edition)
+            }">
+              {{ getEditionStatus(edition) }}
+            </span>
+          </div>
+          <div class="details">
+            <div class="detail">
+              <i class="icon">📍</i>
+              <div>
+                <strong>Lieu</strong>
+                <p>{{ edition.place }}</p>
+              </div>
+            </div>
+            <div class="detail">
+              <i class="icon">🕒</i>
+              <div>
+                <strong>Date</strong>
+                <p>{{ formatDateRange(edition.start_date, edition.end_date) }}</p>
+              </div>
             </div>
           </div>
-          <div class="detail">
-            <i class="icon">🕒</i>
-            <div>
-              <strong>Date</strong>
-              <p>{{ edition.start_date }} → {{ edition.end_date }}</p>
-            </div>
-          </div>
         </div>
+        <button class="voir-plus" @click="selectEdition(edition.id)">
+          Voir plus
+        </button>
       </div>
-      <button class="voir-plus" @click="selectEdition(edition.name)">Voir plus</button>
     </div>
 
     <!-- Modal -->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
-        <h2>New Edition</h2>
+        <h2>Nouvelle Édition</h2>
         <form @submit.prevent="addEdition">
-          <input type="text" v-model="newEdition.name" name="name" placeholder="Name" required />
-          <textarea v-model="newEdition.description_fr" name="description_fr" placeholder="Description FR" required></textarea>
-          <textarea v-model="newEdition.description_en" name="description_en" placeholder="Description EN" required></textarea>
-          <input type="date" v-model="newEdition.start_date" name="start_date" required />
-          <input type="date" v-model="newEdition.end_date" name="end_date" required />
-          <input type="text" v-model="newEdition.place" name="place" placeholder="Place" required />
+          <input type="text" v-model="newEdition.name" placeholder="Nom" required />
+          <textarea v-model="newEdition.description_fr" placeholder="Description (FR)" required></textarea>
+          <textarea v-model="newEdition.description_en" placeholder="Description (EN)" required></textarea>
+          <input type="date" v-model="newEdition.start_date" required />
+          <input type="date" v-model="newEdition.end_date" required />
+          <input type="text" v-model="newEdition.place" placeholder="Lieu" required />
 
-          <!-- Input fichier image -->
-          <input
-            type="file"
-            accept="image/*"
-            @change="onImageSelected"
-            required
-          />
+          <!-- PDF upload field -->
+          <div class="file-upload">
+            <label for="sponsor-dossier">Dossier Sponsoring (PDF):</label>
+            <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelected" required />
+            <p v-if="pdfFileName" class="file-name">{{ pdfFileName }}</p>
+          </div>
 
           <div class="modal-actions">
-            <button type="submit" class="add-btn">Add</button>
-            <button type="button" class="cancel-btn" @click="closeModal">Cancel</button>
+            <button type="submit" class="add-btn">Ajouter</button>
+            <button type="button" class="cancel-btn" @click="closeModal">Annuler</button>
           </div>
         </form>
       </div>
@@ -67,34 +85,16 @@
 </template>
 
 <script setup>
-/* eslint-disable no-undef */
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import EditionService from '@/services/EditionService';
 
-const emit = defineEmits(['editionSelected'])
-const router = useRouter()
-const showModal = ref(false)
-
-const editions = ref([
-  {
-    name: 'SITE 2025',
-    description_fr: 'Description en français',
-    description_en: 'Description in English',
-    start_date: '2025-10-24',
-    end_date: '2025-10-26',
-    place: 'Hammamet',
-    images_url: require('@/assets/logosite.png'),
-  },
-  {
-    name: 'SITE 2024',
-    description_fr: 'Description en français',
-    description_en: 'Description in English',
-    start_date: '2024-10-20',
-    end_date: '2024-10-22',
-    place: 'Hammamet',
-    images_url: require('@/assets/logosite.png'),
-  },
-])
+const router = useRouter();
+const showModal = ref(false);
+const isLoading = ref(true);
+const error = ref(null);
+const editions = ref([]);
+const pdfFileName = ref(''); // Add this line to define pdfFileName
 
 const newEdition = ref({
   name: '',
@@ -103,35 +103,122 @@ const newEdition = ref({
   start_date: '',
   end_date: '',
   place: '',
-  images_url: '', // stockera data URL base64 de l’image
-})
+  dossier_sponso: null
+});
+
+// French month names
+const frenchMonths = [
+  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+];
+
+// Fetch editions on component mount
+onMounted(async () => {
+  await fetchEditions();
+});
+
+// Fetch editions from API
+const fetchEditions = async () => {
+  isLoading.value = true;
+  error.value = null;
+  try {
+    const response = await EditionService.getAllEditions();
+    editions.value = response.data;
+  } catch (err) {
+    error.value = err.message;
+    console.error('Error fetching editions:', err);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Check if edition is current (end date not reached)
+const isCurrentEdition = (edition) => {
+  const today = new Date();
+  const endDate = new Date(edition.end_date);
+  return endDate >= today;
+};
+
+// Get edition status text
+const getEditionStatus = (edition) => {
+  return isCurrentEdition(edition) ? 'En Cours' : 'Terminé';
+};
+
+// Format date range in French style
+const formatDateRange = (startDate, endDate) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  
+  // Same month and year
+  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    return `${start.getDate()} - ${end.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()}`;
+  }
+  // Same year
+  else if (start.getFullYear() === end.getFullYear()) {
+    return `${start.getDate()} ${frenchMonths[start.getMonth()]} - ${end.getDate()} ${frenchMonths[end.getMonth()]} ${start.getFullYear()}`;
+  }
+  // Different years
+  return `${start.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()} - ${end.getDate()} ${frenchMonths[end.getMonth()]} ${end.getFullYear()}`;
+};
+
+// Handle PDF selection
+const onPdfSelected = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    if (file.type === 'application/pdf') {
+      newEdition.value.dossier_sponso = file;
+      pdfFileName.value = file.name;
+    } else {
+      error.value = 'Veuillez sélectionner un fichier PDF';
+      event.target.value = ''; // Reset the input
+      pdfFileName.value = '';
+    }
+  }
+};
+
+// Add new edition
+const addEdition = async () => {
+  try {
+    const formData = new FormData();
+    formData.append('name', newEdition.value.name);
+    formData.append('description_fr', newEdition.value.description_fr);
+    formData.append('description_en', newEdition.value.description_en);
+    formData.append('start_date', newEdition.value.start_date);
+    formData.append('end_date', newEdition.value.end_date);
+    formData.append('place', newEdition.value.place);
+    
+    // Append the PDF file with the correct field name
+    if (newEdition.value.dossier_sponso) {
+      formData.append('dossier_sponso', newEdition.value.dossier_sponso);
+    }
+
+    const response = await EditionService.createEdition(formData);
+    editions.value.unshift(response.data);
+    closeModal();
+  } catch (err) {
+    error.value = 'Erreur lors de la création: ' + err.message;
+    console.error('Error creating edition:', err);
+  }
+};
 
 const selectEdition = (editionId) => {
-  localStorage.setItem('selectedEditionId', editionId)
-  emit('editionSelected', editionId)
-  router.push('/admin/edition')
-}
-
-const onImageSelected = (event) => {
-  const file = event.target.files[0]
-  if (!file) return
-
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    newEdition.value.images_url = e.target.result // data URL base64
-  }
-  reader.readAsDataURL(file)
-}
-
-const addEdition = () => {
-  editions.value.unshift({ ...newEdition.value })
-  closeModal()
-}
+  localStorage.setItem('selectedEditionId', editionId);
+  router.push('/admin/edition/' + editionId);
+};
 
 const closeModal = () => {
-  showModal.value = false
-  Object.keys(newEdition.value).forEach(key => (newEdition.value[key] = ''))
-}
+  showModal.value = false;
+  pdfFileName.value = '';
+  newEdition.value = {
+    name: '',
+    description_fr: '',
+    description_en: '',
+    start_date: '',
+    end_date: '',
+    place: '',
+    dossier_sponso: null
+  };
+};
 </script>
 
 <style scoped>
@@ -193,6 +280,66 @@ const closeModal = () => {
 .edition-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 50px rgba(0, 0, 0, 0.1);
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: #ff4444;
+}
+
+.status {
+  border-radius: 999px;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.status.current {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #2e7d32;
+}
+
+.status.past {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #c62828;
+}
+
+.edition-image.placeholder {
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.8rem;
+}
+.file-upload {
+  margin-bottom: 1rem;
+}
+
+.file-upload label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.file-upload input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.file-name {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 @keyframes fadeInUp {
