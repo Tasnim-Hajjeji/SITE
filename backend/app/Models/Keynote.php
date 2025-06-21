@@ -11,10 +11,15 @@ class Keynote extends Model
         'description_en',
         'speakerable_id',
         'speakerable_type',
+        'edition_id',
     ];
 
     public function speakerable()
     {
         return $this->morphTo();
+    }
+    public function edition()
+    {
+        return $this->belongsTo(Edition::class, 'edition_id');
     }
 }

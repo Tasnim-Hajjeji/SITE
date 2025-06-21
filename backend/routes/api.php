@@ -10,6 +10,7 @@ use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\FormPricesController;
 use App\Http\Controllers\SponsorController;
+use App\Http\Controllers\KeynoteController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -121,4 +122,13 @@ Route::prefix('sponsors')->group(function () {
     Route::post('/', [SponsorController::class, 'store']);
     Route::put('/{id}', [SponsorController::class, 'update']);
     Route::delete('/{id}', [SponsorController::class, 'destroy']);
+});
+// Keynote Routes
+Route::prefix('keynotes')->group(function () {
+    Route::get('/', [KeynoteController::class, 'index']);
+    Route::get('/{id}', [KeynoteController::class, 'show']);
+    Route::post('/', [KeynoteController::class, 'store']);
+    Route::put('/{id}', [KeynoteController::class, 'update']);
+    Route::delete('/{id}', [KeynoteController::class, 'destroy']);
+    Route::get('/edition/{editionId}', [KeynoteController::class, 'getByEdition']);
 });
