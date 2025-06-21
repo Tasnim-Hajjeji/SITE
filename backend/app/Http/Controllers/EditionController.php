@@ -33,6 +33,7 @@ class EditionController extends Controller
             'place' => 'required|string|max:255',
             'images' => 'sometimes|array',
             'images.*' => 'file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'dossier_sponso' => 'required|file|mimes:pdf|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -40,6 +41,12 @@ class EditionController extends Controller
         }
 
         $editionData = $validator->validated();
+        unset($editionData['dossier_sponso']);
+
+         if ($request->hasFile('dossier_sponso')) {
+            $path = $request->file('dossier_sponso')->store('/dossiers_sponso', 'public');
+            $editionData['dossier_sponso'] = $path;
+        }
 
         // Remove images from the data that will be saved to database
         unset($editionData['images']);
@@ -53,7 +60,7 @@ class EditionController extends Controller
             foreach ($files as $image) {
                 if ($image && $image->isValid()) {
                     $path = $image->store('editions');
-                    $editionData['images_url'][] = Storage::url($path);
+                    $editionData['images_url'][] = $path;
                 }
             }
         }
@@ -88,6 +95,7 @@ class EditionController extends Controller
             'place' => 'sometimes|string|max:255',
             'images' => 'sometimes|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'dossier_sponso' => 'sometimes|file|mimes:pdf|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -95,6 +103,15 @@ class EditionController extends Controller
         }
 
         $editionData = $validator->validated();
+        if ($request->hasFile('dossier_sponso')) {
+            // Delete old dossier if exists
+            if ($edition->dossier_sponso) {
+                Storage::delete($edition->dossier_sponso);
+            }
+            
+            $path = $request->file('dossier_sponso')->store('/dossiers_sponso', 'public');
+            $editionData['dossier_sponso'] = $path;
+        }
 
         if ($request->hasFile('images')) {
             if ($edition->images_url) {
@@ -135,6 +152,10 @@ class EditionController extends Controller
     public function destroy(string $id)
     {
         $edition = Edition::findOrFail($id);
+
+         if ($edition->dossier_sponso) {
+            Storage::delete($edition->dossier_sponso);
+        }
 
         // Delete associated images if they exist
         if ($edition->images_url) {

@@ -18,6 +18,7 @@ class Edition extends Model
         'end_date',
         'place',
         'images_url',
+        'dossier_sponso'
     ];
 
     protected $casts = [

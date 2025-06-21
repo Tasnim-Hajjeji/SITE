@@ -22,21 +22,22 @@ export default {
    * @returns {Promise} Axios promise
    */
   createEdition(editionData) {
-    const formData = new FormData();
     
-    // Append regular fields
-    Object.keys(editionData).forEach(key => {
-      if (key === 'images') {
-        // Handle multiple images
-        editionData.images.forEach(image => {
-          formData.append('images[]', image);
-        });
-      } else {
-        formData.append(key, editionData[key]);
-      }
-    });
+    // const formData = new FormData();
+    
+    // // Append regular fields
+    // Object.keys(editionData).forEach(key => {
+    //   if (key === 'images') {
+    //     // Handle multiple images
+    //     editionData.images.forEach(image => {
+    //       formData.append('images[]', image);
+    //     });
+    //   } else {
+    //     formData.append(key, editionData[key]);
+    //   }
+    // });
 
-    return axios.post('/editions', formData, {
+    return axios.post('/editions', editionData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

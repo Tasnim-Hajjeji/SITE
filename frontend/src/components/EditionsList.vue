@@ -191,7 +191,15 @@ const addEdition = async () => {
     if (newEdition.value.dossier_sponso) {
       formData.append('dossier_sponso', newEdition.value.dossier_sponso);
     }
-
+    // const editionData = {
+    //   name: newEdition.value.name,
+    //   description_fr: newEdition.value.description_fr,
+    //   description_en: newEdition.value.description_en,
+    //   start_date: newEdition.value.start_date,
+    //   end_date: newEdition.value.end_date,
+    //   place: newEdition.value.place
+    // };
+    console.log('Form Data:', formData);
     const response = await EditionService.createEdition(formData);
     editions.value.unshift(response.data);
     closeModal();

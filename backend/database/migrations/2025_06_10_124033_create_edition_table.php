@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->json('images_url')->nullable();
             $table->string('place');
+            $table->string('dossier_sponso')->nullable(); 
             $table->timestamps();
         });
     }
