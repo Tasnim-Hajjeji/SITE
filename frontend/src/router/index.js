@@ -71,7 +71,9 @@ const routes = [
     path: '/admin/edition/:editionId',
     name: 'AdEdition',
     component: AdEdition,
+    props: true,
     meta: { layout: 'admin' }
+
   },
   {
     path: '/admin/partnair',

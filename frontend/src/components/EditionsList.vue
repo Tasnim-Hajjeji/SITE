@@ -89,6 +89,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import EditionService from '@/services/EditionService';
 
+
 const router = useRouter();
 const showModal = ref(false);
 const isLoading = ref(true);
@@ -211,7 +212,7 @@ const addEdition = async () => {
 
 const selectEdition = (editionId) => {
   localStorage.setItem('selectedEditionId', editionId);
-  router.push('/admin/edition/' + editionId);
+  router.push({'name': 'AdEdition', params: { editionId } });
 };
 
 const closeModal = () => {

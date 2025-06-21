@@ -60,21 +60,21 @@ export default {
    * @returns {Promise} Axios promise
    */
   updateEdition(id, editionData) {
-    const formData = new FormData();
+    // const formData = new FormData();
     
-    // Append regular fields
-    Object.keys(editionData).forEach(key => {
-      if (key === 'images') {
-        // Handle multiple images
-        editionData.images.forEach(image => {
-          formData.append('images[]', image);
-        });
-      } else {
-        formData.append(key, editionData[key]);
-      }
-    });
+    // // Append regular fields
+    // Object.keys(editionData).forEach(key => {
+    //   if (key === 'images') {
+    //     // Handle multiple images
+    //     editionData.images.forEach(image => {
+    //       formData.append('images[]', image);
+    //     });
+    //   } else {
+    //     formData.append(key, editionData[key]);
+    //   }
+    // });
 
-    return axios.post(`/editions/${id}`, formData, {
+    return axios.post(`/editions/${id}`, editionData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

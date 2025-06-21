@@ -9,15 +9,14 @@
                 <button class="back-arrow" @click="goBackToEditions" title="Return to editions">
                     ←
                 </button>
-                <h1>Edition {{ selectedEditionId }}</h1>
             </div>
         </div>
 
         <div class="edition-content">
-            <AdEdition />
-            <PrevProgram />
-            <KeynoteCarousel />
-            <PhotoGallery />
+            <AdEdition :edition-id="editionId" />
+            <PrevProgram  :edition-id="editionId" />
+            <KeynoteCarousel :edition-id="editionId" />
+            <PhotoGallery :edition-id="editionId" />
         </div>
     </div>
 
@@ -28,9 +27,11 @@ import AdEdition from '@/components/AdEdition.vue';
 import PrevProgram from '@/components/PrevProgram.vue';
 import KeynoteCarousel from '@/components/KeynoteCarousel.vue';
 import PhotoGallery from '@/components/PhotoGallery.vue';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import EditionsList from '@/components/EditionsList.vue'
 
+const router = useRouter();
 const selectedEditionId = ref(null)
 
 const checkSelectedEdition = () => {
@@ -39,14 +40,15 @@ const checkSelectedEdition = () => {
 
 const goBackToEditions = () => {
   localStorage.removeItem('selectedEditionId')
-  selectedEditionId.value = null
+  router.push('/admin')
 }
 
 onMounted(() => {
   checkSelectedEdition()
   
-  // Listen for storage changes (in case edition is selected from another tab)
-  window.addEventListener('storage', checkSelectedEdition)
+   router.afterEach(() => {
+    checkSelectedEdition()
+  })
 })
 </script>
 <style scoped>
