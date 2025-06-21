@@ -16,6 +16,7 @@
         <div class="edition-content">
             <AdEdition />
             <PrevProgram />
+            <ImpDateAdmin />
             <KeynoteCarousel />
             <PhotoGallery />
         </div>
@@ -26,6 +27,7 @@
 <script setup>
 import AdEdition from '@/components/AdEdition.vue';
 import PrevProgram from '@/components/PrevProgram.vue';
+import ImpDateAdmin from '@/components/ImpDateAdmin.vue';
 import KeynoteCarousel from '@/components/KeynoteCarousel.vue';
 import PhotoGallery from '@/components/PhotoGallery.vue';
 import { ref, onMounted } from 'vue'
