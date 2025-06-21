@@ -106,171 +106,237 @@
   </script>
   
   <style scoped>
-  /* General */
-  .container {
-    max-width: 900px;
-    margin: auto;
-    padding: 30px;
-    font-family: 'Segoe UI', sans-serif;
-    color: #333;
+    /* Container & Titles */
+.container {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: auto;
+  font-family: 'Poppins', sans-serif;
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  
-  .title {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #2563eb;
-    font-weight: bold;
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .empty-msg {
-    text-align: center;
-    color: #777;
-    margin-top: 20px;
+}
+
+.title {
+  font-size: 1.7rem;
+  margin-bottom: 1.5rem;
+  color: #1b2d56;
+  font-weight: 700;
+  position: relative;
+}
+
+.title::after {
+  content: "";
+  width: 80px;
+  height: 4px;
+  background: #00a6a6;
+  display: block;
+  margin-top: 8px;
+  border-radius: 2px;
+}
+
+/* Empty Message */
+.empty-msg {
+  text-align: center;
+  color: #999;
+  margin-top: 2rem;
+  font-style: italic;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.btn.add {
+  background-color: #fff;
+  border-color: #00a6a6;
+  color: #00a6a6;
+  margin-bottom: 2rem;
+}
+
+.btn.add:hover {
+  background-color: #00a6a6;
+  color: white;
+}
+
+.btn.edit {
+  background: #fff;
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+
+.btn.edit:hover {
+  background-color: #fbbf24;
+  color: white;
+}
+
+.btn.delete {
+  background: #fff;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.btn.delete:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn.confirm {
+  background: #10b981;
+  color: white;
+  border: none;
+}
+
+.btn.confirm:hover {
+  background-color: #059669;
+}
+
+.btn.cancel {
+  background: #6b7280;
+  color: white;
+  border: none;
+}
+
+.btn.cancel:hover {
+  background-color: #4b5563;
+}
+
+/* Card Styles */
+.dates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.date-card {
+  background: #f9fbfc;
+  border: 1px solid #cce4f6;
+  border-left: 4px solid #00a6a6;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.date-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.card-content h3 {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #1b2d56;
+}
+
+.card-content p {
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
   }
-  
-  /* Buttons */
-  .btn {
-    border: none;
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-weight: 600;
-    transition: background 0.3s, transform 0.2s;
-    cursor: pointer;
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  .btn.add {
-    background-color: #2563eb;
-    color: white;
-    margin-bottom: 20px;
-  }
-  
-  .btn.add:hover {
-    background-color: #1d4ed8;
-    transform: scale(1.02);
-  }
-  
-  .btn.edit {
-    background-color: #facc15;
-    color: #000;
-  }
-  
-  .btn.edit:hover {
-    background-color: #eab308;
-  }
-  
-  .btn.delete {
-    background-color: #ef4444;
-    color: white;
-  }
-  
-  .btn.delete:hover {
-    background-color: #dc2626;
-  }
-  
-  .btn.confirm {
-    background-color: #10b981;
-    color: white;
-  }
-  
-  .btn.confirm:hover {
-    background-color: #059669;
-  }
-  
-  .btn.cancel {
-    background-color: #6b7280;
-    color: white;
-  }
-  
-  .btn.cancel:hover {
-    background-color: #4b5563;
-  }
-  
-  /* Cards */
-  .dates-list {
-    display: flex;
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Fade transition */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .date-card {
     flex-direction: column;
     gap: 1rem;
   }
-  
-  .date-card {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    transition: box-shadow 0.3s;
-  }
-  
-  .date-card:hover {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-  
-  .card-content h3 {
-    margin: 0 0 8px;
-    color: #1f2937;
-  }
-  
-  /* Modal */
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(30, 41, 59, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  
+
   .modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 550px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    animation: zoomIn 0.3s ease-out;
+    padding: 20px;
   }
-  
-  .modal-content input,
-  .modal-content textarea {
-    width: 100%;
-    margin-bottom: 15px;
-    padding: 10px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 1rem;
-  }
-  
+
   .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 10px;
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  /* Transitions */
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity 0.3s ease;
+
+  .btn {
+    width: 100%;
+    text-align: center;
   }
-  .fade-enter-from, .fade-leave-to {
-    opacity: 0;
-  }
-  
-  @keyframes zoomIn {
-    from {
-      transform: scale(0.8);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
+}
+
   </style>
   
