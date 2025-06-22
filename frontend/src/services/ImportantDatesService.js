@@ -61,6 +61,6 @@ export default {
      * @returns {Promise} Axios promise
      */
     getLatestCountdownDate(editionId) {
-        return axios.get(`/important-dates/latest-countdown/${editionId}`);
+        return axios.get(`/important-dates/${editionId}/countdown`);
     }
 };

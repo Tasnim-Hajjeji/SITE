@@ -5,7 +5,7 @@
                 <h1>{{ $t('hero.welcome') }} <span class="blue">{{ editionData.name }}</span></h1>
                 <h2>{{ $t('hero.subtitle') }}</h2>
                 <p>{{ currentDescription }}</p>
-
+                <p class="countdown_event" v-if="targetDateTitle">{{ targetDateTitle }}</p>
                 <div class="countdown">
                     <template v-if="countdown">
                         <div><span class="time">{{ countdown.days }}</span><small>{{ $t('hero.countdown.days')
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-// import EditionService from '@/services/EditionService';
+import ImportantDatesService from '@/services/ImportantDatesService';
 export default {
     props: {
         editionData: {
@@ -48,7 +48,9 @@ export default {
     },
     data() {
         return {
-            targetDate: new Date('2025-06-30T00:00:00'),
+            targeDateTitleFR: null,
+            targeDateTitleEN: null,
+            targetDate: new Date(),
             timeRemaining: 0,
             intervalId: null,
         };
@@ -76,12 +78,31 @@ export default {
                 ? this.editionData.description_fr
                 : this.editionData.description_en;
         },
+        targetDateTitle() {
+            if (!this.targeDateTitleEN || !this.targeDateTitleFR) return null;
+            return this.$i18n.locale === 'fr'
+                ? this.targeDateTitleFR
+                : this.targeDateTitleEN;
+        },
 
     },
     mounted() {
-        this.updateCountdown();
-        this.intervalId = setInterval(this.updateCountdown, 1000);
-        // this.loadEdition();
+        ImportantDatesService.getLatestCountdownDate(this.editionData.id)
+            .then(response => {
+                this.targeDateTitleFR = response.data.title_fr;
+                this.targeDateTitleEN = response.data.title_en;
+                this.targetDate = new Date(response.data.date);
+                this.updateCountdown();
+                this.intervalId = setInterval(this.updateCountdown, 1000);
+            })
+            .catch(error => {
+                console.error('Error fetching countdown date:', error);
+                this.targeDateTitleFR = "Date de conférence";
+                this.targeDateTitleEN = "Conference Date";
+                this.targetDate = new Date(this.editionData.start_date);
+                this.updateCountdown();
+                this.intervalId = setInterval(this.updateCountdown, 1000);
+            });
     },
     beforeUnmount() {
         clearInterval(this.intervalId);
@@ -93,17 +114,7 @@ export default {
             if (this.timeRemaining < 0) {
                 this.timeRemaining = 0;
             }
-        },
-        // async loadEdition() {
-        //     try {
-        //         const response = await EditionService.getCurrentEdition();
-        //         this.editionData = response.data;
-        //         console.log('Edition data fetched:', this.editionData);
-        //     } catch (error) {
-        //         console.error('Error fetching edition data:', error);
-        //     }
-        // },
-
+        }
     }
 };
 </script>
@@ -148,6 +159,7 @@ a {
 }
 
 .buttons {
+    margin-top: 1rem;
     display: flex;
     flex-wrap: wrap;
     /* optionnel : va à la ligne si trop étroit */
@@ -374,6 +386,14 @@ a {
     margin-right: 3rem;
     /* Ajusté pour coller à la navbar */
 
+}
+
+.countdown_event{
+    font-size: 1.2rem !important;
+    margin-bottom: -1.2rem;
+    margin-top: 1rem;
+    text-align: center;
+    font-weight: bold;
 }
 
 .hero-image {

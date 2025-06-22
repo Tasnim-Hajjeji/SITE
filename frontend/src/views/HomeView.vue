@@ -1,11 +1,17 @@
 <template>
-  <HeroSection :edition-data="editionData" />
-  <BlueSection :edition-data="editionData" />
-  <TopicsCarousel :edition-id="editionData?.id" />
-  <PartnersCarousel :edition-id="editionData?.id" />
-  <SponsorsCarousel :edition-id="editionData?.id" />
-  <div id="date">
-    <ImportantDates :edition-id="editionData?.id" />
+  <div v-if="editionData && editionData.id">
+    <HeroSection :edition-data="editionData" />
+    <BlueSection :edition-data="editionData" />
+    <TopicsCarousel :edition-id="editionData.id" />
+    <PartnersCarousel :edition-id="editionData.id" />
+    <SponsorsCarousel :edition-id="editionData.id" />
+    <div id="date">
+      <ImportantDates :edition-id="editionData.id" />
+    </div>
+  </div>
+  <div v-else>
+    <!-- Optionally, show a loading spinner here -->
+    Loading...
   </div>
 </template>
 
