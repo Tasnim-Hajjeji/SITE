@@ -5,29 +5,31 @@
                 <h1>{{ $t('hero.welcome') }} <span class="blue">{{ editionData.name }}</span></h1>
                 <h2>{{ $t('hero.subtitle') }}</h2>
                 <p>{{ currentDescription }}</p>
-                <p class="countdown_event" v-if="targetDateTitle">{{ targetDateTitle }}</p>
-                <div class="countdown">
-                    <template v-if="countdown">
+                <template v-if="countdown">
+                    <p class="countdown_event">{{ targetDateTitle }}</p>
+                    <div class="countdown">
                         <div><span class="time">{{ countdown.days }}</span><small>{{ $t('hero.countdown.days')
-                                }}</small></div>
+                        }}</small></div>
                         <div style="margin-left: -0.3rem;"><span class="time">{{ countdown.hours }}</span><small>{{
                             $t('hero.countdown.hours') }}</small></div>
                         <div style="margin-left: -0.4rem;"><span class="time">{{ countdown.minutes }}</span><small>{{
                             $t('hero.countdown.minutes') }}</small></div>
                         <div style="margin-left: -0.7rem;"><span class="time sec">{{ countdown.seconds }}</span><small
                                 class="sec">{{ $t('hero.countdown.seconds') }}</small></div>
-                    </template>
-                    <template v-else>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="countdown">
                         <div>{{ $t('hero.countdown.timeUp') }}</div>
-                    </template>
-                </div>
+                    </div>
+                </template>
 
                 <div class="buttons">
                     <a href="#date" class="btn-blue">{{ $t('hero.buttons.importantDates') }}</a>
                     <button class="btn-white">{{ $t('hero.buttons.articleSubmission') }}</button>
                     <button class="btn-whit">{{ $t('hero.buttons.articleTemplate') }}</button>
                     <router-link to="/profile-selection" class="btn-green">{{ $t('hero.buttons.registration')
-                        }}</router-link>
+                    }}</router-link>
                 </div>
             </div>
             <div class="image-container">
@@ -388,7 +390,7 @@ a {
 
 }
 
-.countdown_event{
+.countdown_event {
     font-size: 1.2rem !important;
     margin-bottom: -1.2rem;
     margin-top: 1rem;
