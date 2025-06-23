@@ -56,43 +56,104 @@
     </div>
 
     <!-- Update Modal -->
-    <div v-if="showUpdateModal" class="modal-overlay">
-      <div class="modal-content">
-        <h2>Update Edition</h2>
-        <form @submit.prevent="updateEdition">
-          <div class="form-group">
-            <label>Name</label>
-            <input v-model="editionForm.name" >
+    <div v-if="showUpdateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+      <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Update Edition</h3>
+        <div class="space-y-4">
+          <div>
+            <label for="update_name" class="block text-sm font-medium text-gray-700">Name</label>
+            <input
+              v-model="editionForm.name"
+              id="update_name"
+              type="text"
+              placeholder="Enter edition name"
+              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              required
+            />
           </div>
-          <div class="form-group">
-            <label>French Description</label>
-            <textarea v-model="editionForm.description_fr"></textarea>
+          <div>
+            <label for="update_description_fr" class="block text-sm font-medium text-gray-700">French Description</label>
+            <textarea
+              v-model="editionForm.description_fr"
+              id="update_description_fr"
+              placeholder="Enter French description"
+              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              rows="4"
+              required
+            ></textarea>
           </div>
-          <div class="form-group">
-            <label>English Description</label>
-            <textarea v-model="editionForm.description_en"></textarea>
+          <div>
+            <label for="update_description_en" class="block text-sm font-medium text-gray-700">English Description</label>
+            <textarea
+              v-model="editionForm.description_en"
+              id="update_description_en"
+              placeholder="Enter English description"
+              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              rows="4"
+              required
+            ></textarea>
           </div>
-          <div class="form-group">
-            <label>Start Date</label>
-            <input type="date" v-model="editionForm.start_date" >
+          <div>
+            <label for="update_start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+            <input
+              v-model="editionForm.start_date"
+              id="update_start_date"
+              type="date"
+              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              required
+            />
           </div>
-          <div class="form-group">
-            <label>End Date</label>
-            <input type="date" v-model="editionForm.end_date" >
+          <div>
+            <label for="update_end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+            <input
+              v-model="editionForm.end_date"
+              id="update_end_date"
+              type="date"
+              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              required
+            />
           </div>
-          <div class="form-group">
-            <label>Place</label>
-            <input v-model="editionForm.place">
+          <div>
+            <label for="update_place" class="block text-sm font-medium text-gray-700">Place</label>
+            <input
+              v-model="editionForm.place"
+              id="update_place"
+              type="text"
+              placeholder="Enter location"
+              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              required
+            />
           </div>
-          <div class="form-group">
-            <label>Sponsorship File</label>
-            <input type="file" @change="(e) => editionForm.dossier_sponso = e.target.files[0]">
+          <div>
+            <label for="update_dossier_sponso" class="block text-sm font-medium text-gray-700">Sponsorship File</label>
+            <input
+              id="update_dossier_sponso"
+              type="file"
+              @change="(e) => editionForm.dossier_sponso = e.target.files[0]"
+              accept=".pdf,.docx,.doc"
+              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            />
           </div>
-          <div class="modal-actions">
-            <button type="button" @click="showUpdateModal = false">Cancel</button>
-            <button type="submit">Save Changes</button>
+          <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
+            <span class="mr-1">!</span> {{ error }}
           </div>
-        </form>
+        </div>
+        <div class="mt-6 flex justify-end space-x-3">
+          <button
+            @click="showUpdateModal = false"
+            type="button"
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200"
+          >
+            Cancel
+          </button>
+          <button
+            @click="updateEdition"
+            type="button"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+          >
+            Save Changes
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -453,68 +514,6 @@ const updateEdition = async () => {
 .value {
   font-size: 0.9em;
   color: #777;
-}
-
-/* Modal Overlay and Content */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.modal-actions button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.modal-actions button:first-child {
-  background: #ddd;
-}
-
-.modal-actions button:last-child {
-  background: #265985;
-  color: white;
 }
 
 /* Responsive */
