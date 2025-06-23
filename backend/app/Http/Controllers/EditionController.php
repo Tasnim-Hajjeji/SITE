@@ -21,18 +21,17 @@ class EditionController extends Controller
     /**
      * Store a newly created edition in storage.
      */
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'description_fr' => 'sometimes|string|nullable',
-            'description_en' => 'sometimes|string|nullable',
+            'description_fr' => 'nullable|string',
+            'description_en' => 'nullable|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'place' => 'required|string|max:255',
-            'images' => 'sometimes|array',
-            'images.*' => 'file|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'dossier_sponso' => 'required|file|mimes:pdf|max:10240',
         ]);
 
@@ -40,32 +39,28 @@ class EditionController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $editionData = $validator->validated();
-        unset($editionData['dossier_sponso']);
+        // Traitement du dossier sponsor
+        $dossierPath = $request->file('dossier_sponso')->store('dossiers_sponso', 'public');
 
-         if ($request->hasFile('dossier_sponso')) {
-            $path = $request->file('dossier_sponso')->store('/dossiers_sponso', 'public');
-            $editionData['dossier_sponso'] = $path;
-        }
-
-        // Remove images from the data that will be saved to database
-        unset($editionData['images']);
-
-        // Initialize empty images array
-        $editionData['images_url'] = [];
-
-        // Handle image uploads if they exist
+        // Traitement des images
+        $imagesUrls = [];
         if ($request->hasFile('images')) {
-            $files = $request->file('images');
-            foreach ($files as $image) {
-                if ($image && $image->isValid()) {
-                    $path = $image->store('editions');
-                    $editionData['images_url'][] = $path;
-                }
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('editions', 'public');
+                $imagesUrls[] = Storage::url($path);
             }
         }
 
-        $edition = Edition::create($editionData);
+        $edition = Edition::create([
+            'name' => $request->name,
+            'description_fr' => $request->description_fr,
+            'description_en' => $request->description_en,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'place' => $request->place,
+            'dossier_sponso' => $dossierPath,
+            'images_url' => $imagesUrls,
+        ]);
 
         return response()->json($edition, 201);
     }
@@ -88,12 +83,12 @@ class EditionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
-            'description_fr' => 'sometimes|string|nullable',
-            'description_en' => 'sometimes|string|nullable',
+            'description_fr' => 'nullable|string',
+            'description_en' => 'nullable|string',
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after_or_equal:start_date',
             'place' => 'sometimes|string|max:255',
-            'images' => 'sometimes|array',
+            'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'dossier_sponso' => 'sometimes|file|mimes:pdf|max:10240',
         ]);
@@ -102,46 +97,39 @@ class EditionController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $editionData = $validator->validated();
+        $data = $request->only([
+            'name', 'description_fr', 'description_en', 
+            'start_date', 'end_date', 'place'
+        ]);
+
+        // Gestion du dossier sponsor
         if ($request->hasFile('dossier_sponso')) {
-            // Delete old dossier if exists
+            // Suppression de l'ancien fichier
             if ($edition->dossier_sponso) {
-                Storage::delete($edition->dossier_sponso);
+                Storage::disk('public')->delete($edition->dossier_sponso);
             }
-            
-            $path = $request->file('dossier_sponso')->store('/dossiers_sponso', 'public');
-            $editionData['dossier_sponso'] = $path;
+            $data['dossier_sponso'] = $request->file('dossier_sponso')->store('dossiers_sponso', 'public');
         }
 
+        // Gestion des images
         if ($request->hasFile('images')) {
+            // Suppression des anciennes images
             if ($edition->images_url) {
                 foreach ($edition->images_url as $url) {
-                    $path = str_replace('/storage', 'public', $url);
-                    Storage::delete($path);
+                    $path = str_replace('/storage/', '', $url);
+                    Storage::disk('public')->delete($path);
                 }
             }
 
-            $imageUrls = [];
+            $imagesUrls = [];
             foreach ($request->file('images') as $image) {
-                $path = $image->store('public/editions');
-                $imageUrls[] = Storage::url($path);
+                $path = $image->store('editions', 'public');
+                $imagesUrls[] = Storage::url($path);
             }
-            $editionData['images_url'] = $imageUrls;
-        } elseif (isset($editionData['images'])) {
-            // If images array is provided but empty (to clear all images)
-            if (empty($editionData['images'])) {
-                // Delete old images if they exist
-                if ($edition->images_url) {
-                    foreach ($edition->images_url as $url) {
-                        $path = str_replace('/storage', 'public', $url);
-                        Storage::delete($path);
-                    }
-                }
-                $editionData['images_url'] = [];
-            }
+            $data['images_url'] = $imagesUrls;
         }
 
-        $edition->update($editionData);
+        $edition->update($data);
 
         return response()->json($edition);
     }
@@ -153,15 +141,16 @@ class EditionController extends Controller
     {
         $edition = Edition::findOrFail($id);
 
-         if ($edition->dossier_sponso) {
-            Storage::delete($edition->dossier_sponso);
+        // Suppression du dossier sponsor
+        if ($edition->dossier_sponso) {
+            Storage::disk('public')->delete($edition->dossier_sponso);
         }
 
-        // Delete associated images if they exist
+        // Suppression des images
         if ($edition->images_url) {
             foreach ($edition->images_url as $url) {
-                $path = str_replace('/storage', 'public', $url);
-                Storage::delete($path);
+                $path = str_replace('/storage/', '', $url);
+                Storage::disk('public')->delete($path);
             }
         }
 
@@ -190,7 +179,7 @@ class EditionController extends Controller
         $newImages = [];
 
         foreach ($request->file('images') as $image) {
-            $path = $image->store('public/editions');
+            $path = $image->store('editions', 'public');
             $newImages[] = Storage::url($path);
         }
 
@@ -215,17 +204,18 @@ class EditionController extends Controller
         $images = $edition->images_url;
         $imageToRemove = $images[$imageIndex];
 
-        // Delete the image file
-        $path = str_replace('/storage', 'public', $imageToRemove);
-        Storage::delete($path);
+        // Suppression du fichier image
+        $path = str_replace('/storage/', '', $imageToRemove);
+        Storage::disk('public')->delete($path);
 
-        // Remove the image from the array
+        // Suppression de l'URL du tableau
         array_splice($images, $imageIndex, 1);
 
         $edition->update(['images_url' => $images]);
 
         return response()->json($edition);
     }
+
     /**
      * Get the current edition (eldest where start_date > current date).
      */
@@ -257,11 +247,16 @@ class EditionController extends Controller
     {
         $edition = Edition::findOrFail($id);
 
-        // Delete associated images if they exist
+        // Suppression du dossier sponsor
+        if ($edition->dossier_sponso) {
+            Storage::disk('public')->delete($edition->dossier_sponso);
+        }
+
+        // Suppression des images
         if ($edition->images_url) {
             foreach ($edition->images_url as $url) {
-                $path = str_replace('/storage', 'public', $url);
-                Storage::delete($path);
+                $path = str_replace('/storage/', '', $url);
+                Storage::disk('public')->delete($path);
             }
         }
 
