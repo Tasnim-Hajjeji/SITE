@@ -36,6 +36,8 @@ class IntervenantController extends Controller
                 'edition_id' => 'required|exists:edition,id',
                 'program_ids' => 'sometimes|array',
                 'program_ids.*' => 'exists:program,id',
+                'institut' => 'required|string|max:255',
+                'code_pays' => 'required|string|max:10'
             ]);
 
             $programIds = $validated['program_ids'] ?? [];
@@ -92,6 +94,8 @@ class IntervenantController extends Controller
                 'edition_id' => 'sometimes|exists:edition,id',
                 'program_ids' => 'sometimes|array',
                 'program_ids.*' => 'exists:program,id',
+                'institut' => 'sometimes|string|max:255',
+                'code_pays' => 'sometimes|string|max:10'
             ]);
 
             unset($validated['photo'], $validated['program_ids']);

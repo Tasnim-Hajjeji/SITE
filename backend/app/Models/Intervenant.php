@@ -16,6 +16,8 @@ class Intervenant extends Model
         'profession_en',
         'image_url',
         'edition_id',
+        'institut',
+        'code_pays'
     ];
 
     public function edition()

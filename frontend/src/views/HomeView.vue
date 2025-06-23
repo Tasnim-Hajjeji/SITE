@@ -32,6 +32,7 @@ onMounted(async () => {
   try {
     const response = await EditionService.getCurrentEdition();
     editionData.value = response.data;
+    document.cookie = `editionId=${editionData.value.id}; path=/; max-age=864000`; // 10 days
   } catch (error) {
     console.error('Error fetching edition data:', error);
   }

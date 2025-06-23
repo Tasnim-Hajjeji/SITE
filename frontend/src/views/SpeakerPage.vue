@@ -1,27 +1,24 @@
 <template>
   <VoicesHeader />
-  <SpeakerCard
-      name="Dr. Amina Ben Salah"
-      institution="Université de Tunis"
-      intervention="L'intelligence artificielle dans l'éducation moderne"
-      image="https://randomuser.me/api/portraits/women/44.jpg"
-    />
-    <SpeakerCard
-      name="Prof. John Smith"
-      institution="MIT"
-      intervention="Quantum Computing: The Next Frontier"
-      image="https://randomuser.me/api/portraits/men/32.jpg"
-    />
-    <SpeakerCard
-      name="Sara Chen"
-      institution="Peking University"
-      intervention="Sustainable Urban Development"
-      image="https://randomuser.me/api/portraits/women/68.jpg"
-    />    
+  <SpeakerCard v-for="speaker in speakers" :key="speaker.id" :speaker="speaker" />
 </template>
       
 <script setup>
   import VoicesHeader from '@/components/VoicesHeader.vue';
   import SpeakerCard from '@/components/SpeakerCard.vue';
+  import cookieUtils from '@/utils/cookieUtils';
+  import IntervenantService from '@/services/IntervenantService';
+
+  import { onMounted, ref } from 'vue';
+  const speakers = ref([]);
+  onMounted(async () => {
+    try {
+      const editionId = cookieUtils.getCookie('editionId');
+      const response = await IntervenantService.getIntervenantsByEdition(editionId);
+      speakers.value = response.data;
+    } catch (error) {
+      console.error('Error fetching speakers:', error);
+    }
+  });
 </script>
       

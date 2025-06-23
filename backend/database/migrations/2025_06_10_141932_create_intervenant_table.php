@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('image_url');
             $table->string('profession_fr');
             $table->string('profession_en');
+            $table->string('institut');
+            $table->string('code_pays');
             $table->timestamps();
         });
     }
