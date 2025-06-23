@@ -130,4 +130,14 @@ class ParticipantController extends Controller
 
         return response()->json(null, 204);
     }
+    /**
+     * Display participants by edition ID.
+     */
+    public function getByEdition($editionId)
+    {
+        $participants = Participant::with('edition')
+            ->where('edition_id', $editionId)
+            ->get();
+        return response()->json($participants);
+    }
 }

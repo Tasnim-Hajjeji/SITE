@@ -62,6 +62,7 @@ Route::prefix('participants')->group(function () {
     Route::post('/', [ParticipantController::class, 'store']);
     Route::put('/{id}', [ParticipantController::class, 'update']);
     Route::delete('/{id}', [ParticipantController::class, 'destroy']);
+    Route::get('/edition/{editionId}', [ParticipantController::class, 'getByEdition']);
 });
 
 // Program Routes

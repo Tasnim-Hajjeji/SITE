@@ -168,7 +168,7 @@ class EditionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'images' => 'required|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:8192',
         ]);
 
         if ($validator->fails()) {

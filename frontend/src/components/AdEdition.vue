@@ -49,7 +49,7 @@
           <div class="info-item">
             <i class="fas fa-chart-bar"></i>
             <span class="label">Participants</span>
-            <span class="value">200</span>
+            <span class="value">{{participantCount}}</span>
           </div>
         </div>
       </div>
@@ -170,17 +170,19 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import EditionService from '@/services/EditionService';
+import ParticipantService from '@/services/ParticipantService';
 
 const route = useRoute();
 const router = useRouter();
 
-const editionId = ref(localStorage.getItem('selectedEditionId')||route.params.editionId);
+const editionId = ref(localStorage.getItem('selectedEditionId') || route.params.editionId);
 const editions = ref([]);
 const edition = ref(null);
 const isLoading = ref(true);
 const error = ref(null);
 const dropdownOpen = ref(false);
 const showUpdateModal = ref(false);
+const participantCount = ref(0);
 
 // Form for updates
 const editionForm = ref({
@@ -203,8 +205,18 @@ const frenchMonths = [
 onMounted(async () => {
   await fetchEditions();
   await fetchEditionDetails();
+  await fetchParticipantCount();
 });
 
+const fetchParticipantCount = async () => {
+  try {
+    const response = await ParticipantService.getParticipantsByEdition(editionId.value);
+    participantCount.value = response.data.length;
+  } catch (err) {
+    console.error('Error fetching participant count:', err);
+    participantCount.value = 0;
+  }
+};
 // Fetch all editions for dropdown
 const fetchEditions = async () => {
   try {
@@ -224,6 +236,7 @@ const fetchEditionDetails = async () => {
     const response = await EditionService.getEdition(editionId.value);
     edition.value = response.data;
     editionForm.value = { ...response.data };
+    await fetchParticipantCount();
   } catch (err) {
     error.value = 'Failed to load edition details: ' + err.message;
     console.error(err);
@@ -246,10 +259,10 @@ const editionStatus = computed(() => {
 
 const formattedDateRange = computed(() => {
   if (!edition.value?.start_date || !edition.value?.end_date) return 'Dates not specified';
-  
+
   const start = new Date(edition.value.start_date);
   const end = new Date(edition.value.end_date);
-  
+
   // Same month and year
   if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
     return `${start.getDate()} - ${end.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()}`;
