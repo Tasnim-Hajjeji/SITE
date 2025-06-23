@@ -191,13 +191,9 @@ const messages = {
     }
 };
 
-const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-};
-const savedLanguage = getCookie('userLanguage');
+import cookieUtils from '@/utils/cookieUtils.js';
+
+const savedLanguage = cookieUtils.getCookie('userLanguage');
 const browserLanguage = navigator.language.split('-')[0];
 const defaultLanguage = savedLanguage || (['en', 'fr'].includes(browserLanguage) ? browserLanguage : 'en');
 
