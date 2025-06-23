@@ -20,14 +20,11 @@ document.addEventListener('keydown', function (event) {
             // console.log(`Correct key: ${pressedChar} Progress: ${currentIndex}/${expectedSequence.length}`);
 
             if (currentIndex === expectedSequence.length) {
-                alert('Access granted! Redirecting to admin page...');
                 recording = false;
                 currentIndex = 0;
                 if (timeoutId) clearTimeout(timeoutId);
-
-                setTimeout(() => {
-                    window.location.href = '/admin';
-                }, 1000);
+                const event = new CustomEvent('admin-login');
+                window.dispatchEvent(event);
             }
         } else {
             // console.log(`Wrong key: ${pressedChar} (expected ${expectedChar}) - Resetting`);
