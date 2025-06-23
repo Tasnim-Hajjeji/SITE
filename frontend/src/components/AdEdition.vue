@@ -250,12 +250,15 @@ const updateEdition = async () => {
 </script>
 
 <style scoped>
-
-
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
 
 .conference-card {
   font-family: 'Segoe UI', sans-serif;
+  margin-top: 80px; /* Espacement pour éviter la navbar */
+  max-width: 1000px; /* Limite la largeur */
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 @keyframes fadeIn {
@@ -263,7 +266,6 @@ const updateEdition = async () => {
     opacity: 0;
     transform: translateY(10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -382,18 +384,6 @@ const updateEdition = async () => {
   border: 2px solid #265985;
 }
 
-.card-left .speaker-img {
-  width: 350px;
-  height: 250px;
-  border-radius: 20px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.card-left .speaker-img:hover {
-  transform: scale(1.05);
-}
-
 .card-right {
   flex: 1;
   display: flex;
@@ -465,20 +455,91 @@ const updateEdition = async () => {
   color: #777;
 }
 
+/* Modal Overlay and Content */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-actions button:first-child {
+  background: #ddd;
+}
+
+.modal-actions button:last-child {
+  background: #265985;
+  color: white;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+  .conference-card {
+    margin-top: 60px; /* Ajustement mobile */
+  }
   .card-body {
     flex-direction: column;
     padding: 1.5rem;
   }
-
-  .card-left .speaker-img {
-    width: 100%;
-    height: auto;
-  }
-
   .action-buttons {
     flex-wrap: wrap;
   }
+}
+
+.loading,
+.error-message {
+  text-align: center;
+  padding: 1rem;
+}
+
+.error-message {
+  color: #e53935;
+  background-color: #fee;
+  border-radius: 4px;
 }
 </style>
