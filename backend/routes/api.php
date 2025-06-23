@@ -129,7 +129,7 @@ Route::prefix('keynotes')->group(function () {
     Route::get('/', [KeynoteController::class, 'index']);
     Route::get('/{id}', [KeynoteController::class, 'show']);
     Route::post('/', [KeynoteController::class, 'store']);
-    Route::put('/{id}', [KeynoteController::class, 'update']);
+    Route::post('/{id}', [KeynoteController::class, 'update']);
     Route::delete('/{id}', [KeynoteController::class, 'destroy']);
     Route::get('/edition/{editionId}', [KeynoteController::class, 'getByEdition']);
 });

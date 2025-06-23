@@ -25,9 +25,5 @@ class CommitteeMember extends Model
     {
         return $this->belongsTo(Edition::class, 'edition_id');
     }
-    public function keynotes()
-    {
-        return $this->morphMany(Keynote::class, 'speakerable');
-    }
-
+   
 }

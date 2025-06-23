@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->text('description_fr')->nullable();
             $table->text('description_en')->nullable();
-            $table->unsignedBigInteger('speakerable_id')->nullable();
-            $table->string('speakerable_type')->nullable();
+            $table->String('speaker_name');
+            $table->String('speaker_role');
+            $table->string('image_url');
             $table->foreignId('edition_id')
                   ->constrained('edition')
                   ->onDelete('cascade');

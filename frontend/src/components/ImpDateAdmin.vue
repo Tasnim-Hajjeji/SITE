@@ -79,7 +79,7 @@ export default {
       description_fr: "",
       description_en: "",
       date: "",
-      edition_id: route.params.editionId || localStorage.getItem('selectedEditionId')
+      edition_id: localStorage.getItem('selectedEditionId') || route.params.editionId 
     });
 
     // Fetch important dates
