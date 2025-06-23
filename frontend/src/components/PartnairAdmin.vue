@@ -1,16 +1,17 @@
+```vue
 <template>
-  <div class="container">
-    <h1 class="title">Partners 2024</h1>
+  <div class="container mx-auto p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Partners 2024</h1>
 
-    <div class="actions">
-      <button class="btn add" @click="showAddModal = true">
-        <span class="plus">+</span> Add Partners
+    <div class="actions flex items-center gap-4 flex-wrap mb-8">
+      <button class="btn add flex items-center" @click="showAddModal = true">
+        <span class="mr-2">+</span> Add Partners
       </button>
 
-      <div class="dropdown" @click="toggleDropdown">
-        <button class="btn edit">Edition ▼</button>
-        <ul v-if="dropdownOpen" class="dropdown-menu">
-          <li v-for="edition in editions" :key="edition.id" @click="onEditOption(edition.name)">
+      <div class="relative">
+        <button class="btn edit" @click="toggleDropdown">Edition ▼</button>
+        <ul v-if="dropdownOpen" class="absolute top-full right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-10 min-w-[160px]">
+          <li v-for="edition in editions" :key="edition.id" class="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm" @click="onEditOption(edition.name)">
             {{ edition.name }}
           </li>
         </ul>
@@ -25,63 +26,225 @@
         <div class="info"><i class="fas fa-phone icon"></i><span>{{ partner.phone }}</span></div>
         <div class="info"><i class="fas fa-envelope icon"></i><span>{{ partner.email }}</span></div>
         <div class="tools">
-          <button class="icon-btn" @click="openUpdateModal(partner)"><i class="fas fa-edit"></i></button>
-          <button class="icon-btn" @click="openDeleteModal(partner)"><i class="fas fa-trash"></i></button>
+          <button class="icon-btn" @click="openUpdateModal(partner)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="icon-btn" @click="openDeleteModal(partner)">
+            <i class="fas fa-trash"></i>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Modal Ajout -->
-    <div v-if="showAddModal" class="modal-overlay">
-      <div class="modal">
-        <h2>Add Partner</h2>
-        <input name="name" type="text" v-model="newPartner.name" placeholder="Name" />
-        <input name="image_url" type="file" @change="handleImageUpload($event, 'new')" />
-        <select name="edition_id" v-model.number="newPartner.edition_id">
-          <option disabled value="">Select Edition</option>
-          <option v-for="edition in editions" :key="edition.id" :value="edition.id">{{ edition.name }}</option>
-        </select>
-        <input name="description" type="text" v-model="newPartner.description" placeholder="Description" />
-        <input name="phone" type="text" v-model="newPartner.phone" placeholder="Phone Number" />
-        <input name="email" type="email" v-model="newPartner.email" placeholder="Email" />
-        <div class="modal-actions">
-          <button @click="addPartner">Add</button>
-          <button class="cancel" @click="showAddModal = false">Cancel</button>
+    <!-- Add Modal -->
+    <transition name="fade">
+      <div v-if="showAddModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Add Partner</h3>
+          <form @submit.prevent="addPartner" class="space-y-4">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+              <input
+                name="name"
+                type="text"
+                v-model="newPartner.name"
+                placeholder="Enter name"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="image_url" class="block text-sm font-medium text-gray-700">Logo</label>
+              <input
+                name="image_url"
+                type="file"
+                @change="handleImageUpload($event, 'new')"
+                accept="image/*"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="edition_id" class="block text-sm font-medium text-gray-700">Edition</label>
+              <select
+                name="edition_id"
+                v-model.number="newPartner.edition_id"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              >
+                <option disabled value="">Select Edition</option>
+                <option v-for="edition in editions" :key="edition.id" :value="edition.id">{{ edition.name }}</option>
+              </select>
+            </div>
+            <div>
+              <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+              <input
+                name="description"
+                type="text"
+                v-model="newPartner.description"
+                placeholder="Enter description"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+              <input
+                name="phone"
+                type="text"
+                v-model="newPartner.phone"
+                placeholder="Enter phone number"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                name="email"
+                type="email"
+                v-model="newPartner.email"
+                placeholder="Enter email"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+              <button
+                type="button"
+                class="btn cancel"
+                @click="showAddModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn add"
+              >
+                Add
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </div>
+    </transition>
 
-    <!-- Modal Update -->
-    <div v-if="showUpdateModal" class="modal-overlay">
-      <div class="modal">
-        <h2>Update Partner</h2>
-        <input name="name" type="text" v-model="selectedPartner.name" placeholder="Name" />
-        <input name="image_url" type="file" @change="handleImageUpload($event, 'update')" />
-        <select name="edition_id" v-model.number="selectedPartner.edition_id">
-          <option disabled value="">Select Edition</option>
-          <option v-for="edition in editions" :key="edition.id" :value="edition.id">{{ edition.name }}</option>
-        </select>
-        <input name="description" type="text" v-model="selectedPartner.description" placeholder="Description" />
-        <input name="phone" type="text" v-model="selectedPartner.phone" placeholder="Phone Number" />
-        <input name="email" type="email" v-model="selectedPartner.email" placeholder="Email" />
-        <div class="modal-actions">
-          <button @click="updatePartner">Update</button>
-          <button class="cancel" @click="showUpdateModal = false">Cancel</button>
+    <!-- Update Modal -->
+    <transition name="fade">
+      <div v-if="showUpdateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Update Partner</h3>
+          <form @submit.prevent="updatePartner" class="space-y-4">
+            <div>
+              <label for="update_name" class="block text-sm font-medium text-gray-700">Name</label>
+              <input
+                name="update_name"
+                type="text"
+                v-model="selectedPartner.name"
+                placeholder="Enter name"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="update_image_url" class="block text-sm font-medium text-gray-700">Logo</label>
+              <input
+                name="update_image_url"
+                type="file"
+                @change="handleImageUpload($event, 'update')"
+                accept="image/*"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="update_edition_id" class="block text-sm font-medium text-gray-700">Edition</label>
+              <select
+                name="update_edition_id"
+                v-model.number="selectedPartner.edition_id"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              >
+                <option disabled value="">Select Edition</option>
+                <option v-for="edition in editions" :key="edition.id" :value="edition.id">{{ edition.name }}</option>
+              </select>
+            </div>
+            <div>
+              <label for="update_description" class="block text-sm font-medium text-gray-700">Description</label>
+              <input
+                name="update_description"
+                type="text"
+                v-model="selectedPartner.description"
+                placeholder="Enter description"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="update_phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+              <input
+                name="update_phone"
+                type="text"
+                v-model="selectedPartner.phone"
+                placeholder="Enter phone number"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="update_email" class="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                name="update_email"
+                type="email"
+                v-model="selectedPartner.email"
+                placeholder="Enter email"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+              <button
+                type="button"
+                class="btn cancel"
+                @click="showUpdateModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn add"
+              >
+                Update
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </div>
+    </transition>
 
-    <!-- Modal Delete -->
-    <div v-if="showDeleteModal" class="modal-overlay">
-      <div class="modal">
-        <h2>Delete Partner</h2>
-        <p>Are you sure you want to delete <strong>{{ selectedPartner.name }}</strong>?</p>
-        <div class="modal-actions">
-          <button class="delete" @click="deletePartner">Yes, Delete</button>
-          <button class="cancel" @click="showDeleteModal = false">Cancel</button>
+    <!-- Delete Modal -->
+    <transition name="fade">
+      <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete Partner</h3>
+          <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete <strong>{{ selectedPartner.name }}</strong>?</p>
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              class="btn cancel"
+              @click="showDeleteModal = false"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn delete"
+              @click="deletePartner"
+            >
+              Yes, Delete
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -165,7 +328,9 @@ export default {
 
       const reader = new FileReader();
       reader.onload = () => {
+        // eslint-disable-next-line no-cond-assign
         if (type === 'new') this.newPartner.image_url = reader.result;
+        // eslint-disable-next-line no-cond-assign
         if (type === 'update') this.selectedPartner.image_url = reader.result;
       };
       reader.readAsDataURL(file);
@@ -216,81 +381,10 @@ export default {
 };
 </script>
 
-
 <style scoped>
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
 
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.modal input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.modal-actions button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.modal-actions .cancel {
-  background: #999;
-  color: white;
-}
-
-.modal-actions .delete {
-  background: #c0392b;
-  color: white;
-}
-
-.container {
-  padding: 24px;
-  font-family: "Segoe UI", sans-serif;
-}
-
-.title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #2c3e50;
-  margin-bottom: 20px;
-}
-
-.actions {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
+/* Button styles from original Partners component */
 .btn {
   padding: 10px 20px;
   border-radius: 9999px;
@@ -315,6 +409,56 @@ export default {
   border: 1px solid #265985;
   color: #265985;
   background: white;
+}
+
+.cancel {
+  background: #999;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.delete {
+  background: #c0392b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+/* Fade transition styles */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Ensure Poppins font is applied */
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Original styles for non-modal elements */
+.container {
+  padding: 24px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .dropdown {
@@ -438,3 +582,4 @@ export default {
   }
 }
 </style>
+```

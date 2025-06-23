@@ -3,10 +3,9 @@
     <h2 class="title">Galerie Photo</h2>
 
     <div class="action-buttons">
-      <button class="delete-btn">
+      <button class="delete-btn" @click="deleteAllImages">
         <i class="fas fa-trash"></i> Delete All
       </button>
-
       <button class="add-btn" @click="showModal = true">
         <i class="fas fa-plus"></i> Add
       </button>
@@ -20,7 +19,7 @@
       <div class="carousel-track">
         <div v-for="(image, index) in visibleImages" :key="index" class="image-card">
           <img :src="image" alt="Gallery photo" />
-          <button class="hover-button delete-btn">Delete</button>
+          <button class="hover-button delete-btn" @click="removeImage(index)">Delete</button>
         </div>
       </div>
 
@@ -65,10 +64,10 @@
             Cancel
           </button>
           <button
-            @click="addImage"
+            @click="addImageToEdition"
             type="button"
             class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
-            :disabled="!imagePreview"
+            :disabled="!imageFile"
           >
             Add Image
           </button>
@@ -79,19 +78,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+/* eslint-disable no-undef */ // Désactive temporairement l'erreur
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import EditionService from '@/services/EditionService'
 
-const images = ref([
-  '/gallery/1.webp',
-  '/gallery/2.webp',
-  '/gallery/3.jpeg',
-  '/gallery/4.jpg',
-  '/gallery/5.png',
-])
+const props = defineProps({
+  editionId: {
+    type: Number,
+    required: true
+  }
+})
 
+const images = ref([])
 const currentIndex = ref(0)
 const visibleCount = ref(4)
 const showModal = ref(false)
+const imageFile = ref(null)
 const imagePreview = ref(null)
 const error = ref(null)
 
@@ -105,68 +107,104 @@ const maxIndex = computed(() =>
 
 const totalDots = computed(() => images.value.length)
 
-function prevSlide() {
-  if (currentIndex.value > 0) {
-    currentIndex.value--
-  }
-}
-
-function nextSlide() {
-  if (currentIndex.value < maxIndex.value) {
-    currentIndex.value++
-  }
-}
-
-function handleResize() {
-  const width = window.innerWidth
-  if (width < 640) {
-    visibleCount.value = 1
-  } else if (width < 1024) {
-    visibleCount.value = 2
-  } else if (width < 1280) {
-    visibleCount.value = 3
-  } else {
-    visibleCount.value = 4
-  }
-
-  if (currentIndex.value > maxIndex.value) {
-    currentIndex.value = maxIndex.value
-  }
-}
-
-function handleImageUpload(event) {
-  const file = event.target.files[0]
-  if (file && file.type.startsWith('image/')) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      imagePreview.value = e.target.result
-    }
-    reader.readAsDataURL(file)
-  } else {
-    error.value = 'Please upload a valid image file'
-    imagePreview.value = null
-  }
-}
-
-function addImage() {
-  if (imagePreview.value) {
-    images.value.push(imagePreview.value)
-    imagePreview.value = null
-    error.value = null
-    showModal.value = false
-  } else {
-    error.value = 'Please upload an image first'
+const fetchImages = async () => {
+  try {
+    const response = await EditionService.getEdition(props.editionId)
+    images.value = response.data.images_url || []
+  } catch (err) {
+    error.value = 'Failed to load images: ' + err.message
+    console.error(err)
   }
 }
 
 onMounted(() => {
   handleResize()
   window.addEventListener('resize', handleResize)
+  fetchImages()
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
+
+watch(() => props.editionId, () => {
+  fetchImages()
+})
+
+function prevSlide() {
+  if (currentIndex.value > 0) currentIndex.value--
+}
+
+function nextSlide() {
+  if (currentIndex.value < maxIndex.value) currentIndex.value++
+}
+
+function handleResize() {
+  const width = window.innerWidth
+  visibleCount.value = width < 640 ? 1 : width < 1024 ? 2 : width < 1280 ? 3 : 4
+  if (currentIndex.value > maxIndex.value) currentIndex.value = maxIndex.value
+}
+
+function handleImageUpload(event) {
+  const file = event.target.files[0]
+  if (file && file.type.startsWith('image/')) {
+    imageFile.value = file
+    const reader = new FileReader()
+    reader.onload = (e) => (imagePreview.value = e.target.result)
+    reader.readAsDataURL(file)
+    error.value = null
+  } else {
+    error.value = 'Please upload a valid image file'
+    imageFile.value = null
+    imagePreview.value = null
+  }
+}
+
+async function addImageToEdition() {
+  if (imageFile.value) {
+    try {
+      const formData = new FormData()
+      formData.append('images[]', imageFile.value)
+      await EditionService.addImages(props.editionId, [imageFile.value])
+      await fetchImages()
+      showModal.value = false
+      imageFile.value = null
+      imagePreview.value = null
+      error.value = null
+    } catch (err) {
+      error.value = 'Failed to add image: ' + err.message
+      console.error(err)
+    }
+  } else {
+    error.value = 'Please upload an image first'
+  }
+}
+
+async function removeImage(index) {
+  if (confirm('Are you sure you want to delete this image?')) {
+    try {
+      await EditionService.removeImage(props.editionId, index)
+      await fetchImages()
+    } catch (err) {
+      error.value = 'Failed to remove image: ' + err.message
+      console.error(err)
+    }
+  }
+}
+
+async function deleteAllImages() {
+  if (confirm('Are you sure you want to delete all images?')) {
+    try {
+      for (let i = images.value.length - 1; i >= 0; i--) {
+        await EditionService.removeImage(props.editionId, i)
+      }
+      await fetchImages()
+    } catch (err) {
+      error.value = 'Failed to delete all images: ' + err.message
+      console.error(err)
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -219,17 +257,6 @@ onUnmounted(() => {
 
 .delete-btn:hover {
   background-color: #e53935;
-  color: #fff;
-}
-
-.update-btn {
-  border-color: #265985;
-  color: #265985;
-  background-color: #fff;
-}
-
-.update-btn:hover {
-  background-color: #265985;
   color: #fff;
 }
 

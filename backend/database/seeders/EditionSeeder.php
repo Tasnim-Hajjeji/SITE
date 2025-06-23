@@ -43,6 +43,15 @@ class EditionSeeder extends Seeder
                 'place' => 'Marseille, France',
                 'dossier_sponso' => 'dossiers_sponso/dev_2024.pdf',
                 'images_url' => json_encode([]),
+            ],
+            [
+                'name' => 'SITE 2025',
+                'description_en' => 'Annual developers conference',
+                'start_date' => '2025-11-20',
+                'end_date' => '2025-11-22',
+                'place' => 'Marseille, France',
+                'dossier_sponso' => 'dossiers_sponso/dev_2025.pdf',
+                'images_url' => json_encode([]),
             ]
         ];
 

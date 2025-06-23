@@ -1,12 +1,9 @@
+```vue
 <template>
   <div class="container">
-    <h1>Participants 2024</h1>
+    <h1>Participants 2024 ({{ participants.length }} participants)</h1>
 
     <div class="actions">
-      <button class="btn add">
-        <span class="plus">+</span> Add Participants
-      </button>
-
       <div class="dropdown" @click="toggleDropdown">
         <button class="btn edit">Edition ▼</button>
         <ul v-if="dropdownOpen" class="dropdown-menu">
@@ -52,8 +49,228 @@
             </button>
           </div>
         </transition>
+        <div class="tools">
+          <button class="icon-btn" @click="openUpdateModal(index)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="icon-btn" @click="openDeleteModal(index)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
       </div>
     </div>
+
+    <!-- Update Modal -->
+    <transition name="fade">
+      <div v-if="showUpdateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Update Participant</h3>
+          <form @submit.prevent="updateParticipant" class="space-y-4">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+              <input
+                v-model="editParticipant.name"
+                id="name"
+                type="text"
+                placeholder="Enter name"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+              <input
+                v-model="editParticipant.date"
+                id="date"
+                type="text"
+                placeholder="Enter date (e.g., 12-10-2025)"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+              <input
+                v-model="editParticipant.country"
+                id="country"
+                type="text"
+                placeholder="Enter country"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="profession" class="block text-sm font-medium text-gray-700">Profession</label>
+              <input
+                v-model="editParticipant.profession"
+                id="profession"
+                type="text"
+                placeholder="Enter profession"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="institution" class="block text-sm font-medium text-gray-700">Institution</label>
+              <input
+                v-model="editParticipant.institution"
+                id="institution"
+                type="text"
+                placeholder="Enter institution"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                v-model="editParticipant.email"
+                id="email"
+                type="email"
+                placeholder="Enter email"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+              <input
+                v-model="editParticipant.phone"
+                id="phone"
+                type="text"
+                placeholder="Enter phone number"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="participation" class="block text-sm font-medium text-gray-700">Participation</label>
+              <input
+                v-model="editParticipant.details.participation"
+                id="participation"
+                type="text"
+                placeholder="Enter participation (e.g., with paper)"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="accommodation" class="block text-sm font-medium text-gray-700">Accommodation</label>
+              <input
+                v-model="editParticipant.details.accommodation"
+                id="accommodation"
+                type="text"
+                placeholder="Enter accommodation (e.g., yes/no)"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="children" class="block text-sm font-medium text-gray-700">Children</label>
+              <input
+                v-model="editParticipant.details.children"
+                id="children"
+                type="number"
+                placeholder="Enter number of children"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="adults" class="block text-sm font-medium text-gray-700">Adults</label>
+              <input
+                v-model="editParticipant.details.adults"
+                id="adults"
+                type="number"
+                placeholder="Enter number of adults"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="singleSupplement" class="block text-sm font-medium text-gray-700">Single Supplement</label>
+              <input
+                v-model="editParticipant.details.singleSupplement"
+                id="singleSupplement"
+                type="text"
+                placeholder="Enter single supplement (e.g., yes/no)"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="extraNights" class="block text-sm font-medium text-gray-700">Extra Nights</label>
+              <input
+                v-model="editParticipant.details.extraNights"
+                id="extraNights"
+                type="number"
+                placeholder="Enter number of extra nights"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="payment" class="block text-sm font-medium text-gray-700">Payment</label>
+              <select
+                v-model="editParticipant.details.payment"
+                id="payment"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              >
+                <option value="" disabled>Select payment method</option>
+                <option value="bon de commande">Bon de commande</option>
+                <option value="virement">Virement</option>
+                <option value="chèque">Chèque</option>
+              </select>
+            </div>
+            <div>
+              <label for="total" class="block text-sm font-medium text-gray-700">Total</label>
+              <input
+                v-model="editParticipant.details.total"
+                id="total"
+                type="text"
+                placeholder="Enter total amount"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+              <button
+                type="button"
+                class="btn cancel"
+                @click="toggleUpdateModal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn add"
+              >
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Delete Modal -->
+    <transition name="fade">
+      <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete Participant</h3>
+          <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete <strong>{{ editParticipant.name }}</strong>?</p>
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              class="btn cancel"
+              @click="toggleDeleteModal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn delete"
+              @click="deleteParticipant"
+            >
+              Yes, Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -63,6 +280,29 @@ export default {
   data() {
     return {
       dropdownOpen: false,
+      showUpdateModal: false,
+      showDeleteModal: false,
+      editIndex: null,
+      editParticipant: {
+        name: '',
+        date: '',
+        country: '',
+        profession: '',
+        institution: '',
+        email: '',
+        phone: '',
+        showDetails: false,
+        details: {
+          participation: '',
+          accommodation: '',
+          children: 0,
+          adults: 0,
+          singleSupplement: '',
+          extraNights: 0,
+          payment: '',
+          total: ''
+        }
+      },
       participants: [
         {
           name: "Maria Garcia",
@@ -80,7 +320,7 @@ export default {
             adults: 1,
             singleSupplement: "no",
             extraNights: 0,
-            payment: "credit card",
+            payment: "chèque",
             total: "300 EUR",
           },
         },
@@ -100,7 +340,7 @@ export default {
             adults: 2,
             singleSupplement: "yes",
             extraNights: 2,
-            payment: "purchase order",
+            payment: "bon de commande",
             total: "450 USD",
           },
         },
@@ -120,7 +360,7 @@ export default {
             adults: 1,
             singleSupplement: "no",
             extraNights: 1,
-            payment: "bank transfer",
+            payment: "virement",
             total: "250 TND",
           },
         },
@@ -140,7 +380,7 @@ export default {
             adults: 1,
             singleSupplement: "no",
             extraNights: 0,
-            payment: "credit card",
+            payment: "chèque",
             total: "280 USD",
           },
         },
@@ -163,6 +403,59 @@ export default {
         return { ...p, showDetails: false };
       });
     },
+    openUpdateModal(index) {
+      this.editParticipant = { ...this.participants[index], details: { ...this.participants[index].details } };
+      this.editIndex = index;
+      this.showUpdateModal = true;
+    },
+    toggleUpdateModal() {
+      this.showUpdateModal = !this.showUpdateModal;
+      if (!this.showUpdateModal) this.resetEditParticipant();
+    },
+    updateParticipant() {
+      if (this.editIndex !== null) {
+        this.participants.splice(this.editIndex, 1, { ...this.editParticipant });
+      }
+      this.toggleUpdateModal();
+    },
+    openDeleteModal(index) {
+      this.editParticipant = { ...this.participants[index], details: { ...this.participants[index].details } };
+      this.editIndex = index;
+      this.showDeleteModal = true;
+    },
+    toggleDeleteModal() {
+      this.showDeleteModal = !this.showDeleteModal;
+      if (!this.showDeleteModal) this.resetEditParticipant();
+    },
+    deleteParticipant() {
+      if (this.editIndex !== null) {
+        this.participants.splice(this.editIndex, 1);
+      }
+      this.toggleDeleteModal();
+    },
+    resetEditParticipant() {
+      this.editParticipant = {
+        name: '',
+        date: '',
+        country: '',
+        profession: '',
+        institution: '',
+        email: '',
+        phone: '',
+        showDetails: false,
+        details: {
+          participation: '',
+          accommodation: '',
+          children: 0,
+          adults: 0,
+          singleSupplement: '',
+          extraNights: 0,
+          payment: '',
+          total: ''
+        }
+      };
+      this.editIndex = null;
+    },
   },
 };
 </script>
@@ -175,13 +468,6 @@ export default {
   font-family: "Segoe UI", sans-serif;
 }
 
-.title {
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
-  color: black;
-  position: relative;
-}
-
 h1 {
   font-size: 24px;
   font-weight: bold;
@@ -191,7 +477,7 @@ h1 {
 
 .actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 10px;
@@ -221,6 +507,22 @@ h1 {
   border: 1px solid #265985;
   color: #265985;
   background: white;
+}
+
+.cancel {
+  background: #999;
+  color: white;
+  border: none;
+  padding: 0.3rem 1rem;
+  border-radius: 5px;
+}
+
+.delete {
+  background: #eb5a5a;
+  color: white;
+  border: none;
+  padding: 0.3rem 1rem;
+  border-radius: 5px;
 }
 
 .dropdown {
@@ -274,6 +576,7 @@ h1 {
   border: #1e476b 2px solid;
   justify-content: space-between;
   cursor: pointer;
+  position: relative;
 }
 
 .card:hover {
@@ -286,6 +589,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 32px; /* Added to create space for .tools icons */
 }
 
 .title {
@@ -354,6 +658,26 @@ h1 {
   margin-right: 5px;
 }
 
+.tools {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.icon-btn:hover {
+  color: #852c26;
+}
+
 /* Animation */
 .fade-enter-active,
 .fade-leave-active {
@@ -364,6 +688,11 @@ h1 {
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-5px);
+}
+
+/* Modal styles */
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Responsive */
@@ -392,3 +721,4 @@ h1 {
   }
 }
 </style>
+```

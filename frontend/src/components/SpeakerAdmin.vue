@@ -1,3 +1,4 @@
+```vue
 <template>
   <div class="container">
     <h1 class="title">Speakers 2024</h1>
@@ -41,50 +42,225 @@
       </div>
     </div>
 
-    <!-- Modal Add -->
-    <div v-if="showAddModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Add Speaker</h3>
-        <form @submit.prevent="addSpeaker">
-          <input v-model="newSpeaker.full_name" placeholder="Full Name" required />
-          <input v-model="newSpeaker.profession_fr" placeholder="Profession FR" />
-          <input v-model="newSpeaker.profession_en" placeholder="Profession EN" />
-          <textarea v-model="newSpeaker.description_fr" placeholder="Description FR"></textarea>
-          <textarea v-model="newSpeaker.description_en" placeholder="Description EN"></textarea>
-          <input v-model="newSpeaker.edition_id" placeholder="Edition" />
-          <input type="file" @change="handleImageUpload($event, newSpeaker)" />
-          <button type="submit">Submit</button>
-          <button type="button" @click="showAddModal = false">Cancel</button>
-        </form>
+    <!-- Add Modal -->
+    <transition name="fade">
+      <div v-if="showAddModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Add Speaker</h3>
+          <form @submit.prevent="addSpeaker" class="space-y-4">
+            <div>
+              <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+              <input
+                v-model="newSpeaker.full_name"
+                id="full_name"
+                type="text"
+                placeholder="Enter full name"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="profession_fr" class="block text-sm font-medium text-gray-700">Profession (FR)</label>
+              <input
+                v-model="newSpeaker.profession_fr"
+                id="profession_fr"
+                type="text"
+                placeholder="Enter profession in French"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="profession_en" class="block text-sm font-medium text-gray-700">Profession (EN)</label>
+              <input
+                v-model="newSpeaker.profession_en"
+                id="profession_en"
+                type="text"
+                placeholder="Enter profession in English"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="description_fr" class="block text-sm font-medium text-gray-700">Description (FR)</label>
+              <textarea
+                v-model="newSpeaker.description_fr"
+                id="description_fr"
+                placeholder="Enter description in French"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                rows="4"
+              ></textarea>
+            </div>
+            <div>
+              <label for="description_en" class="block text-sm font-medium text-gray-700">Description (EN)</label>
+              <textarea
+                v-model="newSpeaker.description_en"
+                id="description_en"
+                placeholder="Enter description in English"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                rows="4"
+              ></textarea>
+            </div>
+            <div>
+              <label for="edition_id" class="block text-sm font-medium text-gray-700">Edition</label>
+              <input
+                v-model="newSpeaker.edition_id"
+                id="edition_id"
+                type="text"
+                placeholder="Enter edition (e.g., SITE 2025)"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
+              <input
+                id="image"
+                type="file"
+                @change="handleImageUpload($event, newSpeaker)"
+                accept="image/*"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+              <button
+                type="button"
+                class="btn cancel"
+                @click="showAddModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn add"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </transition>
 
-    <!-- Modal Edit -->
-    <div v-if="showEditModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Edit Speaker</h3>
-        <form @submit.prevent="updateSpeaker">
-          <input v-model="editSpeaker.full_name" required />
-          <input v-model="editSpeaker.profession_fr" />
-          <input v-model="editSpeaker.profession_en" />
-          <textarea v-model="editSpeaker.description_fr"></textarea>
-          <textarea v-model="editSpeaker.description_en"></textarea>
-          <input v-model="editSpeaker.edition_id" />
-          <input type="file" @change="handleImageUpload($event, editSpeaker)" />
-          <button type="submit">Update</button>
-          <button type="button" @click="showEditModal = false">Cancel</button>
-        </form>
+    <!-- Edit Modal -->
+    <transition name="fade">
+      <div v-if="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Edit Speaker</h3>
+          <form @submit.prevent="updateSpeaker" class="space-y-4">
+            <div>
+              <label for="edit_full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+              <input
+                v-model="editSpeaker.full_name"
+                id="edit_full_name"
+                type="text"
+                placeholder="Enter full name"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label for="edit_profession_fr" class="block text-sm font-medium text-gray-700">Profession (FR)</label>
+              <input
+                v-model="editSpeaker.profession_fr"
+                id="edit_profession_fr"
+                type="text"
+                placeholder="Enter profession in French"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="edit_profession_en" class="block text-sm font-medium text-gray-700">Profession (EN)</label>
+              <input
+                v-model="editSpeaker.profession_en"
+                id="edit_profession_en"
+                type="text"
+                placeholder="Enter profession in English"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="edit_description_fr" class="block text-sm font-medium text-gray-700">Description (FR)</label>
+              <textarea
+                v-model="editSpeaker.description_fr"
+                id="edit_description_fr"
+                placeholder="Enter description in French"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                rows="4"
+              ></textarea>
+            </div>
+            <div>
+              <label for="edit_description_en" class="block text-sm font-medium text-gray-700">Description (EN)</label>
+              <textarea
+                v-model="editSpeaker.description_en"
+                id="edit_description_en"
+                placeholder="Enter description in English"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                rows="4"
+              ></textarea>
+            </div>
+            <div>
+              <label for="edit_edition_id" class="block text-sm font-medium text-gray-700">Edition</label>
+              <input
+                v-model="editSpeaker.edition_id"
+                id="edit_edition_id"
+                type="text"
+                placeholder="Enter edition (e.g., SITE 2025)"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div>
+              <label for="edit_image" class="block text-sm font-medium text-gray-700">Image</label>
+              <input
+                id="edit_image"
+                type="file"
+                @change="handleImageUpload($event, editSpeaker)"
+                accept="image/*"
+                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+              <button
+                type="button"
+                class="btn cancel"
+                @click="showEditModal = false"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn add"
+              >
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </transition>
 
-    <!-- Modal Delete -->
-    <div v-if="showDeleteModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Are you sure you want to delete "{{ deleteSpeakerData.full_name }}"?</h3>
-        <button @click="deleteSpeaker">Yes, Delete</button>
-        <button @click="showDeleteModal = false">Cancel</button>
+    <!-- Delete Modal -->
+    <transition name="fade">
+      <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete Speaker</h3>
+          <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete <strong>{{ deleteSpeakerData.full_name }}</strong>?</p>
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              class="btn cancel"
+              @click="showDeleteModal = false"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn delete"
+              @click="deleteSpeaker"
+            >
+              Yes, Delete
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -177,224 +353,199 @@ export default {
 </script>
 
 <style scoped>
-/* Le style de base est déjà donné, voici juste le style pour les modals */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+
+.container {
+  padding: 24px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.modal {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
-.modal h3 {
-  margin-bottom: 15px;
-}
-
-.modal form input,
-.modal form textarea {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.modal button {
-  margin-right: 10px;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
+.btn {
+  padding: 10px 20px;
+  border-radius: 9999px;
+  font-weight: 500;
   cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.modal button:first-of-type {
+.add {
   background-color: #265985;
   color: white;
+  border: none;
 }
 
-.modal button:last-of-type {
-  background-color: #ccc;
+.add:hover {
+  background-color: #1e476b;
+  transform: scale(1.05);
 }
 
-  @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
-  
-  .container {
-    padding: 24px;
-    font-family: "Segoe UI", sans-serif;
-  }
-  
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 20px;
-  }
-  
-  .actions {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
+.edit {
+  border: 1px solid #265985;
+  color: #265985;
+  background: white;
+}
+
+.cancel {
+  background: #999;
+  color: white;
+  border: none;
+  padding: 0.3rem 1rem;
+  border-radius: 5px;
+}
+
+.delete {
+  background: #eb5a5a;
+  color: white;
+  border: none;
+  padding: 0.3rem 1rem;
+  border-radius: 5px;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 5px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  list-style: none;
+  padding: 0;
+  min-width: 160px;
+  overflow: hidden;
+}
+
+.dropdown-menu li {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f4ff;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #fefcfc;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  border: 2px solid #265985;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.name {
+  font-weight: 600;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.flag {
+  width: 20px;
+}
+
+.desc {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.tools {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.icon-btn:hover {
+  color: #852c26;
+}
+
+/* Fade transition styles */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Ensure Poppins font is applied */
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+@media (max-width: 480px) {
   .btn {
-    padding: 10px 20px;
-    border-radius: 9999px;
-    font-weight: 500;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    justify-content: center;
   }
-  
-  .add {
-    background-color: #265985;
-    color: white;
-    border: none;
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  .add:hover {
-    background-color: #1e476b;
-    transform: scale(1.05);
-  }
-  
-  .edit {
-    border: 1px solid #265985;
-    color: #265985;
-    background: white;
-  }
-  
-  .dropdown {
-    position: relative;
-  }
-  
-  .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 5px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    z-index: 100;
-    list-style: none;
-    padding: 0;
-    min-width: 160px;
-    overflow: hidden;
-  }
-  
-  .dropdown-menu li {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-size: 14px;
-  }
-  
-  .dropdown-menu li:hover {
-    background-color: #f0f4ff;
-  }
-  
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-  }
-  
-  .card {
-    background: #fefcfc;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 16px;
-    border: 2px solid #265985;
-    position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-  }
-  
-  .name {
-    font-weight: 600;
-    color: #1f2937;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-  
-  .flag {
-    width: 20px;
-  }
-  
-  .desc {
-    font-size: 14px;
-    color: #4b5563;
-    margin-bottom: 8px;
-  }
-  
-  .info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #374151;
-    margin-bottom: 8px;
-  }
-  
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-  }
-  
-  .tools {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    display: flex;
-    gap: 8px;
-  }
-  
-  .icon-btn {
-    background: transparent;
-    border: none;
-    color: #6b7280;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .icon-btn:hover {
-    color: #852c26;
-  }
-  
-  @media (max-width: 480px) {
-    .btn {
-      width: 100%;
-      justify-content: center;
-    }
-  
-    .actions {
-      flex-direction: column;
-      align-items: stretch;
-    }
-  }
-  </style>
-  
+}
+</style>
+```

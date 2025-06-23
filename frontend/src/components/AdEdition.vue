@@ -6,12 +6,9 @@
         <button class="delete-btn" @click="confirmDelete">
           <i class="fas fa-trash"></i> Delete
         </button>
-
         <button class="update-btn" @click="showUpdateModal = true">
           <i class="fas fa-pen"></i> Update
         </button>
-
-        <!-- Dropdown Edition -->
         <div class="dropdown" @click.stop="toggleDropdown">
           <button class="edition-btn">Edition ▼</button>
           <ul v-if="dropdownOpen" class="dropdown-menu">
@@ -32,20 +29,17 @@
         <p class="description">
           {{ edition.description_fr || 'No description available' }}
         </p>
-
         <div class="info-row">
           <div class="info-item">
             <i class="fas fa-map-marker-alt"></i>
             <span class="label">Place</span>
             <span class="value">{{ edition.place || 'Not specified' }}</span>
           </div>
-
           <div class="info-item">
             <i class="fas fa-clock"></i>
             <span class="label">Date</span>
             <span class="value">{{ formattedDateRange }}</span>
           </div>
-
           <div class="info-item">
             <i class="fas fa-chart-bar"></i>
             <span class="label">Participants</span>
@@ -174,7 +168,7 @@ import EditionService from '@/services/EditionService';
 const route = useRoute();
 const router = useRouter();
 
-const editionId = ref(localStorage.getItem('selectedEditionId')||route.params.editionId);
+const editionId = ref(route.params.editionId || localStorage.getItem('selectedEditionId'));
 const editions = ref([]);
 const edition = ref(null);
 const isLoading = ref(true);
@@ -182,7 +176,6 @@ const error = ref(null);
 const dropdownOpen = ref(false);
 const showUpdateModal = ref(false);
 
-// Form for updates
 const editionForm = ref({
   name: '',
   description_fr: '',
@@ -193,19 +186,16 @@ const editionForm = ref({
   dossier_sponso: null
 });
 
-// French month names for date formatting
 const frenchMonths = [
   'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
 ];
 
-// Fetch data when component mounts or editionId changes
 onMounted(async () => {
   await fetchEditions();
   await fetchEditionDetails();
 });
 
-// Fetch all editions for dropdown
 const fetchEditions = async () => {
   try {
     const response = await EditionService.getAllEditions();
@@ -216,7 +206,6 @@ const fetchEditions = async () => {
   }
 };
 
-// Fetch details of the current edition
 const fetchEditionDetails = async () => {
   isLoading.value = true;
   error.value = null;
@@ -232,7 +221,6 @@ const fetchEditionDetails = async () => {
   }
 };
 
-// Computed properties
 const isCurrentEdition = computed(() => {
   if (!edition.value?.end_date) return false;
   const today = new Date();
@@ -246,23 +234,16 @@ const editionStatus = computed(() => {
 
 const formattedDateRange = computed(() => {
   if (!edition.value?.start_date || !edition.value?.end_date) return 'Dates not specified';
-  
   const start = new Date(edition.value.start_date);
   const end = new Date(edition.value.end_date);
-  
-  // Same month and year
   if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
     return `${start.getDate()} - ${end.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()}`;
-  }
-  // Same year
-  else if (start.getFullYear() === end.getFullYear()) {
+  } else if (start.getFullYear() === end.getFullYear()) {
     return `${start.getDate()} ${frenchMonths[start.getMonth()]} - ${end.getDate()} ${frenchMonths[end.getMonth()]} ${start.getFullYear()}`;
   }
-  // Different years
   return `${start.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()} - ${end.getDate()} ${frenchMonths[end.getMonth()]} ${end.getFullYear()}`;
 });
 
-// Dropdown methods
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
 };
@@ -274,12 +255,11 @@ const selectEdition = (id) => {
   fetchEditionDetails();
 };
 
-// Edition operations
 const confirmDelete = async () => {
   if (confirm('Are you sure you want to delete this edition?')) {
     try {
       await EditionService.deleteEdition(editionId.value);
-      router.push({ name: 'Editions' }); // Redirect to editions list
+      router.push({ name: 'Editions' });
     } catch (err) {
       error.value = 'Failed to delete edition: ' + err.message;
       console.error(err);
@@ -289,19 +269,19 @@ const confirmDelete = async () => {
 
 const updateEdition = async () => {
   try {
-    // Create FormData for the update
     const formData = new FormData();
     Object.keys(editionForm.value).forEach(key => {
       if (edition.value[key] !== editionForm.value[key]) {
-        formData.append(key, editionForm.value[key]);
+        if (key === 'dossier_sponso' && editionForm.value.dossier_sponso instanceof File) {
+          formData.append(key, editionForm.value.dossier_sponso);
+        } else if (key !== 'dossier_sponso') {
+          formData.append(key, editionForm.value[key]);
+        }
       }
     });
-    if (editionForm.value.dossier_sponso instanceof File) {
-      formData.append('dossier_sponso', editionForm.value.dossier_sponso);
-    }
     console.log('Updating edition with data:', Object.fromEntries(formData.entries()));
     await EditionService.updateEdition(editionId.value, formData);
-    await fetchEditionDetails(); // Refresh data
+    await fetchEditionDetails();
     showUpdateModal.value = false;
   } catch (err) {
     error.value = 'Failed to update edition: ' + err.message;
@@ -315,8 +295,8 @@ const updateEdition = async () => {
 
 .conference-card {
   font-family: 'Segoe UI', sans-serif;
-  margin-top: 80px; /* Espacement pour éviter la navbar */
-  max-width: 1000px; /* Limite la largeur */
+  margin-top: 80px;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
@@ -386,7 +366,6 @@ const updateEdition = async () => {
   color: #fff;
 }
 
-/* Edition dropdown styles */
 .dropdown {
   position: relative;
 }
@@ -516,10 +495,9 @@ const updateEdition = async () => {
   color: #777;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .conference-card {
-    margin-top: 60px; /* Ajustement mobile */
+    margin-top: 60px;
   }
   .card-body {
     flex-direction: column;

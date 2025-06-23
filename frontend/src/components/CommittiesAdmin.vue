@@ -1,3 +1,4 @@
+```vue
 <template>
     <div class="container">
       <h1 class="title">Committies</h1>
@@ -123,481 +124,522 @@
       </div>
   
       <!-- Modal Add Member -->
-      <div v-if="showAddModal" class="modal-overlay" @click.self="closeAddModal">
-        <div class="modal">
-          <h3>Add Committee Member</h3>
-          <form @submit.prevent="submitAddMember">
-            <label>
-              Full Name:
-              <input type="text" v-model="newMember.fullName" required />
-            </label>
-            <label>
-              Committee Type:
-              <select v-model="newMember.committeeType" required>
-                <option disabled value="">Select Committee</option>
-                <option>Honor</option>
-                <option>Organizing</option>
-                <option>Scientific</option>
-              </select>
-            </label>
-            <label>
-              Role:
-              <input type="text" v-model="newMember.role" required />
-            </label>
-            <label>
-              Etablissement:
-              <input type="text" v-model="newMember.etablissement" required />
-            </label>
-            <label>
-              Image:
-              <input type="file" accept="image/*" @change="onImageSelected($event, 'add')" />
-            </label>
-            <div v-if="newMember.avatar" class="preview-image">
-              <img :src="newMember.avatar" alt="Preview Image" />
-            </div>
-            <label>
-              Edition:
-              <select v-model="newMember.edition" required>
-                <option disabled value="">Select Edition</option>
-                <option>SITE 2025</option>
-                <option>SITE 2024</option>
-                <option>SITE 2023</option>
-                <option>SITE 2022</option>
-              </select>
-            </label>
-            <label>
-              Email:
-              <input type="email" v-model="newMember.email" required />
-            </label>
-            <label>
-              Phone:
-              <input type="tel" v-model="newMember.phone" required />
-            </label>
-  
-            <div class="modal-actions">
-              <button type="submit" class="btn add">Add Member</button>
-              <button type="button" class="btn" @click="closeAddModal">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-  
-      <!-- Modal Edit Member -->
-      <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
-        <div class="modal">
-          <h3>Edit Committee Member</h3>
-          <form @submit.prevent="submitEditMember">
-            <label>
-              Full Name:
-              <input type="text" v-model="editMemberData.fullName" required />
-            </label>
-            <label>
-              Committee Type:
-              <select v-model="editMemberData.committeeType" required>
-                <option disabled value="">Select Committee</option>
-                <option>Honor</option>
-                <option>Organizing</option>
-                <option>Scientific</option>
-              </select>
-            </label>
-            <label>
-              Role:
-              <input type="text" v-model="editMemberData.role" required />
-            </label>
-            <label>
-              Etablissement:
-              <input type="text" v-model="editMemberData.etablissement" required />
-            </label>
-            <label>
-              Image:
-              <input type="file" accept="image/*" @change="onImageSelected($event, 'edit')" />
-            </label>
-            <div v-if="editMemberData.avatar" class="preview-image">
-              <img :src="editMemberData.avatar" alt="Preview Image" />
-            </div>
-            <label>
-              Edition:
-              <select v-model="editMemberData.edition" required>
-                <option disabled value="">Select Edition</option>
-                <option>SITE 2025</option>
-                <option>SITE 2024</option>
-                <option>SITE 2023</option>
-                <option>SITE 2022</option>
-              </select>
-            </label>
-            <label>
-              Email:
-              <input type="email" v-model="editMemberData.email" required />
-            </label>
-            <label>
-              Phone:
-              <input type="tel" v-model="editMemberData.phone" required />
-            </label>
-  
-            <div class="modal-actions">
-              <button type="submit" class="btn edit">Save Changes</button>
-              <button type="button" class="btn" @click="closeEditModal">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-  
-      <!-- Modal Delete Confirmation -->
-      <div
-        v-if="showDeleteModal"
-        class="modal-overlay"
-        @click.self="closeDeleteModal"
-      >
-        <div class="modal">
-          <h3>Confirm Delete</h3>
-          <p>Are you sure you want to delete member <strong>{{ deleteMemberData.fullName }}</strong>?</p>
-          <div class="modal-actions">
-            <button class="btn delete-btn" @click="confirmDeleteMember">Delete</button>
-            <button class="btn" @click="closeDeleteModal">Cancel</button>
+      <transition name="fade">
+        <div v-if="showAddModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300" @click.self="closeAddModal">
+          <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Add Committee Member</h3>
+            <form @submit.prevent="submitAddMember" class="space-y-4">
+              <div>
+                <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input
+                  v-model="newMember.fullName"
+                  id="fullName"
+                  type="text"
+                  placeholder="Enter full name"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label for="committeeType" class="block text-sm font-medium text-gray-700">Committee Type</label>
+                <select
+                  v-model="newMember.committeeType"
+                  id="committeeType"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                >
+                  <option value="" disabled>Select committee type</option>
+                  <option value="Honor">Honor</option>
+                  <option value="Organizing">Organizing</option>
+                  <option value="Scientific">Scientific</option>
+                </select>
+              </div>
+              <div>
+                <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+                <input
+                  v-model="newMember.role"
+                  id="role"
+                  type="text"
+                  placeholder="Enter role"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label for="etablissement" class="block text-sm font-medium text-gray-700">Etablissement</label>
+                <input
+                  v-model="newMember.etablissement"
+                  id="etablissement"
+                  type="text"
+                  placeholder="Enter etablissement"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label for="avatar" class="block text-sm font-medium text-gray-700">Image</label>
+                <input
+                  type="file"
+                  id="avatar"
+                  accept="image/*"
+                  @change="onImageSelected($event, 'add')"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                />
+                <div v-if="newMember.avatar" class="preview-image mt-2">
+                  <img :src="newMember.avatar" alt="Preview Image" class="max-w-[120px] max-h-[120px] rounded-lg border border-gray-300 object-cover" />
+                </div>
+              </div>
+              <div>
+                <label for="edition" class="block text-sm font-medium text-gray-700">Edition</label>
+                <select
+                  v-model="newMember.edition"
+                  id="edition"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                >
+                  <option value="" disabled>Select edition</option>
+                  <option value="SITE 2025">SITE 2025</option>
+                  <option value="SITE 2024">SITE 2024</option>
+                  <option value="SITE 2023">SITE 2023</option>
+                  <option value="SITE 2022">SITE 2022</option>
+                </select>
+              </div>
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input
+                  v-model="newMember.email"
+                  id="email"
+                  type="email"
+                  placeholder="Enter email"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                <input
+                  v-model="newMember.phone"
+                  id="phone"
+                  type="tel"
+                  placeholder="Enter phone number"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" class="btn cancel" @click="closeAddModal">Cancel</button>
+                <button type="submit" class="btn add">Add Member</button>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
+      </transition>
+  
+      <!-- Modal Edit Member -->
+      <transition name="fade">
+        <div v-if="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300" @click.self="closeEditModal">
+          <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Edit Committee Member</h3>
+            <form @submit.prevent="submitEditMember" class="space-y-4">
+              <div>
+                <label for="editFullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input
+                  v-model="editMemberData.fullName"
+                  id="editFullName"
+                  type="text"
+                  placeholder="Enter full name"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label for="editCommitteeType" class="block text-sm font-medium text-gray-700">Committee Type</label>
+                <select
+                  v-model="editMemberData.committeeType"
+                  id="editCommitteeType"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                >
+                  <option value="" disabled>Select committee type</option>
+                  <option value="Honor">Honor</option>
+                  <option value="Organizing">Organizing</option>
+                  <option value="Scientific">Scientific</option>
+                </select>
+              </div>
+              <div>
+                <label for="editRole" class="block text-sm font-medium text-gray-700">Role</label>
+                <input
+                  v-model="editMemberData.role"
+                  id="editRole"
+                  type="text"
+                  placeholder="Enter role"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label for="editEtablissement" class="block text-sm font-medium text-gray-700">Etablissement</label>
+                <input
+                  v-model="editMemberData.etablissement"
+                  id="editEtablissement"
+                  type="text"
+                  placeholder="Enter etablissement"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label for="editAvatar" class="block text-sm font-medium text-gray-700">Image</label>
+                <input
+                  type="file"
+                  id="editAvatar"
+                  accept="image/*"
+                  @change="onImageSelected($event, 'edit')"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                />
+                <div v-if="editMemberData.avatar" class="preview-image mt-2">
+                  <img :src="editMemberData.avatar" alt="Preview Image" class="max-w-[120px] max-h-[120px] rounded-lg border border-gray-300 object-cover" />
+                </div>
+              </div>
+              <div>
+                <label for="editEdition" class="block text-sm font-medium text-gray-700">Edition</label>
+                <select
+                  v-model="editMemberData.edition"
+                  id="editEdition"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                >
+                  <option value="" disabled>Select edition</option>
+                  <option value="SITE 2025">SITE 2025</option>
+                  <option value="SITE 2024">SITE 2024</option>
+                  <option value="SITE 2023">SITE 2023</option>
+                  <option value="SITE 2022">SITE 2022</option>
+                </select>
+              </div>
+              <div>
+                <label for="editEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                <input
+                  v-model="editMemberData.email"
+                  id="editEmail"
+                  type="email"
+                  placeholder="Enter email"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label for="editPhone" class="block text-sm font-medium text-gray-700">Phone</label>
+                <input
+                  v-model="editMemberData.phone"
+                  id="editPhone"
+                  type="tel"
+                  placeholder="Enter phone number"
+                  class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" class="btn cancel" @click="closeEditModal">Cancel</button>
+                <button type="submit" class="btn add">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </transition>
+  
+      <!-- Modal Delete Confirmation -->
+      <transition name="fade">
+        <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300" @click.self="closeDeleteModal">
+          <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete Committee Member</h3>
+            <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete <strong>{{ deleteMemberData.fullName }}</strong>?</p>
+            <div class="flex justify-end space-x-3">
+              <button type="button" class="btn cancel" @click="closeDeleteModal">Cancel</button>
+              <button type="button" class="btn delete" @click="confirmDeleteMember">Yes, Delete</button>
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "CommittiesAdmin",
-    data() {
-      return {
-        editionDropdownOpen: false,
-        committeeDropdownOpen: false,
-        selectedEdition: "All",
-        selectedCommitteeType: "All",
-        tooltip: {
-          show: false,
-          text: "",
-          x: 0,
-          y: 0,
-        },
-        toast: {
-          show: false,
-          message: "",
-          type: "", // 'success' or 'error'
-        },
-        members: [
-          {
-            id: 1,
-            fullName: "Samanta William",
-            role: "enseignant",
-            etablissement: "ensi",
-            edition: "SITE 2025",
-            committeeType: "Honor",
-            avatar:
-              "https://images.unsplash.com/photo-1494790108755-2616b612b988?w=150&h=150&fit=crop&crop=face&auto=format",
-            phone: "+12 345 6789 0",
-            email: "samanta@example.com",
-          },
-          {
-            id: 2,
-            fullName: "John Doe",
-            role: "enseignant",
-            etablissement: "ensi",
-            edition: "SITE 2025",
-            committeeType: "Organizing",
-            avatar:
-              "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&auto=format",
-            phone: "+12 345 6789 1",
-            email: "john@example.com",
-          },
-          {
-            id: 3,
-            fullName: "Jane Smith",
-            role: "enseignant",
-            etablissement: "ensi",
-            edition: "SITE 2025",
-            committeeType: "Scientific",
-            avatar:
-              "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face&auto=format",
-            phone: "+12 345 6789 2",
-            email: "jane@example.com",
-          },
-          {
-            id: 4,
-            fullName: "Robert Johnson",
-            role: "enseignant",
-            etablissement: "ensi",
-            edition: "SITE 2025",
-            committeeType: "Honor",
-            avatar:
-              "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&auto=format",
-            phone: "+12 345 6789 3",
-            email: "robert@example.com",
-          },
-          {
-            id: 5,
-            fullName: "Emily Davis",
-            role: "enseignant",
-            etablissement: "ensi",
-            edition: "SITE 2025",
-            committeeType: "Organizing",
-            avatar:
-              "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=150&h=150&fit=crop&crop=face&auto=format",
-            phone: "+12 345 6789 4",
-            email: "emily@example.com",
-          },
-          {
-            id: 6,
-            fullName: "Michael Brown",
-            role: "enseignant",
-            etablissement: "ensi",
-            edition: "SITE 2025",
-            committeeType: "Honor",
-            avatar:
-              "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face&auto=format",
-            phone: "+12 345 6789 5",
-            email: "michael@example.com",
-          },
-          {
-            id: 7,
-            fullName: "Sarah Wilson",
-            role: "enseignant",
-            etablissement: "ensi",
-            edition: "SITE 2025",
-            committeeType: "Scientific",
-            avatar:
-              "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face&auto=format",
-            phone: "+12 345 6789 6",
-            email: "sarah@example.com",
-          },
-          {
-            id: 8,
-            fullName: "David Miller",
-            role: "enseignant",
-            etablissement: "ensi",
-            edition: "SITE 2025",
-            committeeType: "Honor",
-            avatar:
-              "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=150&h=150&fit=crop&crop=face&auto=format",
-            phone: "+12 345 6789 7",
-            email: "david@example.com",
-          },
-        ],
-        // Modals state
-        showAddModal: false,
-        showEditModal: false,
-        showDeleteModal: false,
-        newMember: {
-          fullName: "",
-          committeeType: "",
-          role: "",
-          etablissement: "",
-          avatar: "",
-          edition: "",
-          email: "",
-          phone: "",
-        },
-        editMemberData: null,
-        deleteMemberData: null,
-        nextId: 9, // pour générer ID unique auto
-      };
-    },
-    computed: {
-      filteredMembers() {
-        return this.members.filter((member) => {
-          const editionMatch =
-            this.selectedEdition === "All" ||
-            member.edition.includes(this.selectedEdition.replace("Edition ", ""));
-          const committeeMatch =
-            this.selectedCommitteeType === "All" ||
-            member.committeeType === this.selectedCommitteeType;
-          return editionMatch && committeeMatch;
-        });
-      },
-    },
-    methods: {
-      toggleEditionDropdown() {
-        this.editionDropdownOpen = !this.editionDropdownOpen;
-        this.committeeDropdownOpen = false;
-      },
-      toggleCommitteeDropdown() {
-        this.committeeDropdownOpen = !this.committeeDropdownOpen;
-        this.editionDropdownOpen = false;
-      },
-      onEditionOption(option) {
-        this.selectedEdition = option;
-        this.editionDropdownOpen = false;
-      },
-      onCommitteeOption(option) {
-        this.selectedCommitteeType = option;
-        this.committeeDropdownOpen = false;
-      },
-      showTooltip(event, text) {
-        this.tooltip.show = true;
-        this.tooltip.text = text;
-        this.tooltip.x = event.clientX + 10;
-        this.tooltip.y = event.clientY - 10;
-      },
-      hideTooltip() {
-        this.tooltip.show = false;
-      },
-      async showToast(message, type = "success") {
-        this.toast.message = message;
-        this.toast.type = type;
-        this.toast.show = true;
-        setTimeout(() => {
-          this.toast.show = false;
-        }, 3000);
-      },
-      async contactMember(member, type) {
-        try {
-          let textToCopy = "";
-          if (type === "phone") {
-            textToCopy = member.phone;
-          } else if (type === "email") {
-            textToCopy = member.email;
-          }
-  
-          await navigator.clipboard.writeText(textToCopy);
-          this.showToast(
-            `${type === "phone" ? "Phone number" : "Email"} copied to clipboard!`
-          );
-        } catch (err) {
-          console.error("Failed to copy: ", err);
-          this.showToast("Failed to copy to clipboard", "error");
-        }
-      },
-      openAddModal() {
-        // Reset form
-        this.newMember = {
-          fullName: "",
-          committeeType: "",
-          role: "",
-          etablissement: "",
-          avatar: "",
-          edition: "",
-          email: "",
-          phone: "",
-        };
-        this.showAddModal = true;
-      },
-      closeAddModal() {
-        this.showAddModal = false;
-      },
-      submitAddMember() {
-        // Crée un nouveau membre avec un id auto généré
-        const newMem = { ...this.newMember, id: this.nextId };
-        this.nextId++;
-        this.members.push(newMem);
-        this.showToast("Member added successfully");
-        this.closeAddModal();
-      },
-      openEditModal(member) {
-        this.editMemberData = { ...member };
-        this.showEditModal = true;
-      },
-      closeEditModal() {
-        this.showEditModal = false;
-        this.editMemberData = null;
-      },
-      submitEditMember() {
-        // Trouver le membre dans le tableau original et mettre à jour ses données
-        const index = this.members.findIndex(
-          (m) => m.id === this.editMemberData.id
-        );
-        if (index !== -1) {
-          this.members.splice(index, 1, { ...this.editMemberData });
-          this.showToast("Member updated successfully");
-        }
-        this.closeEditModal();
-      },
-      openDeleteModal(member) {
-        this.deleteMemberData = member;
-        this.showDeleteModal = true;
-      },
-      closeDeleteModal() {
-        this.showDeleteModal = false;
-        this.deleteMemberData = null;
-      },
-      confirmDeleteMember() {
-        const index = this.members.findIndex(
-          (m) => m.id === this.deleteMemberData.id
-        );
-        if (index !== -1) {
-          this.members.splice(index, 1);
-          this.showToast("Member deleted successfully");
-        }
-        this.closeDeleteModal();
-      },
-      onImageSelected(event, mode) {
-        const file = event.target.files[0];
-        if (file && file.type.startsWith("image/")) {
-          const imageUrl = URL.createObjectURL(file);
-          if (mode === "add") {
-            this.newMember.avatar = imageUrl;
-          } else if (mode === "edit") {
-            this.editMemberData.avatar = imageUrl;
-          }
-        } else {
-          this.showToast("Please select a valid image file", "error");
-        }
-      },
-    },
-  };
-  </script>
-  
-  
-  <style scoped>
-  /* Garde ton style précédent + ajouter styles pour modals */
-  
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-  }
-  
-  .modal {
-    background-color: white;
-    border-radius: 16px;
-    padding: 24px;
-    width: 90%;
-    max-width: 480px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  }
-  
-  .modal h3 {
-    margin-bottom: 16px;
-    color: #265985;
-  }
-  
-  .modal label {
-    display: block;
-    margin-bottom: 12px;
-    font-weight: 600;
-    color: #374151;
-  }
-  
-  .modal input,
-  .modal select {
-    width: 100%;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    margin-top: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
-  }
-  
-  .modal-actions {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-  }
-  
+</template>
 
+<script>
+export default {
+  name: "CommittiesAdmin",
+  data() {
+    return {
+      editionDropdownOpen: false,
+      committeeDropdownOpen: false,
+      selectedEdition: "All",
+      selectedCommitteeType: "All",
+      tooltip: {
+        show: false,
+        text: "",
+        x: 0,
+        y: 0,
+      },
+      toast: {
+        show: false,
+        message: "",
+        type: "", // 'success' or 'error'
+      },
+      members: [
+        {
+          id: 1,
+          fullName: "Samanta William",
+          role: "enseignant",
+          etablissement: "ensi",
+          edition: "SITE 2025",
+          committeeType: "Honor",
+          avatar:
+            "https://images.unsplash.com/photo-1494790108755-2616b612b988?w=150&h=150&fit=crop&crop=face&auto=format",
+          phone: "+12 345 6789 0",
+          email: "samanta@example.com",
+        },
+        {
+          id: 2,
+          fullName: "John Doe",
+          role: "enseignant",
+          etablissement: "ensi",
+          edition: "SITE 2025",
+          committeeType: "Organizing",
+          avatar:
+            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&auto=format",
+          phone: "+12 345 6789 1",
+          email: "john@example.com",
+        },
+        {
+          id: 3,
+          fullName: "Jane Smith",
+          role: "enseignant",
+          etablissement: "ensi",
+          edition: "SITE 2025",
+          committeeType: "Scientific",
+          avatar:
+            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face&auto=format",
+          phone: "+12 345 6789 2",
+          email: "jane@example.com",
+        },
+        {
+          id: 4,
+          fullName: "Robert Johnson",
+          role: "enseignant",
+          etablissement: "ensi",
+          edition: "SITE 2025",
+          committeeType: "Honor",
+          avatar:
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&auto=format",
+          phone: "+12 345 6789 3",
+          email: "robert@example.com",
+        },
+        {
+          id: 5,
+          fullName: "Emily Davis",
+          role: "enseignant",
+          etablissement: "ensi",
+          edition: "SITE 2025",
+          committeeType: "Organizing",
+          avatar:
+            "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=150&h=150&fit=crop&crop=face&auto=format",
+          phone: "+12 345 6789 4",
+          email: "emily@example.com",
+        },
+        {
+          id: 6,
+          fullName: "Michael Brown",
+          role: "enseignant",
+          etablissement: "ensi",
+          edition: "SITE 2025",
+          committeeType: "Honor",
+          avatar:
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face&auto=format",
+          phone: "+12 345 6789 5",
+          email: "michael@example.com",
+        },
+        {
+          id: 7,
+          fullName: "Sarah Wilson",
+          role: "enseignant",
+          etablissement: "ensi",
+          edition: "SITE 2025",
+          committeeType: "Scientific",
+          avatar:
+            "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face&auto=format",
+          phone: "+12 345 6789 6",
+          email: "sarah@example.com",
+        },
+        {
+          id: 8,
+          fullName: "David Miller",
+          role: "enseignant",
+          etablissement: "ensi",
+          edition: "SITE 2025",
+          committeeType: "Honor",
+          avatar:
+            "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=150&h=150&fit=crop&crop=face&auto=format",
+          phone: "+12 345 6789 7",
+          email: "david@example.com",
+        },
+      ],
+      showAddModal: false,
+      showEditModal: false,
+      showDeleteModal: false,
+      newMember: {
+        fullName: "",
+        committeeType: "",
+        role: "",
+        etablissement: "",
+        avatar: "",
+        edition: "",
+        email: "",
+        phone: "",
+      },
+      editMemberData: null,
+      deleteMemberData: null,
+      nextId: 9,
+    };
+  },
+  computed: {
+    filteredMembers() {
+      return this.members.filter((member) => {
+        const editionMatch =
+          this.selectedEdition === "All" ||
+          member.edition.includes(this.selectedEdition.replace("Edition ", ""));
+        const committeeMatch =
+          this.selectedCommitteeType === "All" ||
+          member.committeeType === this.selectedCommitteeType;
+        return editionMatch && committeeMatch;
+      });
+    },
+  },
+  methods: {
+    toggleEditionDropdown() {
+      this.editionDropdownOpen = !this.editionDropdownOpen;
+      this.committeeDropdownOpen = false;
+    },
+    toggleCommitteeDropdown() {
+      this.committeeDropdownOpen = !this.committeeDropdownOpen;
+      this.editionDropdownOpen = false;
+    },
+    onEditionOption(option) {
+      this.selectedEdition = option;
+      this.editionDropdownOpen = false;
+    },
+    onCommitteeOption(option) {
+      this.selectedCommitteeType = option;
+      this.committeeDropdownOpen = false;
+    },
+    showTooltip(event, text) {
+      this.tooltip.show = true;
+      this.tooltip.text = text;
+      this.tooltip.x = event.clientX + 10;
+      this.tooltip.y = event.clientY - 10;
+    },
+    hideTooltip() {
+      this.tooltip.show = false;
+    },
+    async showToast(message, type = "success") {
+      this.toast.message = message;
+      this.toast.type = type;
+      this.toast.show = true;
+      setTimeout(() => {
+        this.toast.show = false;
+      }, 3000);
+    },
+    async contactMember(member, type) {
+      try {
+        let textToCopy = "";
+        if (type === "phone") {
+          textToCopy = member.phone;
+        } else if (type === "email") {
+          textToCopy = member.email;
+        }
+        await navigator.clipboard.writeText(textToCopy);
+        this.showToast(
+          `${type === "phone" ? "Phone number" : "Email"} copied to clipboard!`
+        );
+      } catch (err) {
+        console.error("Failed to copy:", err);
+        this.showToast("Failed to copy to clipboard", "error");
+      }
+    },
+    openAddModal() {
+      this.newMember = {
+        fullName: "",
+        committeeType: "",
+        role: "",
+        etablissement: "",
+        avatar: "",
+        edition: "",
+        email: "",
+        phone: "",
+      };
+      this.showAddModal = true;
+    },
+    closeAddModal() {
+      this.showAddModal = false;
+    },
+    submitAddMember() {
+      const newMem = { ...this.newMember, id: this.nextId };
+      this.nextId++;
+      this.members.push(newMem);
+      this.showToast("Member added successfully");
+      this.closeAddModal();
+    },
+    openEditModal(member) {
+      this.editMemberData = { ...member };
+      this.showEditModal = true;
+    },
+    closeEditModal() {
+      this.showEditModal = false;
+      this.editMemberData = null;
+    },
+    submitEditMember() {
+      const index = this.members.findIndex(
+        (m) => m.id === this.editMemberData.id
+      );
+      if (index !== -1) {
+        this.members.splice(index, 1, { ...this.editMemberData });
+        this.showToast("Member updated successfully");
+      }
+      this.closeEditModal();
+    },
+    openDeleteModal(member) {
+      this.deleteMemberData = member;
+      this.showDeleteModal = true;
+    },
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+      this.deleteMemberData = null;
+    },
+    confirmDeleteMember() {
+      const index = this.members.findIndex(
+        (m) => m.id === this.deleteMemberData.id
+      );
+      if (index !== -1) {
+        this.members.splice(index, 1);
+        this.showToast("Member deleted successfully");
+      }
+      this.closeDeleteModal();
+    },
+    onImageSelected(event, mode) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith("image/")) {
+        const imageUrl = URL.createObjectURL(file);
+        if (mode === "add") {
+          this.newMember.avatar = imageUrl;
+        } else if (mode === "edit") {
+          this.editMemberData.avatar = imageUrl;
+        }
+      } else {
+        this.showToast("Please select a valid image file", "error");
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
 
 .container {
@@ -642,8 +684,24 @@
 }
 
 .add:hover {
-    background-color: #4338CA;
+    background-color: #1e476b;
     transform: scale(1.05);
+}
+
+.cancel {
+    background: #999;
+    color: white;
+    border: none;
+    padding: 0.3rem 1rem;
+    border-radius: 5px;
+}
+
+.delete {
+    background: #eb5a5a;
+    color: white;
+    border: none;
+    padding: 0.3rem 1rem;
+    border-radius: 5px;
 }
 
 .edit {
@@ -744,14 +802,11 @@
 
 .name-cell {
     display: table-cell;
-    /* ← restores default cell behavior */
     vertical-align: middle;
-    /* padding is inherited from the generic td rule above */
 }
 
 .name-cell .member-avatar {
     margin-right: 12px;
-    /* ← simple spacing inside the cell */
 }
 
 .member-avatar {
@@ -821,7 +876,6 @@
     gap: 8px;
     align-items: center;
     justify-content: center;
-    /* or flex-start, if you like them flushed left */
 }
 
 .contact-btn {
@@ -925,11 +979,26 @@
         opacity: 0;
         transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Modal styles */
+.font-poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-5px);
 }
 
 /* Responsive Design */
@@ -937,7 +1006,6 @@
     .container {
         padding: 20px;
     }
-
     .members-table {
         min-width: 800px;
     }
@@ -947,32 +1015,26 @@
     .container {
         padding: 16px;
     }
-
     .actions {
         flex-direction: column;
         align-items: stretch;
     }
-
     .btn {
         width: 100%;
         justify-content: center;
     }
-
     .members-table {
         min-width: 700px;
     }
-
     .members-table th,
     .members-table td {
         padding: 12px 16px;
         font-size: 13px;
     }
-
     .member-avatar {
         width: 32px;
         height: 32px;
     }
-
     .name-cell {
         min-width: 150px;
     }
@@ -982,86 +1044,16 @@
     .container {
         padding: 12px;
     }
-
     .title {
         font-size: 24px;
     }
-
     .members-table th,
     .members-table td {
         padding: 8px 12px;
     }
-
     .members-table {
         min-width: 600px;
     }
 }
-
-
-  /* Modal styles */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: #000000a0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1200;
-  }
-  
-  .modal {
-    background: white;
-    border-radius: 12px;
-    max-width: 450px;
-    width: 100%;
-    padding: 22px 25px;
-    box-shadow: 0 0 12px rgb(0 0 0 / 0.2);
-    max-height: 95vh;
-    overflow-y: auto;
-  }
-  
-  .modal h3 {
-    margin-top: 0;
-    font-weight: 700;
-    color: #003366;
-    margin-bottom: 15px;
-  }
-  
-  .modal form label {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-    font-weight: 600;
-    color: #333;
-    font-size: 0.95rem;
-  }
-  
-  .modal form input[type="text"],
-  .modal form input[type="email"],
-  .modal form input[type="tel"],
-  .modal form select,
-  .modal form input[type="file"] {
-    padding: 7px 12px;
-    font-size: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-top: 6px;
-    font-weight: 400;
-  }
-  
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .preview-image img {
-    max-width: 120px;
-    max-height: 120px;
-    margin-top: 8px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 1px solid #ddd;
-  }
 </style>
+```
