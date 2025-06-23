@@ -50,7 +50,7 @@ onUnmounted(() => {
   background: white;
   color:  #265985;
   border: none;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
   z-index: 1000;
   display: block;
   padding: 0.4rem 1rem;

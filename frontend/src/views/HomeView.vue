@@ -9,6 +9,10 @@
       <ImportantDates :edition-id="editionData.id" />
     </div>
   </div>
+  <div v-else-if="editionData && !editionData.id">
+    <h1 class="text-center text-2xl font-bold">No current edition available</h1>
+    <p class="text-center">Please check back later.</p>
+  </div>
   <div v-else>
     <!-- Optionally, show a loading spinner here -->
     Loading...
@@ -32,6 +36,7 @@ onMounted(async () => {
   try {
     const response = await EditionService.getCurrentEdition();
     editionData.value = response.data;
+    document.cookie = `editionId=${editionData.value.id}; path=/; max-age=864000`; // 10 days
   } catch (error) {
     console.error('Error fetching edition data:', error);
   }

@@ -16,6 +16,8 @@ class Intervenant extends Model
         'profession_en',
         'image_url',
         'edition_id',
+        'institut',
+        'code_pays'
     ];
 
     public function edition()
@@ -26,9 +28,5 @@ class Intervenant extends Model
     public function programs()
     {
         return $this->belongsToMany(Program::class, 'program_intervenant', 'intervenant_id', 'program_id');
-    }
-    public function keynotes()
-    {
-        return $this->morphMany(Keynote::class, 'speakerable');
     }
 }

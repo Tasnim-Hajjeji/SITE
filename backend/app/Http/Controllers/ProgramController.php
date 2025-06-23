@@ -28,8 +28,8 @@ class ProgramController extends Controller
                 'name_en' => 'required|string|max:255',
                 'description_fr' => 'sometimes|string',
                 'description_en' => 'sometimes|string',
-                'time_start' => 'required|date_format:Y-m-d H:i:s',
-                'time_end' => 'required|date_format:Y-m-d H:i:s',
+                'time_start' => 'required|date_format:Y-m-d H:i',
+                'time_end' => 'required|date_format:Y-m-d H:i',
                 'edition_id' => 'required|exists:edition,id',
             ]);
     
@@ -65,8 +65,8 @@ class ProgramController extends Controller
                 'name_en' => 'sometimes|string|max:255',
                 'description_fr' => 'sometimes|string',
                 'description_en' => 'sometimes|string',
-                'time_start' => 'sometimes|date_format:Y-m-d H:i:s',
-                'time_end' => 'sometimes|date_format:Y-m-d H:i:s',
+                'time_start' => 'sometimes|date_format:Y-m-d H:i',
+                'time_end' => 'sometimes|date_format:Y-m-d H:i',
                 'edition_id' => 'sometimes|exists:edition,id',
                 // intervenant_ids is optional and can be added later
                 'intervenant_ids' => 'nullable|array',

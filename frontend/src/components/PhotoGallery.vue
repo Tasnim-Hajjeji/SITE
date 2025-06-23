@@ -4,6 +4,7 @@
 
     <div class="action-buttons">
       <button class="delete-btn" @click="deleteAllImages">
+      <button class="delete-btn" @click="deleteAllImages">
         <i class="fas fa-trash"></i> Delete All
       </button>
       <button class="add-btn" @click="showModal = true">
@@ -11,15 +12,25 @@
       </button>
     </div><br><br>
 
-    <div class="carousel-container">
+    <div v-if="isLoading" class="loading-message">
+      Loading images...
+    </div>
+
+    <div v-else-if="images.length === 0" class="empty-message">
+      No images available.
+    </div>
+
+    <div v-else class="carousel-container">
       <button class="nav-btn" @click="prevSlide" :disabled="currentIndex === 0">
         <i class="fas fa-arrow-left"></i>
       </button>
 
       <div class="carousel-track">
         <div v-for="(image, index) in visibleImages" :key="index" class="image-card">
-          <img :src="image" alt="Gallery photo" />
-          <button class="hover-button delete-btn" @click="removeImage(index)">Delete</button>
+          <img :src="getImageUrl(image)" alt="Gallery photo" />
+          <button class="hover-button delete-btn" @click="deleteImage(index)">
+            Delete
+          </button>
         </div>
       </div>
 
@@ -28,25 +39,21 @@
       </button>
     </div>
 
-    <div class="carousel-dots">
+    <div v-if="!isLoading && images.length > 0" class="carousel-dots">
       <span v-for="(dot, i) in totalDots" :key="i" :class="['dot', { active: i === currentIndex }]"></span>
     </div>
 
     <!-- Add Image Modal -->
-    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+    <div v-if="showModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
       <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
         <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Add Image</h3>
         <div class="space-y-4">
           <div>
             <label for="image_upload" class="block text-sm font-medium text-gray-700">Upload Image</label>
-            <input
-              id="image_upload"
-              type="file"
-              accept="image/*"
-              @change="handleImageUpload"
+            <input id="image_upload" type="file" accept="image/*" @change="handleImageUpload"
               class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required
-            />
+              required />
             <div v-if="imagePreview" class="mt-2">
               <img :src="imagePreview" alt="Image Preview" class="w-20 h-20 object-cover rounded-md" />
             </div>
@@ -56,19 +63,13 @@
           </div>
         </div>
         <div class="mt-6 flex justify-end space-x-3">
-          <button
-            @click="showModal = false"
-            type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200"
-          >
+          <button @click="showModal = false" type="button"
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">
             Cancel
           </button>
-          <button
-            @click="addImageToEdition"
-            type="button"
+          <button @click="addImage" type="button"
             class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
-            :disabled="!imageFile"
-          >
+            :disabled="!imagePreview">
             Add Image
           </button>
         </div>
@@ -78,25 +79,41 @@
 </template>
 
 <script setup>
-/* eslint-disable no-undef */ // Désactive temporairement l'erreur
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import EditionService from '@/services/EditionService'
+import { useRoute } from 'vue-router'
 
-const props = defineProps({
-  editionId: {
-    type: Number,
-    required: true
-  }
-})
-
+const route = useRoute()
+const editionId = ref(localStorage.getItem('selectedEditionId') || route.params.editionId)
 const images = ref([])
 const currentIndex = ref(0)
 const visibleCount = ref(4)
 const showModal = ref(false)
 const imageFile = ref(null)
 const imagePreview = ref(null)
+const selectedFile = ref(null)
 const error = ref(null)
+const isLoading = ref(true)
 
+// Fetch edition images on component mount
+onMounted(() => {
+  fetchImages()
+})
+async function fetchImages() {
+  try {
+    isLoading.value = true
+    const response = await EditionService.getEdition(editionId.value)
+    console.log('Fetched edition:', response.data)
+    console.log('Fetched images:', response.data.images_url)
+    images.value = response.data.images_url || []
+    handleResize()
+    window.addEventListener('resize', handleResize)
+  } catch (err) {
+    error.value = 'Failed to load images: ' + err.message
+  } finally {
+    isLoading.value = false
+  }
+}
 const visibleImages = computed(() =>
   images.value.slice(currentIndex.value, currentIndex.value + visibleCount.value)
 )
@@ -106,6 +123,14 @@ const maxIndex = computed(() =>
 )
 
 const totalDots = computed(() => images.value.length)
+
+function getImageUrl(imagePath) {
+  return `http://localhost:8000/storage/${imagePath}`;
+}
+
+function getImageUrl(imagePath) {
+  return `http://localhost:8000/storage/${imagePath}`;
+}
 
 const fetchImages = async () => {
   try {
@@ -148,7 +173,7 @@ function handleResize() {
 function handleImageUpload(event) {
   const file = event.target.files[0]
   if (file && file.type.startsWith('image/')) {
-    imageFile.value = file
+    selectedFile.value = file
     const reader = new FileReader()
     reader.onload = (e) => (imagePreview.value = e.target.result)
     reader.readAsDataURL(file)
@@ -157,54 +182,74 @@ function handleImageUpload(event) {
     error.value = 'Please upload a valid image file'
     imageFile.value = null
     imagePreview.value = null
+    selectedFile.value = null
   }
 }
 
-async function addImageToEdition() {
-  if (imageFile.value) {
-    try {
-      const formData = new FormData()
-      formData.append('images[]', imageFile.value)
-      await EditionService.addImages(props.editionId, [imageFile.value])
-      await fetchImages()
-      showModal.value = false
-      imageFile.value = null
-      imagePreview.value = null
-      error.value = null
-    } catch (err) {
-      error.value = 'Failed to add image: ' + err.message
-      console.error(err)
+async function addImage() {
+  try {
+    if (!selectedFile.value) {
+      error.value = 'Please upload an image first'
+      return
     }
-  } else {
-    error.value = 'Please upload an image first'
+
+    const formData = new FormData()
+    formData.append('images[]', selectedFile.value)
+
+    const response = await EditionService.addImages(editionId.value, formData)
+    images.value = response.data.images || []
+
+    // Reset form
+    imagePreview.value = null
+    selectedFile.value = null
+    error.value = null
+    showModal.value = false
+    fetchImages() // Refresh images after adding
+  } catch (err) {
+    error.value = 'Error adding image: ' + (err.response?.data?.error || err.message)
   }
 }
 
-async function removeImage(index) {
-  if (confirm('Are you sure you want to delete this image?')) {
-    try {
-      await EditionService.removeImage(props.editionId, index)
-      await fetchImages()
-    } catch (err) {
-      error.value = 'Failed to remove image: ' + err.message
-      console.error(err)
+async function deleteImage(index) {
+  try {
+    if (confirm('Are you sure you want to delete this image?')) {
+      await EditionService.removeImage(editionId.value, index)
+      images.value.splice(index, 1)
+      if (currentIndex.value > maxIndex.value) {
+        currentIndex.value = maxIndex.value
+      }
     }
+    fetchImages() // Refresh images after deletion
+  } catch (err) {
+    error.value = 'Error deleting image: ' + err.message
   }
 }
 
 async function deleteAllImages() {
-  if (confirm('Are you sure you want to delete all images?')) {
-    try {
+  try {
+    if (confirm('Are you sure you want to delete all images?')) {
+      // Delete images starting from the end to avoid index shifting
       for (let i = images.value.length - 1; i >= 0; i--) {
-        await EditionService.removeImage(props.editionId, i)
+        await EditionService.removeImage(editionId.value, i)
       }
+
+      // Refetch updated image list from backend
       await fetchImages()
-    } catch (err) {
-      error.value = 'Failed to delete all images: ' + err.message
-      console.error(err)
+
+      // Reset local state
+      images.value = []
+      currentIndex.value = 0
     }
+  } catch (err) {
+    console.error(err)
+    error.value = 'Error deleting images: ' + (err.response?.data?.message || err.message)
   }
 }
+
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped>

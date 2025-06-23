@@ -62,6 +62,7 @@ Route::prefix('participants')->group(function () {
     Route::post('/', [ParticipantController::class, 'store']);
     Route::put('/{id}', [ParticipantController::class, 'update']);
     Route::delete('/{id}', [ParticipantController::class, 'destroy']);
+    Route::get('/edition/{editionId}', [ParticipantController::class, 'getByEdition']);
 });
 
 // Program Routes
@@ -120,7 +121,7 @@ Route::prefix('sponsors')->group(function () {
     Route::get('/edition/{editionId}', [SponsorController::class, 'getSponsorsByEdition']);
     Route::get('/{id}', [SponsorController::class, 'show']);
     Route::post('/', [SponsorController::class, 'store']);
-    Route::put('/{id}', [SponsorController::class, 'update']);
+    Route::post('/{id}', [SponsorController::class, 'update']);
     Route::delete('/{id}', [SponsorController::class, 'destroy']);
 });
 // Keynote Routes
@@ -128,7 +129,7 @@ Route::prefix('keynotes')->group(function () {
     Route::get('/', [KeynoteController::class, 'index']);
     Route::get('/{id}', [KeynoteController::class, 'show']);
     Route::post('/', [KeynoteController::class, 'store']);
-    Route::put('/{id}', [KeynoteController::class, 'update']);
+    Route::post('/{id}', [KeynoteController::class, 'update']);
     Route::delete('/{id}', [KeynoteController::class, 'destroy']);
     Route::get('/edition/{editionId}', [KeynoteController::class, 'getByEdition']);
 });

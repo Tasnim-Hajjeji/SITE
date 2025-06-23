@@ -97,12 +97,12 @@ export default {
    * @returns {Promise} Axios promise
    */
   addImages(id, images) {
-    const formData = new FormData();
-    images.forEach(image => {
-      formData.append('images[]', image);
-    });
+    // const formData = new FormData();
+    // images.forEach(image => {
+    //   formData.append('images[]', image);
+    // });
 
-    return axios.post(`/editions/${id}/images`, formData, {
+    return axios.post(`/editions/${id}/images`, images, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
