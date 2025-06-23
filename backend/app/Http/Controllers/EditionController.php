@@ -98,8 +98,12 @@ class EditionController extends Controller
         }
 
         $data = $request->only([
-            'name', 'description_fr', 'description_en', 
-            'start_date', 'end_date', 'place'
+            'name',
+            'description_fr',
+            'description_en',
+            'start_date',
+            'end_date',
+            'place'
         ]);
 
         // Gestion du dossier sponsor
@@ -224,6 +228,18 @@ class EditionController extends Controller
         $currentEdition = Edition::where('start_date', '>', now())
             ->orderBy('start_date', 'asc')
             ->first();
+
+        // If no upcoming edition exists, get the most recent past edition
+        if (!$currentEdition) {
+            $currentEdition = Edition::where('end_date', '<=', now())
+                ->orderBy('end_date', 'desc')
+                ->first();
+        }
+
+        // If still no edition found, get the most recent edition regardless of dates
+        if (!$currentEdition) {
+            $currentEdition = Edition::orderBy('created_at', 'desc')->first();
+        }
 
         return response()->json($currentEdition);
     }
