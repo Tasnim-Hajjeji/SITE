@@ -9,6 +9,10 @@
       <ImportantDates :edition-id="editionData.id" />
     </div>
   </div>
+  <div v-else-if="editionData && !editionData.id">
+    <h1 class="text-center text-2xl font-bold">No current edition available</h1>
+    <p class="text-center">Please check back later.</p>
+  </div>
   <div v-else>
     <!-- Optionally, show a loading spinner here -->
     Loading...

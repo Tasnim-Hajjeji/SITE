@@ -14,6 +14,7 @@ class Sponsor extends Model
         'phone',
         'description',
         'logo',
+        'etat',
         'edition_id',
     ];
 

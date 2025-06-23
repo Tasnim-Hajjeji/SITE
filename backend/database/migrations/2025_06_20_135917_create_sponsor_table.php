@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('description');
             $table->string('logo');
+            $table->enum('etat', ['pending', 'confirmed'])->default('pending');
             $table->foreignId('edition_id')
                   ->constrained('edition')
                   ->onDelete('cascade'); // Assuming 'edition' table exists and has an id column
