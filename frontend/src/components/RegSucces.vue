@@ -192,22 +192,23 @@
 
 .edit {
   background-color: white;
-  color: #000;
-  border: 2px solid #000;
+  color: #4e4545;
+  border: 2px solid #4e4545;
 }
 .edit:hover {
-  background-color: #f0f0f0;
+  background-color: #4e4545;
+  color: white;
   transform: scale(1.05);
 }
 
 .home {
-  background-color: #265985;
-  color: white;
+  background-color: white;
+  color: #265985;
   border: 2px solid #265985;
 }
 .home:hover {
-  background-color: white;
-  color: #265985;
+  background-color: #265985;
+  color: white;
   transform: scale(1.05);
 }
 
