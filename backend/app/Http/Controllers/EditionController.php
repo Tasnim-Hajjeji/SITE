@@ -184,7 +184,7 @@ class EditionController extends Controller
 
         foreach ($request->file('images') as $image) {
             $path = $image->store('editions', 'public');
-            $newImages[] = Storage::url($path);
+            $newImages[] =$path;
         }
 
         $edition->update([
