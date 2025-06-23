@@ -113,7 +113,7 @@ import EditionService from '@/services/EditionService';
 const route = useRoute();
 const router = useRouter();
 
-const editionId = ref(route.params.editionId);
+const editionId = ref(localStorage.getItem('selectedEditionId')||route.params.editionId);
 const editions = ref([]);
 const edition = ref(null);
 const isLoading = ref(true);
