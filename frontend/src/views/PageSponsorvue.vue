@@ -1,11 +1,11 @@
 <template>
     <PageSponsor />
-    <PartnersCarousel />
+    <SponsorsCarousel />
     <SponsorForm />
 </template>
     
 <script setup>
     import PageSponsor from '@/components/PageSponsor.vue';
-    import PartnersCarousel from '@/components/PartnersCarousel.vue';
+    import SponsorsCarousel from '@/components/SponsorsCarousel.vue';
     import SponsorForm from '@/components/SponsorForm.vue';
     </script>

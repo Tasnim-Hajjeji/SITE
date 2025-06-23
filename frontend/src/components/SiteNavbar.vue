@@ -9,6 +9,7 @@
         <li><router-link to="/">{{ $t('navbar.home') }}</router-link></li>
         <li><router-link to="/schedule">{{ $t('navbar.program') }}</router-link></li>
         <li><router-link to="/speaker">{{ $t('navbar.speakers') }}</router-link></li>
+        <li><router-link to="/sponsor">{{ $t('navbar.sponsors') }}</router-link></li>
         <li class="dropdown">
           <a href="#">
             {{ $t('navbar.committees') }}
@@ -23,14 +24,19 @@
         <li><router-link to="/previous-editions">{{ $t('navbar.previousEditions') }}</router-link></li>
         <li><a href="#contact">{{ $t('navbar.contact') }}</a></li>
       </ul>
+
+      <!-- ✅ Language switch with short/full label -->
       <div class="lang-switch">
         <button @click="switchLanguage('fr')" :class="{ 'active': currentLanguage === 'fr' }">
-          Français
+          <span class="full">Français</span>
+          <span class="short">Fr</span>
         </button>
         <button @click="switchLanguage('en')" :class="{ 'active': currentLanguage === 'en' }">
-          English
+          <span class="full">English</span>
+          <span class="short">En</span>
         </button>
       </div>
+
       <div class="burger" @click="toggleMenu = !toggleMenu">
         <div></div>
         <div></div>
@@ -39,7 +45,6 @@
     </div>
   </nav>
 </template>
-
 
 <script setup>
 import { ref } from 'vue';
@@ -95,7 +100,6 @@ html {
   background: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 0.5rem 0;
-  list-style: none;
   min-width: 200px;
   z-index: 1000;
 }
@@ -142,6 +146,7 @@ html {
   font-weight: 500;
 }
 
+/* ✅ Lang Switch Responsive */
 .lang-switch button {
   margin-left: 0.5rem;
   background: none;
@@ -150,6 +155,7 @@ html {
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 0.9rem;
 }
 
 .lang-switch button:hover {
@@ -160,6 +166,22 @@ html {
   background-color: #005a90;
   color: white;
   border-color: #005a90;
+}
+
+.lang-switch .short {
+  display: none;
+}
+.lang-switch .full {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .lang-switch .short {
+    display: inline;
+  }
+  .lang-switch .full {
+    display: none;
+  }
 }
 
 .burger {
@@ -204,12 +226,9 @@ html {
   .chevron {
     display: none;
   }
-
 }
 
-/* Desktop dropdown behavior */
 @media (min-width: 769px) {
-
   .dropdown-menu {
     display: none;
     position: absolute;
@@ -227,7 +246,6 @@ html {
   }
 }
 
-/* Mobile: dropdown menu always visible under "Communities" */
 @media (max-width: 768px) {
   .dropdown-menu {
     padding-left: 1rem;
