@@ -121,7 +121,7 @@ Route::prefix('sponsors')->group(function () {
     Route::get('/edition/{editionId}', [SponsorController::class, 'getSponsorsByEdition']);
     Route::get('/{id}', [SponsorController::class, 'show']);
     Route::post('/', [SponsorController::class, 'store']);
-    Route::put('/{id}', [SponsorController::class, 'update']);
+    Route::post('/{id}', [SponsorController::class, 'update']);
     Route::delete('/{id}', [SponsorController::class, 'destroy']);
 });
 // Keynote Routes
