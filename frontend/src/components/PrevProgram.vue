@@ -284,29 +284,36 @@ export default {
     // Add new program
     const addProgram = async () => {
       try {
+        // Validate required fields
+        if (!newProgram.value.name_fr || !newProgram.value.name_en) {
+          throw new Error('Both French and English names are required');
+        }
+
+        // Validate times
         const startDate = dayjs(newProgram.value.time_start);
         const endDate = dayjs(newProgram.value.time_end);
 
         if (!startDate.isValid() || !endDate.isValid()) {
-          throw new Error('Please enter valid dates');
+          throw new Error('Please enter valid start and end times');
         }
-        // Convert date to proper format
-        newProgram.value.time_start = startDate.format('YYYY-MM-DD HH:mm:ss');
-        newProgram.value.time_end = endDate.format('YYYY-MM-DD HH:mm:ss');
-        console.log('Adding program:', newProgram.value);
+
+        if (endDate.isBefore(startDate)) {
+          throw new Error('End time must be after start time');
+        }
+
+        // Format times with leading zeros
+        newProgram.value.time_start = startDate.format('YYYY-MM-DD HH:mm');
+        newProgram.value.time_end = endDate.format('YYYY-MM-DD HH:mm');
 
         const response = await ProgramService.createProgram(newProgram.value);
         programs.value.push(response.data);
-
-        // Update dates list
         extractDates();
-
-        // Reset form and close modal
         resetNewProgramForm();
         showModal.value = false;
       } catch (err) {
-        error.value = 'Failed to add program: ' + err.message;
-        console.error(err);
+        error.value = 'Failed to add program: ' +
+          (err.response?.data?.error || err.message || 'Unknown error');
+        console.error('Error details:', err.response?.data || err);
       }
     };
 
@@ -322,40 +329,40 @@ export default {
 
     // Update program
     const updateProgram = async () => {
-  try {
-    // Convert datetime-local input to proper format
-    const startDate = dayjs(selectedProgram.value.time_start);
-    const endDate = dayjs(selectedProgram.value.time_end);
-    
-    if (!startDate.isValid() || !endDate.isValid()) {
-      throw new Error('Please enter valid dates');
-    }
+      try {
+        // Convert datetime-local input to proper format
+        const startDate = dayjs(selectedProgram.value.time_start);
+        const endDate = dayjs(selectedProgram.value.time_end);
 
-    // Format dates for backend
-    const dataToSend = {
-      ...selectedProgram.value,
-      time_start: startDate.format('YYYY-MM-DD HH:mm:ss'),
-      time_end: endDate.format('YYYY-MM-DD HH:mm:ss')
+        if (!startDate.isValid() || !endDate.isValid()) {
+          throw new Error('Please enter valid dates');
+        }
+
+        // Format dates for backend
+        const dataToSend = {
+          ...selectedProgram.value,
+          time_start: startDate.format('YYYY-MM-DD HH:mm'),
+          time_end: endDate.format('YYYY-MM-DD HH:mm')
+        };
+
+        const response = await ProgramService.updateProgram(
+          selectedProgram.value.id,
+          dataToSend
+        );
+
+        // Update local programs list
+        const index = programs.value.findIndex(p => p.id === selectedProgram.value.id);
+        if (index !== -1) {
+          programs.value[index] = response.data;
+        }
+
+        // Close modal
+        showUpdateModal.value = false;
+      } catch (err) {
+        error.value = 'Failed to update program: ' + (err.response?.data?.error || err.message);
+        console.error(err);
+      }
     };
-
-    const response = await ProgramService.updateProgram(
-      selectedProgram.value.id,
-      dataToSend
-    );
-    
-    // Update local programs list
-    const index = programs.value.findIndex(p => p.id === selectedProgram.value.id);
-    if (index !== -1) {
-      programs.value[index] = response.data;
-    }
-    
-    // Close modal
-    showUpdateModal.value = false;
-  } catch (err) {
-    error.value = 'Failed to update program: ' + (err.response?.data?.error || err.message);
-    console.error(err);
-  }
-};
 
     // Delete program
     const deleteProgram = async (id) => {
