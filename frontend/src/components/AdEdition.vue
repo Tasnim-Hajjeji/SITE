@@ -1,9 +1,10 @@
+```vue
 <template>
   <section class="conference-card" v-if="!isLoading && edition">
     <div class="card-header">
       <h1>{{ edition.name }}</h1>
       <div class="action-buttons">
-        <button class="delete-btn" @click="confirmDelete">
+        <button class="delete-btn" @click="openDeleteModal">
           <i class="fas fa-trash"></i> Delete
         </button>
         <button class="update-btn" @click="showUpdateModal = true">
@@ -43,7 +44,7 @@
           <div class="info-item">
             <i class="fas fa-chart-bar"></i>
             <span class="label">Participants</span>
-            <span class="value">{{participantCount}}</span>
+            <span class="value">{{ participantCount }}</span>
           </div>
         </div>
       </div>
@@ -134,22 +135,36 @@
         </div>
         <div class="mt-6 flex justify-end space-x-3">
           <button
-            @click="showUpdateModal = false"
             type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200"
+            class="btn cancel"
+            @click="showUpdateModal = false"
           >
             Cancel
           </button>
           <button
-            @click="updateEdition"
             type="button"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+            class="btn add"
+            @click="updateEdition"
           >
             Save Changes
           </button>
         </div>
       </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <transition name="fade">
+      <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete Edition</h3>
+          <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete <strong>{{ edition.name }}</strong>?</p>
+          <div class="flex justify-end space-x-3">
+            <button type="button" class="btn cancel" @click="showDeleteModal = false">Cancel</button>
+            <button type="button" class="btn delete" @click="confirmDelete">Yes, Delete</button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </section>
 
   <div v-if="isLoading" class="loading">
@@ -169,17 +184,14 @@ import ParticipantService from '@/services/ParticipantService';
 const route = useRoute();
 const router = useRouter();
 
-<<<<<<< HEAD
 const editionId = ref(route.params.editionId || localStorage.getItem('selectedEditionId'));
-=======
-const editionId = ref(localStorage.getItem('selectedEditionId') || route.params.editionId);
->>>>>>> aad6fae34145379ec19e0432991b55a964677476
 const editions = ref([]);
 const edition = ref(null);
 const isLoading = ref(true);
 const error = ref(null);
 const dropdownOpen = ref(false);
 const showUpdateModal = ref(false);
+const showDeleteModal = ref(false);
 const participantCount = ref(0);
 
 const editionForm = ref({
@@ -200,11 +212,8 @@ const frenchMonths = [
 onMounted(async () => {
   await fetchEditions();
   await fetchEditionDetails();
-  await fetchParticipantCount();
 });
 
-<<<<<<< HEAD
-=======
 const fetchParticipantCount = async () => {
   try {
     const response = await ParticipantService.getParticipantsByEdition(editionId.value);
@@ -214,8 +223,7 @@ const fetchParticipantCount = async () => {
     participantCount.value = 0;
   }
 };
-// Fetch all editions for dropdown
->>>>>>> aad6fae34145379ec19e0432991b55a964677476
+
 const fetchEditions = async () => {
   try {
     const response = await EditionService.getAllEditions();
@@ -255,16 +263,8 @@ const editionStatus = computed(() => {
 
 const formattedDateRange = computed(() => {
   if (!edition.value?.start_date || !edition.value?.end_date) return 'Dates not specified';
-<<<<<<< HEAD
   const start = new Date(edition.value.start_date);
   const end = new Date(edition.value.end_date);
-=======
-
-  const start = new Date(edition.value.start_date);
-  const end = new Date(edition.value.end_date);
-
-  // Same month and year
->>>>>>> aad6fae34145379ec19e0432991b55a964677476
   if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
     return `${start.getDate()} - ${end.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()}`;
   } else if (start.getFullYear() === end.getFullYear()) {
@@ -284,15 +284,18 @@ const selectEdition = (id) => {
   fetchEditionDetails();
 };
 
+const openDeleteModal = () => {
+  showDeleteModal.value = true;
+};
+
 const confirmDelete = async () => {
-  if (confirm('Are you sure you want to delete this edition?')) {
-    try {
-      await EditionService.deleteEdition(editionId.value);
-      router.push({ name: 'Editions' });
-    } catch (err) {
-      error.value = 'Failed to delete edition: ' + err.message;
-      console.error(err);
-    }
+  try {
+    await EditionService.deleteEdition(editionId.value);
+    showDeleteModal.value = false;
+    router.push({ name: 'Editions' });
+  } catch (err) {
+    error.value = 'Failed to delete edition: ' + err.message;
+    console.error(err);
   }
 };
 
@@ -393,6 +396,34 @@ const updateEdition = async () => {
 .update-btn:hover {
   background-color: #265985;
   color: #fff;
+}
+
+.btn.add {
+  background-color: #265985;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.btn.add:hover {
+  background-color: #1e476b;
+}
+
+.btn.cancel {
+  background: #999;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.btn.delete {
+  background: #eb5a5a;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
 }
 
 .dropdown {
@@ -522,6 +553,17 @@ const updateEdition = async () => {
 .value {
   font-size: 0.9em;
   color: #777;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
 }
 
 @media (max-width: 768px) {

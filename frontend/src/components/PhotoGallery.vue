@@ -3,8 +3,7 @@
     <h2 class="title">Galerie Photo</h2>
 
     <div class="action-buttons">
-      <button class="delete-btn" @click="deleteAllImages">
-      <button class="delete-btn" @click="deleteAllImages">
+      <button class="delete-btn" @click="openDeleteAllModal">
         <i class="fas fa-trash"></i> Delete All
       </button>
       <button class="add-btn" @click="showModal = true">
@@ -28,7 +27,7 @@
       <div class="carousel-track">
         <div v-for="(image, index) in visibleImages" :key="index" class="image-card">
           <img :src="getImageUrl(image)" alt="Gallery photo" />
-          <button class="hover-button delete-btn" @click="deleteImage(index)">
+          <button class="hover-button delete-btn" @click="openDeleteModal(index)">
             Delete
           </button>
         </div>
@@ -44,8 +43,7 @@
     </div>
 
     <!-- Add Image Modal -->
-    <div v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
       <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
         <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Add Image</h3>
         <div class="space-y-4">
@@ -63,196 +61,191 @@
           </div>
         </div>
         <div class="mt-6 flex justify-end space-x-3">
-          <button @click="showModal = false" type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">
-            Cancel
-          </button>
-          <button @click="addImage" type="button"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
-            :disabled="!imagePreview">
-            Add Image
-          </button>
+          <button type="button" class="btn cancel" @click="showModal = false">Cancel</button>
+          <button type="button" class="btn add" @click="addImage" :disabled="!imagePreview">Add Image</button>
         </div>
       </div>
     </div>
+
+    <!-- Delete Image Modal -->
+    <transition name="fade">
+      <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete Image</h3>
+          <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete this image?</p>
+          <div class="flex justify-end space-x-3">
+            <button type="button" class="btn cancel" @click="showDeleteModal = false">Cancel</button>
+            <button type="button" class="btn delete" @click="deleteImage">Yes, Delete</button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Delete All Images Modal -->
+    <transition name="fade">
+      <div v-if="showDeleteAllModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete All Images</h3>
+          <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete all images?</p>
+          <div class="flex justify-end space-x-3">
+            <button type="button" class="btn cancel" @click="showDeleteAllModal = false">Cancel</button>
+            <button type="button" class="btn delete" @click="deleteAllImages">Yes, Delete</button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </section>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import EditionService from '@/services/EditionService'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRoute } from 'vue-router';
+import EditionService from '@/services/EditionService';
 
-const route = useRoute()
-const editionId = ref(localStorage.getItem('selectedEditionId') || route.params.editionId)
-const images = ref([])
-const currentIndex = ref(0)
-const visibleCount = ref(4)
-const showModal = ref(false)
-const imageFile = ref(null)
-const imagePreview = ref(null)
-const selectedFile = ref(null)
-const error = ref(null)
-const isLoading = ref(true)
+const route = useRoute();
+const editionId = ref(localStorage.getItem('selectedEditionId') || route.params.editionId);
+const images = ref([]);
+const currentIndex = ref(0);
+const visibleCount = ref(4);
+const showModal = ref(false);
+const showDeleteModal = ref(false);
+const showDeleteAllModal = ref(false);
+const deleteIndex = ref(null);
+const imageFile = ref(null);
+const imagePreview = ref(null);
+const selectedFile = ref(null);
+const error = ref(null);
+const isLoading = ref(true);
 
-// Fetch edition images on component mount
 onMounted(() => {
-  fetchImages()
-})
+  fetchImages();
+  handleResize();
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
+
 async function fetchImages() {
   try {
-    isLoading.value = true
-    const response = await EditionService.getEdition(editionId.value)
-    console.log('Fetched edition:', response.data)
-    console.log('Fetched images:', response.data.images_url)
-    images.value = response.data.images_url || []
-    handleResize()
-    window.addEventListener('resize', handleResize)
+    isLoading.value = true;
+    const response = await EditionService.getEdition(editionId.value);
+    images.value = response.data.images_url || [];
+    handleResize();
   } catch (err) {
-    error.value = 'Failed to load images: ' + err.message
+    error.value = 'Failed to load images: ' + err.message;
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
+
 const visibleImages = computed(() =>
   images.value.slice(currentIndex.value, currentIndex.value + visibleCount.value)
-)
+);
 
 const maxIndex = computed(() =>
   Math.max(images.value.length - visibleCount.value, 0)
-)
+);
 
-const totalDots = computed(() => images.value.length)
-
-function getImageUrl(imagePath) {
-  return `http://localhost:8000/storage/${imagePath}`;
-}
+const totalDots = computed(() => images.value.length);
 
 function getImageUrl(imagePath) {
   return `http://localhost:8000/storage/${imagePath}`;
 }
-
-const fetchImages = async () => {
-  try {
-    const response = await EditionService.getEdition(props.editionId)
-    images.value = response.data.images_url || []
-  } catch (err) {
-    error.value = 'Failed to load images: ' + err.message
-    console.error(err)
-  }
-}
-
-onMounted(() => {
-  handleResize()
-  window.addEventListener('resize', handleResize)
-  fetchImages()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
-
-watch(() => props.editionId, () => {
-  fetchImages()
-})
 
 function prevSlide() {
-  if (currentIndex.value > 0) currentIndex.value--
+  if (currentIndex.value > 0) currentIndex.value--;
 }
 
 function nextSlide() {
-  if (currentIndex.value < maxIndex.value) currentIndex.value++
+  if (currentIndex.value < maxIndex.value) currentIndex.value++;
 }
 
 function handleResize() {
-  const width = window.innerWidth
-  visibleCount.value = width < 640 ? 1 : width < 1024 ? 2 : width < 1280 ? 3 : 4
-  if (currentIndex.value > maxIndex.value) currentIndex.value = maxIndex.value
+  const width = window.innerWidth;
+  visibleCount.value = width < 640 ? 1 : width < 1024 ? 2 : width < 1280 ? 3 : 4;
+  if (currentIndex.value > maxIndex.value) currentIndex.value = maxIndex.value;
 }
 
 function handleImageUpload(event) {
-  const file = event.target.files[0]
+  const file = event.target.files[0];
   if (file && file.type.startsWith('image/')) {
-    selectedFile.value = file
-    const reader = new FileReader()
-    reader.onload = (e) => (imagePreview.value = e.target.result)
-    reader.readAsDataURL(file)
-    error.value = null
+    selectedFile.value = file;
+    const reader = new FileReader();
+    reader.onload = (e) => (imagePreview.value = e.target.result);
+    reader.readAsDataURL(file);
+    error.value = null;
   } else {
-    error.value = 'Please upload a valid image file'
-    imageFile.value = null
-    imagePreview.value = null
-    selectedFile.value = null
+    error.value = 'Please upload a valid image file';
+    imageFile.value = null;
+    imagePreview.value = null;
+    selectedFile.value = null;
   }
 }
 
 async function addImage() {
   try {
     if (!selectedFile.value) {
-      error.value = 'Please upload an image first'
-      return
+      error.value = 'Please upload an image first';
+      return;
     }
-
-    const formData = new FormData()
-    formData.append('images[]', selectedFile.value)
-
-    const response = await EditionService.addImages(editionId.value, formData)
-    images.value = response.data.images || []
-
-    // Reset form
-    imagePreview.value = null
-    selectedFile.value = null
-    error.value = null
-    showModal.value = false
-    fetchImages() // Refresh images after adding
+    const formData = new FormData();
+    formData.append('images[]', selectedFile.value);
+    const response = await EditionService.addImages(editionId.value, formData);
+    images.value = response.data.images || [];
+    imagePreview.value = null;
+    selectedFile.value = null;
+    error.value = null;
+    showModal.value = false;
+    await fetchImages();
   } catch (err) {
-    error.value = 'Error adding image: ' + (err.response?.data?.error || err.message)
+    error.value = 'Error adding image: ' + (err.response?.data?.error || err.message);
   }
 }
 
-async function deleteImage(index) {
+async function deleteImage() {
   try {
-    if (confirm('Are you sure you want to delete this image?')) {
-      await EditionService.removeImage(editionId.value, index)
-      images.value.splice(index, 1)
-      if (currentIndex.value > maxIndex.value) {
-        currentIndex.value = maxIndex.value
-      }
+    await EditionService.removeImage(editionId.value, deleteIndex.value);
+    images.value.splice(deleteIndex.value, 1);
+    if (currentIndex.value > maxIndex.value) {
+      currentIndex.value = maxIndex.value;
     }
-    fetchImages() // Refresh images after deletion
+    showDeleteModal.value = false;
+    deleteIndex.value = null;
+    await fetchImages();
   } catch (err) {
-    error.value = 'Error deleting image: ' + err.message
+    error.value = 'Error deleting image: ' + err.message;
   }
 }
 
 async function deleteAllImages() {
   try {
-    if (confirm('Are you sure you want to delete all images?')) {
-      // Delete images starting from the end to avoid index shifting
-      for (let i = images.value.length - 1; i >= 0; i--) {
-        await EditionService.removeImage(editionId.value, i)
-      }
-
-      // Refetch updated image list from backend
-      await fetchImages()
-
-      // Reset local state
-      images.value = []
-      currentIndex.value = 0
+    for (let i = images.value.length - 1; i >= 0; i--) {
+      await EditionService.removeImage(editionId.value, i);
     }
+    images.value = [];
+    currentIndex.value = 0;
+    showDeleteAllModal.value = false;
+    await fetchImages();
   } catch (err) {
-    console.error(err)
-    error.value = 'Error deleting images: ' + (err.response?.data?.message || err.message)
+    error.value = 'Error deleting images: ' + (err.response?.data?.message || err.message);
   }
 }
 
+function openDeleteModal(index) {
+  deleteIndex.value = index;
+  showDeleteModal.value = true;
+}
 
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
+function openDeleteAllModal() {
+  showDeleteAllModal.value = true;
+}
 </script>
 
 <style scoped>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+
 .photo-gallery {
   padding: 2rem;
   max-width: 1200px;
@@ -316,6 +309,34 @@ onUnmounted(() => {
   color: #fff;
 }
 
+.btn.add {
+  background-color: #265985;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.btn.add:hover {
+  background-color: #1e476b;
+}
+
+.btn.cancel {
+  background: #999;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.btn.delete {
+  background: #eb5a5a;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
 .carousel-container {
   display: flex;
   align-items: center;
@@ -367,7 +388,6 @@ onUnmounted(() => {
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.3s ease;
-  background: white;
 }
 
 .image-card img {
@@ -434,5 +454,27 @@ onUnmounted(() => {
 
 .image-card:hover img {
   opacity: 0.8;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.loading-message,
+.empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-style: italic;
 }
 </style>
