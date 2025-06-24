@@ -95,7 +95,7 @@ export default {
         description: '',
         logo: null,
         edition_id: localStorage.getItem('selectedEditionId') || useRoute().params.editionId,
-        etat: 'pending' ,
+        etat: 'confirmed' ,
       },
       selectedFile: null
     }
@@ -165,7 +165,7 @@ export default {
         formData.append('email', this.newSponsor.email)
         formData.append('description', this.newSponsor.description)
         formData.append('edition_id', this.newSponsor.edition_id)
-        formData.append('etat', 'pending') 
+        formData.append('etat', this.newSponsor.etat) 
         if (this.selectedFile) {
           formData.append('logo', this.selectedFile)
         }
