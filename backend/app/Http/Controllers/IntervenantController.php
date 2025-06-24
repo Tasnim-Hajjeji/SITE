@@ -44,8 +44,8 @@ class IntervenantController extends Controller
             unset($validated['photo'], $validated['program_ids']);
 
             if ($request->hasFile('photo')) {
-                $path = $request->file('photo')->store('intervenants');
-                $validated['image_url'] = Storage::url($path);
+                $path = $request->file('photo')->store('intervenants', 'public');
+                $validated['image_url'] = $path;
             }
 
             $intervenant = Intervenant::create($validated);
@@ -114,8 +114,8 @@ class IntervenantController extends Controller
                 }
 
 
-                $path = $request->file('photo')->store('intervenants');
-                $validated['image_url'] = Storage::url($path);
+                $path = $request->file('photo')->store('intervenants', 'public');
+                $validated['image_url'] = $path;
             }
 
             $intervenant->update($validated);

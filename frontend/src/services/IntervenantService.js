@@ -11,10 +11,18 @@ export default {
         return axios.get(`/intervenants/edition/${editionId}`);
     },
     createIntervenant(intervenant) {
-        return axios.post("/intervenants", intervenant);
+        return axios.post("/intervenants", intervenant,{
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
     },
     updateIntervenant(id, intervenant) {
-        return axios.post(`/intervenants/${id}`, intervenant);
+        return axios.post(`/intervenants/${id}`, intervenant,{
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
     },
     deleteIntervenant(id) {
         return axios.delete(`/intervenants/${id}`);
