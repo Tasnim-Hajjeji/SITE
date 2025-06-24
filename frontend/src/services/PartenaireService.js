@@ -15,16 +15,16 @@ export default {
    * @returns {Promise} Axios promise
    */
   createPartenaire(partenaireData) {
-    const formData = new FormData();
-    Object.keys(partenaireData).forEach(key => {
-      if (key === 'image') {
-        formData.append('image', partenaireData.image);
-      } else {
-        formData.append(key, partenaireData[key]);
-      }
-    });
+    // const formData = new FormData();
+    // Object.keys(partenaireData).forEach(key => {
+    //   if (key === 'image') {
+    //     formData.append('image', partenaireData.image);
+    //   } else {
+    //     formData.append(key, partenaireData[key]);
+    //   }
+    // });
     
-    return axios.post('/partenaires', formData, {
+    return axios.post('/partenaires', partenaireData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -47,16 +47,16 @@ export default {
    * @returns {Promise} Axios promise
    */
   updatePartenaire(id, partenaireData) {
-    const formData = new FormData();
-    Object.keys(partenaireData).forEach(key => {
-      if (key === 'image') {
-        formData.append('image', partenaireData.image);
-      } else {
-        formData.append(key, partenaireData[key]);
-      }
-    });
+    // const formData = new FormData();
+    // Object.keys(partenaireData).forEach(key => {
+    //   if (key === 'image') {
+    //     formData.append('image', partenaireData.image);
+    //   } else {
+    //     formData.append(key, partenaireData[key]);
+    //   }
+    // });
 
-    return axios.post(`/partenaires/${id}`, formData, {
+    return axios.post(`/partenaires/${id}`, partenaireData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

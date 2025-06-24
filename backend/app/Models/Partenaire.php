@@ -8,6 +8,9 @@ class Partenaire extends Model
 {
     protected $fillable = [
         'name',
+        'description',
+        'phone',
+        'email',
         'image_url',
         'edition_id',
     ];

@@ -26,6 +26,9 @@ class PartenaireController extends Controller
 
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'phone' => 'nullable|string|max:20',
+                'email' => 'nullable|email|max:255',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
                 'edition_id' => 'required|exists:edition,id',
             ]);
@@ -61,6 +64,9 @@ class PartenaireController extends Controller
             $partenaire = Partenaire::findOrFail($id);
             $validated = $request->validate([
                 'name' => 'sometimes|string|max:255',
+                'description' => 'sometimes|string',
+                'phone' => 'sometimes|string|max:20',
+                'email' => 'sometimes|email|max:255',
                 'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:8192',
                 'edition_id' => 'sometimes|exists:edition,id',
             ]);

@@ -19,7 +19,7 @@
 
     <div class="grid">
       <div v-for="partner in filteredPartners" :key="partner.id" class="card">
-        <img :src="partner.logo" alt="Partner logo" class="logo" />
+        <img :src="getImageUrl(partner.image_url)" alt="Partner logo" class="logo" />
         <h2 class="name">{{ partner.name }}</h2>
         <p class="desc">{{ partner.description }}</p>
         <div class="info"><i class="fas fa-phone icon"></i><span>{{ partner.phone }}</span></div>
@@ -86,6 +86,9 @@
 </template>
 
 <script>
+import PartenaireService from '@/services/PartenaireService';
+import EditionService from '@/services/EditionService';
+
 export default {
   name: "PartnairAdmin",
   data() {
@@ -95,14 +98,10 @@ export default {
       showUpdateModal: false,
       showDeleteModal: false,
       selectedEdition: null,
-      editions: [
-        { id: 2024, name: 'Edition 2024' },
-        { id: 2023, name: 'Edition 2023' },
-        { id: 2022, name: 'Edition 2022' }
-      ],
+      editions: [], // Will be loaded from API
       newPartner: {
         name: '',
-        image_url: '',
+        image: null, // Changed from image_url to image for FormData
         edition_id: '',
         description: '',
         phone: '',
@@ -111,78 +110,130 @@ export default {
       selectedPartner: {
         id: null,
         name: '',
-        image_url: '',
+        image: null, // Changed from image_url to image for FormData
         edition_id: '',
         description: '',
         phone: '',
         email: ''
       },
-      partners: [
-        {
-          id: 1,
-          logo: require('@/assets/partenaire1.png'),
-          name: "ISET",
-          description: "Technology Development",
-          phone: "+12 345 6789 0",
-          email: "iset@mail.com",
-          image_url: '',
-          edition_id: 2024
-        },
-        {
-          id: 2,
-          logo: require('@/assets/partenaire2.png'),
-          name: "Pole",
-          description: "Innovation Hub",
-          phone: "+98 765 4321 0",
-          email: "pole@mail.com",
-          image_url: '',
-          edition_id: 2023
-        }
-      ]
+      partners: [] // Will be loaded from API
     };
+  },
+  async created() {
+    await this.fetchEditions();
+    
+    // Get edition ID from route params or localStorage
+    const editionId = this.$route.params.editionId || localStorage.getItem('selectedEditionId');
+    
+    // Set default edition if available
+    if (editionId) {
+      this.selectedEdition = parseInt(editionId);
+      this.newPartner.edition_id = parseInt(editionId);
+    }
+    
+    await this.fetchPartnersByEdition();
   },
   computed: {
     filteredPartners() {
-      if (!this.selectedEdition) return this.partners;
-      return this.partners.filter(p => p.edition_id === this.selectedEdition);
-    },
-    nextId() {
-      return this.partners.length ? Math.max(...this.partners.map(p => p.id)) + 1 : 1;
+      return this.partners; // Now we always show the filtered list from API
     }
   },
   methods: {
+    async fetchEditions() {
+      try {
+        const response = await EditionService.getAllEditions();
+        this.editions = response.data;
+        
+        // If no edition is selected yet, select the first one by default
+        if (!this.selectedEdition && this.editions.length > 0) {
+          this.selectedEdition = this.editions[0].id;
+          this.newPartner.edition_id = this.editions[0].id;
+          localStorage.setItem('selectedEditionId', this.editions[0].id);
+        }
+      } catch (error) {
+        console.error('Error fetching editions:', error);
+      }
+    },
+    
+    async fetchPartnersByEdition() {
+      if (!this.selectedEdition) return;
+      
+      try {
+        const response = await PartenaireService.getPartenairesByEdition(this.selectedEdition);
+        this.partners = response.data;
+      } catch (error) {
+        console.error('Error fetching partners:', error);
+      }
+    },
+    
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
-    onEditOption(optionName) {
-      const edition = this.editions.find(e => e.name === optionName);
-      if (edition) this.selectedEdition = edition.id;
+    
+    onEditOption(editionName) {
+      const edition = this.editions.find(e => e.name === editionName);
+      if (edition) {
+        this.selectedEdition = edition.id;
+        localStorage.setItem('selectedEditionId', edition.id);
+        this.newPartner.edition_id = edition.id;
+        this.fetchPartnersByEdition();
+      }
       this.dropdownOpen = false;
     },
+    
     handleImageUpload(event, type) {
       const file = event.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (type === 'new') this.newPartner.image_url = reader.result;
-        if (type === 'update') this.selectedPartner.image_url = reader.result;
-      };
-      reader.readAsDataURL(file);
+      if (type === 'new') {
+        this.newPartner.image = file;
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.newPartner.image_url = reader.result;
+        };
+        reader.readAsDataURL(file);
+      }
+      
+      if (type === 'update') {
+        this.selectedPartner.image = file;
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.selectedPartner.image_url = reader.result;
+        };
+        reader.readAsDataURL(file);
+      }
     },
-    addPartner() {
-      const newEntry = {
-        ...this.newPartner,
-        id: this.nextId,
-        logo: this.newPartner.image_url
-      };
-      this.partners.push(newEntry);
-      this.resetNewPartner();
-      this.showAddModal = false;
+    getImageUrl(imagePath) {
+      return `http://localhost:8000/storage/${imagePath}`;
     },
+    
+    async addPartner() {
+      try {
+        const formData = new FormData();
+        formData.append('name', this.newPartner.name);
+        if (this.newPartner.image) {
+          formData.append('image', this.newPartner.image);
+        }
+        formData.append('edition_id', this.newPartner.edition_id);
+        formData.append('description', this.newPartner.description);
+        formData.append('phone', this.newPartner.phone);
+        formData.append('email', this.newPartner.email);
+
+        const response = await PartenaireService.createPartenaire(formData);
+        this.partners.push(response.data);
+        this.resetNewPartner();
+        this.showAddModal = false;
+      } catch (error) {
+        console.error('Error adding partner:', error);
+      }
+    },
+    
     resetNewPartner() {
       this.newPartner = {
         name: '',
+        image: null,
         image_url: '',
         edition_id: '',
         description: '',
@@ -190,27 +241,55 @@ export default {
         email: ''
       };
     },
+    
     openUpdateModal(partner) {
-      this.selectedPartner = { ...partner };
+      this.selectedPartner = { 
+        ...partner,
+        image: null,
+        image_url: partner.logo || partner.image_url
+      };
       this.showUpdateModal = true;
     },
-    updatePartner() {
-      const index = this.partners.findIndex(p => p.id === this.selectedPartner.id);
-      if (index !== -1) {
-        this.partners.splice(index, 1, {
-          ...this.selectedPartner,
-          logo: this.selectedPartner.image_url
-        });
+    
+    async updatePartner() {
+      try {
+        const formData = new FormData();
+        formData.append('name', this.selectedPartner.name);
+        if (this.selectedPartner.image) {
+          formData.append('image', this.selectedPartner.image);
+        }
+        formData.append('edition_id', this.selectedPartner.edition_id);
+        formData.append('description', this.selectedPartner.description);
+        formData.append('phone', this.selectedPartner.phone);
+        formData.append('email', this.selectedPartner.email);
+
+        const response = await PartenaireService.updatePartenaire(this.selectedPartner.id, formData);
+        
+        // Update local data
+        const index = this.partners.findIndex(p => p.id === this.selectedPartner.id);
+        if (index !== -1) {
+          this.partners.splice(index, 1, response.data);
+        }
+        
+        this.showUpdateModal = false;
+      } catch (error) {
+        console.error('Error updating partner:', error);
       }
-      this.showUpdateModal = false;
     },
+    
     openDeleteModal(partner) {
       this.selectedPartner = { ...partner };
       this.showDeleteModal = true;
     },
-    deletePartner() {
-      this.partners = this.partners.filter(p => p.id !== this.selectedPartner.id);
-      this.showDeleteModal = false;
+    
+    async deletePartner() {
+      try {
+        await PartenaireService.deletePartenaire(this.selectedPartner.id);
+        this.partners = this.partners.filter(p => p.id !== this.selectedPartner.id);
+        this.showDeleteModal = false;
+      } catch (error) {
+        console.error('Error deleting partner:', error);
+      }
     }
   }
 };
