@@ -27,7 +27,7 @@ class CommitteeMemberController extends Controller
             'committee' => 'required|string|max:255',
             'role' => 'required|string|max:255',
             'from_etablissement' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'edition_id' => 'required|exists:edition,id',
@@ -38,8 +38,8 @@ class CommitteeMemberController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('public/committee_members');
-            $validated['image_url'] = Storage::url($path);
+            $path = $request->file('image')->store('committee_members', 'public');
+            $validated['image_url'] = $path;
         }
 
         $member = CommitteeMember::create($validated);
@@ -68,7 +68,7 @@ class CommitteeMemberController extends Controller
             'committee' => 'sometimes|string|max:255',
             'role' => 'sometimes|string|max:255',
             'from_etablisement' => 'sometimes|string|max:255',
-            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:8192',
             'email' => 'sometimes|email|max:255',
             'phone' => 'sometimes|string|max:20',
             'edition_id' => 'sometimes|exists:edition,id',
@@ -87,8 +87,8 @@ class CommitteeMemberController extends Controller
                 Storage::delete($oldPath);
             }
 
-            $path = $request->file('image')->store('public/committee_members');
-            $validated['image_url'] = Storage::url($path);
+            $path = $request->file('image')->store('committee_members', 'public');
+            $validated['image_url'] = $path;
         }
 
         $member->update($validated);
