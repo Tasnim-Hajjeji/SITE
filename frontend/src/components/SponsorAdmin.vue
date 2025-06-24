@@ -41,6 +41,9 @@
           <button class="icon-btn" @click="deleteSponsor(sponsor.id)">
             <i class="fas fa-trash"></i>
           </button>
+          <button class="icon-btn" @click="openUpdateModal(sponsor)">
+            <i class="fas fa-edit"></i>
+          </button>
         </div>
 
         <div class="buttons" v-if="sponsor.etat === 'pending'">
@@ -71,6 +74,23 @@
         </div>
       </div>
     </div>
+
+    <!-- Update Modal -->
+    <div v-if="showUpdateModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Update Sponsor</h3>
+        <input v-model="selectedSponsor.name" placeholder="Company name" />
+        <input v-model="selectedSponsor.adresse" placeholder="Address" />
+        <input v-model="selectedSponsor.phone" placeholder="Phone" />
+        <input v-model="selectedSponsor.email" placeholder="Email" />
+        <textarea v-model="selectedSponsor.description" placeholder="Description"></textarea>
+        <input type="file" @change="onFileChangeUpdate" />
+        <div class="modal-actions">
+          <button class="cancel" @click="closeUpdateModal">Cancel</button>
+          <button>Save</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -86,6 +106,7 @@ export default {
       filter: 'all',
       showFilter: false,
       showAddModal: false,
+      showUpdateModal: false,
       isLoading: true,
       newSponsor: {
         name: '',
@@ -95,9 +116,21 @@ export default {
         description: '',
         logo: null,
         edition_id: localStorage.getItem('selectedEditionId') || useRoute().params.editionId,
-        etat: 'confirmed' ,
+        etat: 'confirmed',
       },
-      selectedFile: null
+      selectedSponsor: {
+        id: null,
+        name: '',
+        adresse: '',
+        phone: '',
+        email: '',
+        description: '',
+        logo: null,
+        edition_id: null,
+        etat: '',
+      },
+      selectedFile: null,
+      selectedUpdateFile: null,
     }
   },
   computed: {
@@ -156,6 +189,13 @@ export default {
         this.newSponsor.logo = URL.createObjectURL(file)
       }
     },
+    onFileChangeUpdate(event) {
+      const file = event.target.files[0]
+      if (file) {
+        this.selectedUpdateFile = file
+        this.selectedSponsor.logo = URL.createObjectURL(file)
+      }
+    },
     async addSponsor() {
       try {
         const formData = new FormData()
@@ -170,7 +210,6 @@ export default {
           formData.append('logo', this.selectedFile)
         }
         
-
         await SponsorService.createSponsor(formData)
         await this.fetchSponsors() // Refresh the list
         
@@ -199,6 +238,25 @@ export default {
         etat: 'confirmed'
       }
       this.selectedFile = null
+    },
+    openUpdateModal(sponsor) {
+      this.selectedSponsor = { ...sponsor }
+      this.showUpdateModal = true
+    },
+    closeUpdateModal() {
+      this.showUpdateModal = false
+      this.selectedSponsor = {
+        id: null,
+        name: '',
+        adresse: '',
+        phone: '',
+        email: '',
+        description: '',
+        logo: null,
+        edition_id: null,
+        etat: '',
+      }
+      this.selectedUpdateFile = null
     },
     getImageUrl(imagePath) {
       return `http://localhost:8000/storage/${imagePath}`;
