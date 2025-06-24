@@ -71,29 +71,37 @@ const messages = {
         footer: {
             contact: 'Contact us',
         },
-        schedule:{
+        schedule: {
             title: 'Conference',
-            sched:'Schedule',
-            description:"Explore the full schedule of our conference, including keynotes, workshops, sessions, and networking moments."
+            sched: 'Schedule',
+            description: "Explore the full schedule of our conference, including keynotes, workshops, sessions, and networking moments."
         },
-        voices:{
-            title:'Voices of ',
-            conf:'Conference',
-            subtitle:'Meet the experts leading our sessions and workshops. Their insights will spark ideas and meaningful conversations.'
+        voices: {
+            title: 'Voices of ',
+            conf: 'Conference',
+            subtitle: 'Meet the experts leading our sessions and workshops. Their insights will spark ideas and meaningful conversations.'
         },
         previousEditions: {
-            title:'Conference Highlights from',
-            highlight:'Previous Years',
-            carousel_subtitle_1:'From inspiring talks to vibrant exchanges, each edition brought something unique.',
-            carousel_subtitle_2:' Relive the highlights through photos and memories.',
-            button:'See More'
+            title: 'Conference Highlights from',
+            highlight: 'Previous Years',
+            carousel_subtitle_1: 'From inspiring talks to vibrant exchanges, each edition brought something unique.',
+            carousel_subtitle_2: ' Relive the highlights through photos and memories.',
+            button: 'See More'
 
         },
         partners: {
-            title:'Our Partners',
+            title: 'Our Partners',
         },
-        sponsors:{
+        sponsors: {
             title: 'Our Sponsors',
+        },
+        committees: {
+            title_scientific: 'Scientific Committee',
+            title_organizing: 'Organizing Committee',
+            discover_honor: 'Discover Our',
+            title_honor: 'Honor Committee',
+            description_honor1: 'The Honorary Committee brings together influential figures who share our vision and support our mission.',
+            description_honor2: 'Their presence reflects the quality and credibility of this conference.'
         }
     },
     fr: {
@@ -188,8 +196,15 @@ const messages = {
         },
         sponsors: {
             title: 'Nos Sponsors',
+        },
+        committees: {
+            title_scientific: 'Comité Scientifique',
+            title_organizing: 'Comité d\'Organisation',
+            discover_honor: 'Découvrez Notre',
+            title_honor: 'Comité d\'Honneur',
+            description_honor1: 'Le Comité d\'honneur réunit des personnalités influentes qui partagent notre vision et soutiennent notre mission.',
+            description_honor2: 'Leur présence reflète la qualité et la crédibilité de cette conférence.'
         }
-
     }
 };
 

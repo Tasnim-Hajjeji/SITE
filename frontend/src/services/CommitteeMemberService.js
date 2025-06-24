@@ -29,7 +29,7 @@ export default {
    * @returns {Promise} Axios promise
    */
   getMembersByEditionAndCommittee(editionId, committee) {
-    return axios.get(`/committee-members/${editionId}/${committee}`);
+    return axios.get(`/committee-members/edition/${editionId}/${committee}`);
   },
 
   /**

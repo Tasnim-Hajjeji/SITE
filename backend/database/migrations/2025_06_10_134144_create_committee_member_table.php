@@ -18,7 +18,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('full_name');
             $table->string('committee');
-            $table->string('role');
+            $table->string('role')->nullable(); //honor committee member does not have a role
             $table->string('from_etablissement');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();

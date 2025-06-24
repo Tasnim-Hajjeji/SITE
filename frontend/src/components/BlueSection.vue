@@ -100,7 +100,7 @@ export default {
   font-family: 'Segoe UI', sans-serif;
   color: white;
   text-align: center;
-  padding-bottom: 1rem;
+  padding-bottom: 3%;
   position: relative;
   overflow: hidden;
 }
@@ -132,7 +132,7 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
   gap: 1.7rem;
-  max-width: 1100px;
+  max-width: 95%;
   margin: 0 auto;
   padding: 0 1rem;
 }

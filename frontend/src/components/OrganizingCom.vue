@@ -1,9 +1,9 @@
 <template>
     <section class="committee-section">
-      <h2 class="committee-title">{{ $t('committees.title_scientific') }}</h2>
+      <h2 class="committee-title">{{ $t('committees.title_organizing') }}</h2>
   
       <!-- Chair seul en haut -->
-      <div class="chair-wrapper">
+      <div class="chair-wrapper" v-if="chair.full_name">
         <div class="card">
           <div
             class="card-image"
@@ -51,7 +51,7 @@
 
   onMounted(() => {
     var editionId = cookieUtils.getCookie('editionId');
-    CommitteeMemberService.getMembersByEditionAndCommittee(editionId, 'scientific')
+    CommitteeMemberService.getMembersByEditionAndCommittee(editionId, 'organizing')
       .then(response => {
         members.value = response.data;
         chair.value = members.value.find(member => member.role === 'chair') || {};

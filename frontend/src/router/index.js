@@ -55,6 +55,14 @@ const routes = [
     path: '/scientific',
     name: 'ScientificCom',
     component: ScientificCom,
+    props: { committeeType: 'scientific' },
+    meta: { layout: 'default' }
+  },
+  {
+    path: '/organizing',
+    name: 'OrganizingCom',
+    component: ScientificCom,
+    props: { committeeType: 'organizing' },
     meta: { layout: 'default' }
   },
   {

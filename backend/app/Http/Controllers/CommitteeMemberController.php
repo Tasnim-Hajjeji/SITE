@@ -25,7 +25,7 @@ class CommitteeMemberController extends Controller
         $validated = $request->validate([
             'full_name' => 'required|string|max:255',
             'committee' => 'required|string|max:255',
-            'role' => 'required|string|max:255',
+            'role' => 'sometimes|string|max:255',
             'from_etablissement' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
             'email' => 'nullable|email|max:255',

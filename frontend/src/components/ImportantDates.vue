@@ -140,9 +140,8 @@ export default {
 }
 
 .date-circle {
-  padding: 0.3rem;
-  width: 40px;
-  height: 35px;
+  width: 50px;
+  height: 45px;
   background-color: #bcd5e6;
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
   border-radius: 50%;
