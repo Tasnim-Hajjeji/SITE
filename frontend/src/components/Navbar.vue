@@ -1,7 +1,7 @@
 <template>
     <nav class="admin-navbar">
         <div class="navbar-left">
-            <img src="@/assets/logo.png" alt="Logo" class="logo" />
+            <img src="@/assets/logosite.png" alt="Logo" class="logo" />
             <span class="site-title">SITE 202X</span>
         </div>
 
@@ -10,7 +10,7 @@
         </div>
 
         <div class="navbar-right">
-            <img src="@/assets/logo.png" alt="Notifications" class="notification-icon" />
+            <img src="@/assets/avatar.png" alt="Notifications" class="notification-icon" />
             <span class="admin-name">Admin</span>
         </div>
     </nav>
@@ -30,8 +30,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 50px;
-    padding: 0 20px;
+    height: 60px;
+    padding: 0 25px;
     background-color: white;
     border-bottom: 2px solid #e0e0e0;
     font-family: 'Segoe UI', sans-serif;
@@ -44,13 +44,13 @@
 }
 
 .logo {
-    height: 24px;
-    width: 24px;
+    height: 30px;
+    width: 30px;
 }
 
 .site-title {
     font-weight: 700;
-    font-size: 16px;
+    font-size: 18px;
     color: #002b45;
 }
 
@@ -61,9 +61,9 @@
 }
 
 .search-input {
-    width: 250px;
-    height: 28px;
-    padding: 4px 10px;
+    width: 300px;
+    height: 34px;
+    padding: 6px 12px;
     border: 1px solid #ccc;
     border-radius: 14px;
     font-size: 14px;
@@ -77,12 +77,12 @@
 }
 
 .notification-icon {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
 }
 
 .admin-name {
-    font-size: 14px;
+    font-size: 16px;
     color: #333;
 }
 

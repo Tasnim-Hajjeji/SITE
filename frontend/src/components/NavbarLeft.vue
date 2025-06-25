@@ -4,43 +4,42 @@
     <ul>
       <router-link to="/admin" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Dashbord' }" @click="handleNavigation('Dashbord', navigate)">
-          <span class="icon">🏠</span>
+          <span class="icon"><i class="fas fa-home"></i></span>
           <span class="text">Editions</span>
         </li>
       </router-link>
 
       <router-link to="/admin/sponsor" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Sponsors' }" @click="handleNavigation('Sponsors', navigate)">
-        <span class="icon">💸</span>
-        <span class="text">Sponsors</span>
-      </li>
+          <span class="icon"><i class="fas fa-hand-holding-dollar"></i></span>
+          <span class="text">Sponsors</span>
+        </li>
       </router-link>
-      
 
       <router-link to="/admin/partnair" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Partenaires' }" @click="handleNavigation('Partenaires', navigate)">
-          <span class="icon">👤</span>
+          <span class="icon"><i class="fas fa-users"></i></span>
           <span class="text">Partners</span>
         </li>
       </router-link>
 
       <router-link to="/admin/speaker" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Intervenants' }" @click="handleNavigation('Intervenants', navigate)">
-          <span class="icon">🧑‍🏫</span>
+          <span class="icon"><i class="fas fa-chalkboard-teacher"></i></span>
           <span class="text">Speakers</span>
         </li>
       </router-link>
 
       <router-link to="/admin/participant-card" custom v-slot="{ navigate }">
-        <li :class="{ active: selected === 'participant-card' }"
-          @click="handleNavigation('participant-card', navigate)">
-          <span class="icon">🧑‍🤝‍🧑</span>
+        <li :class="{ active: selected === 'participant-card' }" @click="handleNavigation('participant-card', navigate)">
+          <span class="icon"><i class="fas fa-users-class"></i></span>
           <span class="text">Participants</span>
         </li>
       </router-link>
+
       <router-link to="/admin/committies" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Committies' }" @click="handleNavigation('Committies', navigate)">
-          <span class="icon">💬</span>
+          <span class="icon"><i class="fas fa-comments"></i></span>
           <span class="text">Committies</span>
         </li>
       </router-link>
@@ -90,6 +89,8 @@ defineExpose({ toggleSidebar, isOpen })
 </script>
 
 <style scoped>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+
 .sidebar {
   width: 220px;
   background-color: white;
@@ -140,9 +141,14 @@ li.active {
 }
 
 .icon {
-  font-size: 1.1rem;
+  font-size: 1.2rem; /* Légèrement agrandi pour un look plus luxueux */
   display: flex;
   align-items: center;
+  color: #265985; /* Couleur unifiée */
+}
+
+.icon i {
+  color: #265985; /* Assure que l'icône Font Awesome hérite de la couleur */
 }
 
 .text {
@@ -167,6 +173,10 @@ li.active {
 
   li.active .icon {
     color: #265985;
+  }
+
+  li.active .icon i {
+    color: #265985; /* Couleur de l'icône dans l'état actif */
   }
 }
 </style>
