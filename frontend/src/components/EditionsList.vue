@@ -4,7 +4,7 @@
     <div class="header">
       <h2>Éditions</h2>
       <button class="new-edition-btn" @click="showModal = true">
-        <span>➕</span> Nouvelle Édition
+        <i class="fas fa-plus text-white"></i> Nouvelle Édition
       </button>
     </div>
 
@@ -19,9 +19,9 @@
     </div>
 
     <!-- Edition Cards -->
-    <div v-if="!isLoading && !error">
+    <div v-if="!isLoading && !error" class="editions-container">
       <div class="edition-card" v-for="edition in editions" :key="edition.id">
-        <img src="@/assets/logosite.png"  class="edition-image"/>
+        <img :src="getRandomConferenceImage()" class="edition-image" />
         <div class="edition-info">
           <div class="title-status">
             <h3>{{ edition.name }}</h3>
@@ -34,14 +34,14 @@
           </div>
           <div class="details">
             <div class="detail">
-              <i class="icon">📍</i>
+              <i class="fas fa-map-marker-alt text-blue-700"></i>
               <div>
                 <strong>Lieu</strong>
                 <p>{{ edition.place }}</p>
               </div>
             </div>
             <div class="detail">
-              <i class="icon">🕒</i>
+              <i class="fas fa-calendar-alt text-blue-700"></i>
               <div>
                 <strong>Date</strong>
                 <p>{{ formatDateRange(edition.start_date, edition.end_date) }}</p>
@@ -57,26 +57,40 @@
 
     <!-- Modal -->
     <div v-if="showModal" class="modal-overlay">
-      <div class="modal">
-        <h2>Nouvelle Édition</h2>
-        <form @submit.prevent="addEdition">
-          <input type="text" v-model="newEdition.name" placeholder="Nom" required />
-          <textarea v-model="newEdition.description_fr" placeholder="Description (FR)" required></textarea>
-          <textarea v-model="newEdition.description_en" placeholder="Description (EN)" required></textarea>
-          <input type="date" v-model="newEdition.start_date" required />
-          <input type="date" v-model="newEdition.end_date" required />
-          <input type="text" v-model="newEdition.place" placeholder="Lieu" required />
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4">Nouvelle Édition</h3>
+        <form @submit.prevent="addEdition" class="space-y-4">
+          <input type="text" v-model="newEdition.name" placeholder="Nom" required
+            class="w-full p-2 border border-gray-300 rounded-lg" />
+          <textarea v-model="newEdition.description_fr" placeholder="Description (FR)" required
+            class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
+          <textarea v-model="newEdition.description_en" placeholder="Description (EN)" required
+            class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
+          <input type="date" v-model="newEdition.start_date" required
+            class="w-full p-2 border border-gray-300 rounded-lg" />
+          <input type="date" v-model="newEdition.end_date" required
+            class="w-full p-2 border border-gray-300 rounded-lg" />
+          <input type="text" v-model="newEdition.place" placeholder="Lieu" required
+            class="w-full p-2 border border-gray-300 rounded-lg" />
 
           <!-- PDF upload field -->
           <div class="file-upload">
-            <label for="sponsor-dossier">Dossier Sponsoring (PDF):</label>
-            <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelected" required />
-            <p v-if="pdfFileName" class="file-name">{{ pdfFileName }}</p>
+            <label for="sponsor-dossier" class="block mb-1 font-bold">Dossier Sponsoring (PDF):</label>
+            <div class="relative w-full">
+              <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelected" required
+                class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
+              <div
+                class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
+                <span class="text-gray-600">Choisir un fichier</span>
+                <i class="fas fa-download text-gray-600"></i>
+              </div>
+            </div>
+            <p v-if="pdfFileName" class="mt-1 text-sm text-gray-600">{{ pdfFileName }}</p>
           </div>
-
-          <div class="modal-actions">
+          <div class="modal-actions flex justify-end gap-2">
             <button type="submit" class="add-btn">Ajouter</button>
-            <button type="button" class="cancel-btn" @click="closeModal">Annuler</button>
+            <button type="button" class="cancel-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400"
+              @click="closeModal">Annuler</button>
           </div>
         </form>
       </div>
@@ -89,13 +103,12 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import EditionService from '@/services/EditionService';
 
-
 const router = useRouter();
 const showModal = ref(false);
 const isLoading = ref(true);
 const error = ref(null);
 const editions = ref([]);
-const pdfFileName = ref(''); // Add this line to define pdfFileName
+const pdfFileName = ref('');
 
 const newEdition = ref({
   name: '',
@@ -149,7 +162,7 @@ const getEditionStatus = (edition) => {
 const formatDateRange = (startDate, endDate) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
-  
+
   // Same month and year
   if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
     return `${start.getDate()} - ${end.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()}`;
@@ -187,19 +200,10 @@ const addEdition = async () => {
     formData.append('start_date', newEdition.value.start_date);
     formData.append('end_date', newEdition.value.end_date);
     formData.append('place', newEdition.value.place);
-    
-    // Append the PDF file with the correct field name
+
     if (newEdition.value.dossier_sponso) {
       formData.append('dossier_sponso', newEdition.value.dossier_sponso);
     }
-    // const editionData = {
-    //   name: newEdition.value.name,
-    //   description_fr: newEdition.value.description_fr,
-    //   description_en: newEdition.value.description_en,
-    //   start_date: newEdition.value.start_date,
-    //   end_date: newEdition.value.end_date,
-    //   place: newEdition.value.place
-    // };
     console.log('Form Data:', formData);
     const response = await EditionService.createEdition(formData);
     editions.value.unshift(response.data);
@@ -212,7 +216,7 @@ const addEdition = async () => {
 
 const selectEdition = (editionId) => {
   localStorage.setItem('selectedEditionId', editionId);
-  router.push({'name': 'AdEdition', params: { editionId } });
+  router.push({ name: 'AdEdition', params: { editionId } });
 };
 
 const closeModal = () => {
@@ -228,15 +232,26 @@ const closeModal = () => {
     dossier_sponso: null
   };
 };
+
+// Get random conference image
+const getRandomConferenceImage = () => {
+  const imageNumbers = [1, 2, 3, 4, 5, 6];
+  const randomIndex = Math.floor(Math.random() * imageNumbers.length);
+  return require(`@/assets/conference${imageNumbers[randomIndex]}.jpg`);
+};
 </script>
 
 <style scoped>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
+
 .editions-section {
   font-family: 'Segoe UI', sans-serif;
   width: 100%;
   max-width: 1200px;
   margin: auto;
   padding: 1rem;
+  margin-top: 2rem;
+  /* Augmenté pour plus d'espace en haut */
 }
 
 .header {
@@ -253,8 +268,8 @@ const closeModal = () => {
 }
 
 .new-edition-btn {
-  border: 1px solid #000;
-  background: white;
+  border: 1px solid #265985;
+  background: #265985;
   padding: 0.5rem 1rem;
   border-radius: 999px;
   font-weight: 500;
@@ -263,13 +278,16 @@ const closeModal = () => {
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
+  color: white;
 }
 
 .new-edition-btn:hover {
-  border-color: #265985;
-  color: #265985;
-  background-color: #fff;
+  background-color: #1e4b6b;
   transform: scale(1.05);
+}
+
+.editions-container {
+  margin-top: 1.5rem;
 }
 
 .edition-card {
@@ -278,7 +296,6 @@ const closeModal = () => {
   align-items: flex-start;
   background: white;
   border-radius: 15px;
-  margin-top: 1.5rem;
   padding: 1rem;
   box-shadow: 0 9px 40px rgba(0, 0, 0, 0.05);
   gap: 1rem;
@@ -287,7 +304,7 @@ const closeModal = () => {
 }
 
 .edition-card:hover {
-  transform: translateY(-5px);
+  transform: translateY Stan(-5px);
   box-shadow: 0 12px 50px rgba(0, 0, 0, 0.1);
 }
 
@@ -318,49 +335,6 @@ const closeModal = () => {
   background-color: #ffebee;
   color: #c62828;
   border: 1px solid #c62828;
-}
-
-.edition-image.placeholder {
-  background: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  font-size: 0.8rem;
-}
-.file-upload {
-  margin-bottom: 1rem;
-}
-
-.file-upload label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.file-upload input[type="file"] {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.file-name {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .edition-image {
@@ -415,14 +389,14 @@ const closeModal = () => {
   color: #666;
 }
 
-.detail strong {
-  color: #3c3c9c;
-  font-size: 0.9rem;
+.detail i {
+  color: #265985;
+  font-size: 1.3rem;
 }
 
-.icon {
-  font-size: 1.3rem;
-  color: #6a0dad;
+.detail strong {
+  color: #265985;
+  font-size: 0.9rem;
 }
 
 .voir-plus {
@@ -443,72 +417,105 @@ const closeModal = () => {
   transform: translateY(-2px);
 }
 
-/* === MODAL === */
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   z-index: 999;
 }
 
-.modal {
+.modal-content {
   background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 9px 40px rgba(0, 0, 0, 0.1);
-  animation: fadeInUp 0.4s ease;
-}
-
-.modal h2 {
-  margin-bottom: 1rem;
-  color: #265985;
-}
-
-.modal input,
-.modal textarea {
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.6rem;
-  border: 1px solid #ccc;
+  padding: 30px;
   border-radius: 10px;
-  font-size: 1rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  /* Limit modal height to 80% of viewport height */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* Smooth scrolling on mobile */
 }
 
-.modal textarea {
-  resize: vertical;
-  height: 80px;
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
 }
 
 .modal-actions {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.file-upload {
+  margin-bottom: 1rem;
+}
+
+.file-upload label {
+  display: “block”;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.file-upload input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.file-name {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .add-btn {
   background: #265985;
   color: white;
   border: none;
-  padding: 0.6rem 1rem;
+  padding: 0.7rem 1.2rem;
   border-radius: 10px;
+  font-weight: bold;
   cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
-.cancel-btn {
-  background: #ccc;
-  color: #333;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
-  cursor: pointer;
+.add-btn:hover {
+  background: #1e4b6b;
+  transform: translateY(-2px);
 }
 
 /* RESPONSIVE */
@@ -534,6 +541,24 @@ const closeModal = () => {
   .new-edition-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .modal-content {
+    max-height: 90vh;
+    /* Slightly more height on smaller screens */
+    padding: 20px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
