@@ -36,6 +36,7 @@
         <div class="tools">
           <button class="icon-btn" @click="openEditModal(speaker)"><i class="fas fa-edit"></i></button>
           <button class="icon-btn" @click="openDeleteModal(speaker)"><i class="fas fa-trash"></i></button>
+          <button class="icon-btn" @click="openProgramModal(speaker)"><i class="fas fa-calendar-plus"></i></button>
         </div>
       </div>
     </div>
@@ -86,6 +87,34 @@
         <button @click="showDeleteModal = false">Cancel</button>
       </div>
     </div>
+
+    <!-- Modal Program -->
+    <div v-if="showProgramModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 w-full max-w-2xl shadow-lg max-h-[80vh] overflow-y-auto">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Add/Remove Programmes for {{ selectedSpeaker.full_name }}</h3>
+        <div class="space-y-4">
+          <div v-for="(program, index) in programs" :key="index" class="p-4 border rounded-lg flex justify-between items-center" :class="{ 'border-2 border-blue-500': selectedPrograms.includes(program.id) }">
+            <div>
+              <p class="text-sm font-medium text-gray-700">{{ program.title }}</p>
+              <p class="text-xs text-gray-500">Start: {{ program.startDate }} - End: {{ program.endDate }}</p>
+              <p class="text-xs text-gray-500">{{ program.description }}</p>
+            </div>
+            <div class="flex space-x-2">
+              <button @click="addProgram(program.id)" class="text-green-500 hover:text-green-700">
+                <i class="fas fa-plus"></i>
+              </button>
+              <button @click="removeProgram(program.id)" class="text-red-500 hover:text-red-700">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 flex justify-end space-x-4">
+          <button @click="closeProgramModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+          <button @click="confirmPrograms" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Confirm</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -104,6 +133,9 @@ export default {
       showAddModal: false,
       showEditModal: false,
       showDeleteModal: false,
+      showProgramModal: false,
+      selectedSpeaker: null,
+      selectedPrograms: [],
       newSpeaker: {
         full_name: "",
         description_fr: "",
@@ -118,6 +150,12 @@ export default {
       editSpeaker: null,
       deleteSpeakerData: null,
       speakers: [],
+      programs: [
+        { id: 1, title: "Keynote Address", startDate: "2025-06-25 09:00", endDate: "2025-06-25 10:00", description: "Opening speech by the chief guest" },
+        { id: 2, title: "Panel Discussion", startDate: "2025-06-25 10:30", endDate: "2025-06-25 12:00", description: "Experts discussing future trends" },
+        { id: 3, title: "Workshop Session", startDate: "2025-06-25 13:30", endDate: "2025-06-25 15:00", description: "Hands-on training on new technologies" },
+        { id: 4, title: "Closing Ceremony", startDate: "2025-06-25 16:00", endDate: "2025-06-25 17:00", description: "Awards and closing remarks" },
+      ],
     };
   },
   async created() {
@@ -256,6 +294,32 @@ export default {
       } catch (error) {
         console.error('Error deleting speaker:', error);
       }
+    },
+    openProgramModal(speaker) {
+      this.selectedSpeaker = speaker;
+      this.selectedPrograms = speaker.programs ? speaker.programs.map(p => p.id) : [];
+      this.showProgramModal = true;
+    },
+    addProgram(programId) {
+      if (!this.selectedPrograms.includes(programId)) {
+        this.selectedPrograms.push(programId);
+      }
+    },
+    removeProgram(programId) {
+      const index = this.selectedPrograms.indexOf(programId);
+      if (index !== -1) {
+        this.selectedPrograms.splice(index, 1);
+      }
+    },
+    closeProgramModal() {
+      this.showProgramModal = false;
+      this.selectedSpeaker = null;
+      this.selectedPrograms = [];
+    },
+    confirmPrograms() {
+      // Placeholder for backend integration
+      console.log('Confirmed programs for', this.selectedSpeaker.full_name, ':', this.selectedPrograms);
+      this.closeProgramModal();
     },
   },
 };
