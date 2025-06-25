@@ -24,11 +24,13 @@
       <div class="card" v-for="speaker in speakers" :key="speaker.id">
         <h2 class="name">
           {{ speaker.full_name }}
-          <img class="flag" :src="`https://flagcdn.com/${speaker.code_pays.toLowerCase()}.svg`" :alt="speaker.code_pays" />
+          <img class="flag" :src="`https://flagcdn.com/${speaker.code_pays.toLowerCase()}.svg`"
+            :alt="speaker.code_pays" />
         </h2>
         <p class="desc"><strong>Profession :</strong> {{ speaker.profession_fr }}</p>
         <p class="desc"><strong>Intervention :</strong> {{ speaker.description_fr }}</p>
-        <p class="info">📌 <span class="count">{{ speaker.programs ? speaker.programs.length : 0 }}</span> Intervention(s)</p>
+        <p class="info">📌 <span class="count">{{ speaker.programs ? speaker.programs.length : 0 }}</span>
+          Intervention(s)</p>
         <div class="info">
           <img class="avatar" :src="getImageUrl(speaker.image_url)" :alt="speaker.full_name" />
           <span>{{ speaker.institut }}</span>
@@ -91,27 +93,57 @@
     <!-- Modal Program -->
     <div v-if="showProgramModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 w-full max-w-2xl shadow-lg max-h-[80vh] overflow-y-auto">
-        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Add/Remove Programmes for {{ selectedSpeaker.full_name }}</h3>
-        <div class="space-y-4">
-          <div v-for="(program, index) in programs" :key="index" class="p-4 border rounded-lg flex justify-between items-center" :class="{ 'border-2 border-blue-500': selectedPrograms.includes(program.id) }">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+          Add/Remove Programmes for {{ selectedSpeaker.full_name }}
+        </h3>
+
+        <div class="flex justify-end mb-4">
+          <button @click="selectedPrograms = []" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            :disabled="isUpdatingPrograms || selectedPrograms.length === 0">
+            Remove All
+          </button>
+        </div>
+
+        <div v-if="isLoadingPrograms" class="text-center py-4">
+          Loading programs...
+        </div>
+
+        <div v-else class="space-y-4">
+          <div v-for="(program, index) in programs" :key="index"
+            class="p-4 border rounded-lg flex justify-between items-center"
+            :class="{ 'border-2 border-blue-500': selectedPrograms.includes(program.id) }">
             <div>
-              <p class="text-sm font-medium text-gray-700">{{ program.title }}</p>
-              <p class="text-xs text-gray-500">Start: {{ program.startDate }} - End: {{ program.endDate }}</p>
-              <p class="text-xs text-gray-500">{{ program.description }}</p>
+              <p class="text-sm font-medium text-gray-700">{{ program.name_fr }}</p>
+              <p class="text-xs text-gray-500">Start: {{ program.time_start }} - End: {{ program.time_end }}</p>
+              <p class="text-xs text-gray-500">{{ program.description_fr }}</p>
             </div>
             <div class="flex space-x-2">
-              <button @click="addProgram(program.id)" class="text-green-500 hover:text-green-700">
+              <button @click="addProgram(program.id)" class="text-green-500 hover:text-green-700"
+                :disabled="isUpdatingPrograms">
                 <i class="fas fa-plus"></i>
               </button>
-              <button @click="removeProgram(program.id)" class="text-red-500 hover:text-red-700">
+              <button @click="removeProgram(program.id)" class="text-red-500 hover:text-red-700"
+                :disabled="isUpdatingPrograms">
                 <i class="fas fa-minus"></i>
               </button>
             </div>
           </div>
+
+          <div v-if="programs.length === 0" class="text-center py-4 text-gray-500">
+            No programs found for this edition.
+          </div>
         </div>
+
         <div class="mt-6 flex justify-end space-x-4">
-          <button @click="closeProgramModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
-          <button @click="confirmPrograms" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Confirm</button>
+          <button @click="closeProgramModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400"
+            :disabled="isUpdatingPrograms">
+            Cancel
+          </button>
+          <button @click="confirmPrograms" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            :disabled="isUpdatingPrograms">
+            <span v-if="isUpdatingPrograms">Saving...</span>
+            <span v-else>Confirm</span>
+          </button>
         </div>
       </div>
     </div>
@@ -121,6 +153,7 @@
 <script>
 import IntervenantService from '@/services/IntervenantService';
 import EditionService from '@/services/EditionService';
+import ProgramService from '@/services/ProgramService';
 
 export default {
   name: "SpeakerAdmin",
@@ -150,23 +183,20 @@ export default {
       editSpeaker: null,
       deleteSpeakerData: null,
       speakers: [],
-      programs: [
-        { id: 1, title: "Keynote Address", startDate: "2025-06-25 09:00", endDate: "2025-06-25 10:00", description: "Opening speech by the chief guest" },
-        { id: 2, title: "Panel Discussion", startDate: "2025-06-25 10:30", endDate: "2025-06-25 12:00", description: "Experts discussing future trends" },
-        { id: 3, title: "Workshop Session", startDate: "2025-06-25 13:30", endDate: "2025-06-25 15:00", description: "Hands-on training on new technologies" },
-        { id: 4, title: "Closing Ceremony", startDate: "2025-06-25 16:00", endDate: "2025-06-25 17:00", description: "Awards and closing remarks" },
-      ],
+      programs: [],
+      isLoadingPrograms: false,
+      isUpdatingPrograms: false,
     };
   },
   async created() {
     await this.fetchEditions();
-    
+
     // Set initial edition from route params or localStorage
     const routeEditionId = this.$route.params.editionId;
     const storedEditionId = localStorage.getItem('selectedEditionId');
-    
+
     this.selectedEditionId = routeEditionId || storedEditionId || (this.editions.length > 0 ? this.editions[0].id : null);
-    
+
     if (this.selectedEditionId) {
       localStorage.setItem('selectedEditionId', this.selectedEditionId);
       await this.fetchSpeakers();
@@ -177,7 +207,7 @@ export default {
       try {
         const response = await EditionService.getAllEditions();
         this.editions = response.data;
-        
+
         if (this.editions.length > 0 && !this.selectedEditionId) {
           this.selectedEditionId = this.editions[0].id;
           this.selectedEditionName = this.editions[0].name;
@@ -193,6 +223,7 @@ export default {
       try {
         const response = await IntervenantService.getIntervenantsByEdition(this.selectedEditionId);
         this.speakers = response.data;
+        console.log('Speakers fetched:', this.speakers);
       } catch (error) {
         console.error('Error fetching speakers:', error);
       }
@@ -231,14 +262,14 @@ export default {
       try {
         console.log('Adding speaker:', this.newSpeaker);
         const formData = new FormData();
-        
+
         // Append all speaker data to formData
         Object.keys(this.newSpeaker).forEach(key => {
           if (key !== 'image' && this.newSpeaker[key] !== null) {
             formData.append(key, this.newSpeaker[key]);
           }
         });
-        
+
         if (this.newSpeaker.image) {
           formData.append('photo', this.newSpeaker.image);
         }
@@ -263,14 +294,14 @@ export default {
     async updateSpeaker() {
       try {
         const formData = new FormData();
-        
+
         // Append all speaker data to formData
         Object.keys(this.editSpeaker).forEach(key => {
           if (key !== 'image' && this.editSpeaker[key] !== null && key !== 'image_url') {
             formData.append(key, this.editSpeaker[key]);
           }
         });
-        
+
         if (this.editSpeaker.image) {
           formData.append('photo', this.editSpeaker.image);
         }
@@ -295,10 +326,21 @@ export default {
         console.error('Error deleting speaker:', error);
       }
     },
-    openProgramModal(speaker) {
+    async openProgramModal(speaker) {
       this.selectedSpeaker = speaker;
       this.selectedPrograms = speaker.programs ? speaker.programs.map(p => p.id) : [];
-      this.showProgramModal = true;
+      this.isLoadingPrograms = true;
+
+      try {
+        const response = await ProgramService.getProgramsByEdition(this.selectedEditionId);
+        this.programs = response.data;
+        this.showProgramModal = true;
+      } catch (error) {
+        console.error('Error fetching programs:', error);
+        // Handle error (show notification, etc.)
+      } finally {
+        this.isLoadingPrograms = false;
+      }
     },
     addProgram(programId) {
       if (!this.selectedPrograms.includes(programId)) {
@@ -306,21 +348,42 @@ export default {
       }
     },
     removeProgram(programId) {
-      const index = this.selectedPrograms.indexOf(programId);
-      if (index !== -1) {
-        this.selectedPrograms.splice(index, 1);
-      }
+      this.selectedPrograms = this.selectedPrograms.filter(id => id !== programId);
     },
     closeProgramModal() {
       this.showProgramModal = false;
       this.selectedSpeaker = null;
       this.selectedPrograms = [];
     },
-    confirmPrograms() {
-      // Placeholder for backend integration
-      console.log('Confirmed programs for', this.selectedSpeaker.full_name, ':', this.selectedPrograms);
-      this.closeProgramModal();
-    },
+    async confirmPrograms() {
+      if (!this.selectedSpeaker) return;
+
+      this.isUpdatingPrograms = true;
+
+      try {
+        const formData = new FormData();
+
+        // Add program_ids in a way Laravel will understand as an array
+        this.selectedPrograms.forEach((id, index) => {
+          formData.append(`program_ids[${index}]`, id);
+        });
+
+        // Explicitly handle empty array case
+        if (this.selectedPrograms.length === 0) {
+          formData.append('program_ids', ''); // Laravel will convert this to empty array
+        }
+
+        await IntervenantService.updateIntervenant(this.selectedSpeaker.id, formData);
+        await this.fetchSpeakers();
+        this.closeProgramModal();
+
+      } catch (error) {
+        console.error('Error updating speaker programs:', error);
+        // Show error notification to user
+      } finally {
+        this.isUpdatingPrograms = false;
+      }
+    }
   },
 };
 </script>
@@ -381,7 +444,7 @@ export default {
 }
 
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
-  
+
 .container {
   padding: 24px;
   font-family: "Segoe UI", sans-serif;

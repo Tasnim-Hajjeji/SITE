@@ -26,5 +26,6 @@ export default {
     },
     deleteIntervenant(id) {
         return axios.delete(`/intervenants/${id}`);
-    }
+    },
+    
 }
