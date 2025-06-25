@@ -44,7 +44,7 @@
             <p>Payment: {{ participant.details.payment }}</p>
             <p>Total: {{ participant.details.total }}</p>
             <button class="download-btn" @click="openPaymentModal(index)">
-              <i class="fas fa-download"></i> Payment Proof
+              <i class="fas fa-eye"></i> Payment Proof
             </button>
           </div>
         </transition>
@@ -201,9 +201,10 @@
         <div class="bg-white p-6 rounded-lg w-full max-w-2xl shadow-md font-poppins max-h-[90vh] overflow-y-auto">
           <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Payment Proof</h3>
           <img src="@/assets/coeur.png" alt="Payment Proof" class="w-full h-auto max-h-[70vh] object-contain mb-4" />
-          <div class="flex justify-end">
-            <button class="btn confirm" @click="downloadPaymentProof"><i class="fas fa-download"></i> Download Payment
-              Proof</button>
+          <div class="flex justify-end space-x-3">
+            <button class="btn confirm" @click="downloadPaymentProof">
+              <i class="fas fa-download"></i> Download Payment Proof
+            </button>
             <button class="btn cancel" @click="closePaymentModal">Cancel</button>
           </div>
         </div>
@@ -381,6 +382,16 @@ export default {
       this.showPaymentModal = false;
       this.paymentIndex = null;
     },
+    downloadPaymentProof() {
+      const imageUrl = require('@/assets/coeur.png');
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = `payment_proof_${this.participants[this.paymentIndex].name.replace(/\s+/g, '_')}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      this.closePaymentModal();
+    },
     resetEditParticipant() {
       this.editParticipant = {
         name: '',
@@ -471,6 +482,9 @@ h1 {
   border: none;
   padding: 0.3rem 1rem;
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .delete {
@@ -546,7 +560,6 @@ h1 {
   justify-content: space-between;
   align-items: center;
   margin-top: 32px;
-  /* Added to create space for .tools icons */
 }
 
 .title {
