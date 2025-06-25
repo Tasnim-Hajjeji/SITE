@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <!-- Modal -->
+ <!-- Modal -->
 <div v-if="showModal" class="modal-overlay">
   <div class="modal-content">
     <h3 class="text-xl font-bold text-blue-700 mb-4">Nouvelle Édition</h3>
@@ -106,10 +106,11 @@
       </div>
       <div class="modal-actions flex justify-end gap-2">
         <button type="submit" class="add-btn">Ajouter</button>
-        <button type="button" class="cancel-btn bg-gray-300 text-gray-800 px-6 py-2">Annuler</button>
+        <button type="button" class="cancel-btn bg-gray-300 text-gray-800 px-6 py-2 rounded-lg" @click="closeModal">Annuler</button>
       </div>
     </form>
   </div>
+
 </div>
   </section>
 </template>
