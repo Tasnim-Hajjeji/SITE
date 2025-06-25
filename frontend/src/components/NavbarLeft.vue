@@ -32,7 +32,7 @@
 
       <router-link to="/admin/participant-card" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'participant-card' }" @click="handleNavigation('participant-card', navigate)">
-          <span class="icon"><i class="fas fa-users-class"></i></span>
+          <span class="icon"><i class="fas fa-users"></i></span>
           <span class="text">Participants</span>
         </li>
       </router-link>
