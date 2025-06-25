@@ -22,32 +22,42 @@ class ParticipantController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|email|unique:participant,email',
-            'fonction' => 'required|string|max:255',
-            'tel' => 'required|string|max:255',
-            'pays' => 'required|string|max:255',
-            'est_tunisien' => 'required|boolean',
-            'etablissement' => 'required|string|max:255',
-            'num_enfant' => 'required|integer|min:0',
-            'num_adulte' => 'required|integer|min:0',
-            'supp_single' => 'required|boolean',
-            'supp_nuit' => 'required|boolean',
-            'prix_total' => 'required|integer|min:0',
-            'edition_id' => 'required|exists:edition,id',
-            'methode_paie' => 'required|string|max:255',
-            'recu_paie' => 'required|file',
-        ]);
-        unset($validated['recu_paie']); // Remove recu_paie from validation array
-        if ($request->hasFile('recu_paie')) {
-            $path = $request->file('recu_paie')->store('recu_paie');
-            $validated['recu_paie'] = Storage::url($path);
-        }
-        $participant = Participant::create($validated);
+        try{
 
-        return response()->json($participant, 201);
+            $validated = $request->validate([
+                'nom' => 'required|string|max:255',
+                'prenom' => 'required|string|max:255',
+                'email' => 'required|email|unique:participant,email',
+                'fonction' => 'required|string|max:255',
+                'tel' => 'required|string|max:255',
+                'pays' => 'required|string|max:255',
+                'est_tunisien' => 'required|in:true,false,1,0',
+                'participation' => 'required|string|max:255',
+                'accomodation' => 'nullable|in:true,false,1,0',
+                'etablissement' => 'required|string|max:255',
+                'num_enfant' => 'required|integer|min:0',
+                'num_adulte' => 'required|integer|min:0',
+                'supp_single' => 'required|in:true,false,1,0',
+                'supp_nuit' => 'required|integer|min:0',
+                'prix_total' => 'required|integer|min:0',
+                'edition_id' => 'required|exists:edition,id',
+                'methode_paie' => 'required|string|max:255',
+                'recu_paie' => 'required|file',
+            ]);
+            unset($validated['recu_paie']); // Remove recu_paie from validation array
+            if ($request->hasFile('recu_paie')) {
+                $path = $request->file('recu_paie')->store('recu_paie', 'public');
+                $validated['recu_paie'] = $path;
+            }
+            $validated['est_tunisien'] = filter_var($validated['est_tunisien'], FILTER_VALIDATE_BOOLEAN);
+            $validated['supp_single'] = filter_var($validated['supp_single'], FILTER_VALIDATE_BOOLEAN);
+            $validated['accomodation'] = filter_var($validated['accomodation'], FILTER_VALIDATE_BOOLEAN);
+            $participant = Participant::create($validated);
+    
+            return response()->json($participant, 201);
+        }catch (\Exception $e) {
+            return response()->json(['error' => 'Error creating participant: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -69,16 +79,18 @@ class ParticipantController extends Controller
             $validated = $request->validate([
                 'nom' => 'sometimes|string|max:255',
                 'prenom' => 'sometimes|string|max:255',
-                'email' => 'sometimes|email|unique:participant,email,' . $id,
+                'email' => 'sometimes|email' ,
                 'fonction' => 'sometimes|string|max:255',
                 'tel' => 'sometimes|string|max:255',
                 'pays' => 'sometimes|string|max:255',
-                'est_tunisien' => 'sometimes|boolean',
+                'est_tunisien' => 'sometimes|in:true,false,1,0',
+                'participation' => 'sometimes|string|max:255',
+                'accomodation' => 'sometimes|in:true,false,1,0',
                 'etablissement' => 'sometimes|string|max:255',
                 'num_enfant' => 'sometimes|integer|min:0',
                 'num_adulte' => 'sometimes|integer|min:0',
-                'supp_single' => 'sometimes|boolean',
-                'supp_nuit' => 'sometimes|boolean',
+                'supp_single' => 'sometimes|in:true,false,1,0',
+                'supp_nuit' => 'sometimes|integer|min:0',
                 'edition_id' => 'sometimes|exists:edition,id',
                 'methode_paie' => 'sometimes|string|max:255',
                 'recu_paie' => 'sometimes|file',
@@ -98,15 +110,24 @@ class ParticipantController extends Controller
                     Storage::disk('public')->delete($relativePath);
                 }
 
-                $path = $request->file('recu_paie')->store('recu_paie');
-                $validated['recu_paie'] = Storage::url($path);
+                $path = $request->file('recu_paie')->store('recu_paie', 'public');
+                $validated['recu_paie'] = $path;
+            }
+            if (isset($validated['est_tunisien'])) {
+                $validated['est_tunisien'] = filter_var($validated['est_tunisien'], FILTER_VALIDATE_BOOLEAN);
+            }
+            if (isset($validated['supp_single'])) {
+                $validated['supp_single'] = filter_var($validated['supp_single'], FILTER_VALIDATE_BOOLEAN);
+            }
+            if (isset($validated['accomodation'])) {
+                $validated['accomodation'] = filter_var($validated['accomodation'], FILTER_VALIDATE_BOOLEAN);
             }
 
             $participant->update($validated);
 
             return response()->json($participant);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Participant not found or invalid data'], 404);
+            return response()->json(['error' => 'Participant not found or invalid data'.$e->getMessage()], 404);
         }
     }
 
@@ -140,4 +161,5 @@ class ParticipantController extends Controller
             ->get();
         return response()->json($participants);
     }
+    
 }

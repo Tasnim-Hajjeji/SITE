@@ -1,14 +1,14 @@
 <template>
   <div class="container">
-    <h1>Participants 2024 ({{ participants.length }} participants)</h1>
+    <h1>Participants {{ this.selectedEditionName }} ({{ participants.length }} participants)</h1>
 
     <div class="actions">
       <div class="dropdown" @click="toggleDropdown">
         <button class="btn edit">Edition ▼</button>
         <ul v-if="dropdownOpen" class="dropdown-menu">
-          <li @click="onEditOption('Edition 2024')">Edition 2024</li>
-          <li @click="onEditOption('Edition 2023')">Edition 2023</li>
-          <li @click="onEditOption('Edition 2022')">Edition 2022</li>
+          <li v-for="edition in editions" :key="edition.id" @click="setSelectedEdition(edition.id)">
+            {{ edition.name }}
+          </li>
         </ul>
       </div>
     </div>
@@ -200,7 +200,8 @@
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
         <div class="bg-white p-6 rounded-lg w-full max-w-2xl shadow-md font-poppins max-h-[90vh] overflow-y-auto">
           <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Payment Proof</h3>
-          <img src="@/assets/coeur.png" alt="Payment Proof" class="w-full h-auto max-h-[70vh] object-contain mb-4" />
+          <img :src="getImageUrl(this.currentPaymentProof)" alt="Payment Proof"
+            class="w-full h-auto max-h-[70vh] object-contain mb-4" />
           <div class="flex justify-end space-x-3">
             <button class="btn confirm" @click="downloadPaymentProof">
               <i class="fas fa-download"></i> Download Payment Proof
@@ -214,6 +215,9 @@
 </template>
 
 <script>
+import ParticipantService from '@/services/ParticipantService';
+import EditionService from '@/services/EditionService';
+
 export default {
   name: "ParticipantCard",
   data() {
@@ -224,6 +228,8 @@ export default {
       showPaymentModal: false,
       editIndex: null,
       paymentIndex: null,
+      editions: [], // To store fetched editions
+      selectedEditionName: '',
       editParticipant: {
         name: '',
         date: '',
@@ -244,97 +250,74 @@ export default {
           total: ''
         }
       },
-      participants: [
-        {
-          name: "Maria Garcia",
-          date: "12-10-2025",
-          country: "Spain",
-          profession: "Researcher",
-          institution: "University of Barcelona",
-          email: "maria.garcia@example.com",
-          phone: "+34 123 456 789",
-          showDetails: false,
-          details: {
-            participation: "with paper",
-            accommodation: "no",
-            children: 0,
-            adults: 1,
-            singleSupplement: "no",
-            extraNights: 0,
-            payment: "chèque",
-            total: "300 EUR",
-          },
-        },
-        {
-          name: "John Smith",
-          date: "11-09-2025",
-          country: "USA",
-          profession: "Engineer",
-          institution: "MIT",
-          email: "john.smith@example.com",
-          phone: "+1 555 123 4567",
-          showDetails: false,
-          details: {
-            participation: "without paper",
-            accommodation: "yes",
-            children: 2,
-            adults: 2,
-            singleSupplement: "yes",
-            extraNights: 2,
-            payment: "bon de commande",
-            total: "450 USD",
-          },
-        },
-        {
-          name: "Fatima Ben Ali",
-          date: "10-09-2025",
-          country: "Tunisia",
-          profession: "Teacher",
-          institution: "ENSI",
-          email: "fatima.benali@example.tn",
-          phone: "+216 98 765 432",
-          showDetails: false,
-          details: {
-            participation: "with paper",
-            accommodation: "yes",
-            children: 1,
-            adults: 1,
-            singleSupplement: "no",
-            extraNights: 1,
-            payment: "virement",
-            total: "250 TND",
-          },
-        },
-        {
-          name: "Liam Nguyen",
-          date: "13-10-2025",
-          country: "Vietnam",
-          profession: "Professor",
-          institution: "Hanoi University",
-          email: "liam.nguyen@example.vn",
-          phone: "+84 123 456 789",
-          showDetails: false,
-          details: {
-            participation: "without paper",
-            accommodation: "no",
-            children: 0,
-            adults: 1,
-            singleSupplement: "no",
-            extraNights: 0,
-            payment: "chèque",
-            total: "280 USD",
-          },
-        },
-      ],
+      participants: [], // Will be populated from API
+      selectedEditionId: null,
+      currentPaymentProof: null
     };
   },
+  async created() {
+    await this.fetchEditions();
+    this.setSelectedEdition();
+    await this.fetchParticipants();
+  },
   methods: {
+    async fetchEditions() {
+      try {
+        const response = await EditionService.getAllEditions();
+        this.editions = response.data;
+        this.selectedEditionId = localStorage.getItem('selectedEditionId') || this.editions[0].id;
+        const selectedEdition = this.editions.find(e => e.id == this.selectedEditionId);
+        this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
+      } catch (error) {
+        console.error('Error fetching editions:', error);
+      }
+    },
+    setSelectedEdition(editionId) {
+      this.selectedEditionId = editionId || localStorage.getItem('selectedEditionId');
+      const selectedEdition = this.editions.find(e => e.id == this.selectedEditionId);
+        this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
+      this.dropdownOpen = false;
+      this.fetchParticipants();
+    },
+    async fetchParticipants() {
+      if (!this.selectedEditionId) return;
+
+      try {
+        const response = await ParticipantService.getParticipantsByEdition(this.selectedEditionId);
+        this.participants = response.data.map(p => ({
+          ...p,
+          showDetails: false,
+          // Map backend fields to frontend structure
+          name: `${p.prenom} ${p.nom}`,
+          date: p.created_at ? new Date(p.created_at).toLocaleDateString() : 'N/A',
+          country: p.pays,
+          profession: p.fonction,
+          institution: p.etablissement,
+          email: p.email,
+          phone: p.tel,
+          details: {
+            participation: p.participation || 'N/A', 
+            accommodation: p.accommodation ? 'Yes' : 'No',
+            children: p.num_enfant,
+            adults: p.num_adulte,
+            singleSupplement: p.supp_single ? 'Yes' : 'No',
+            extraNights: p.supp_nuit ? 1 : 0,
+            payment: p.methode_paie,
+            total: p.prix_total
+          }
+        }));
+      } catch (error) {
+        console.error('Error fetching participants:', error);
+      }
+    },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
-    onEditOption(option) {
+    async onEditOption(editionId) {
       this.dropdownOpen = false;
-      alert(`Option sélectionnée : ${option}`);
+      this.selectedEditionId = editionId;
+      localStorage.setItem('selectedEditionId', editionId);
+      await this.fetchParticipants();
     },
     toggleDetails(index) {
       this.participants = this.participants.map((p, i) => {
@@ -353,11 +336,37 @@ export default {
       this.showUpdateModal = !this.showUpdateModal;
       if (!this.showUpdateModal) this.resetEditParticipant();
     },
-    updateParticipant() {
-      if (this.editIndex !== null) {
-        this.participants.splice(this.editIndex, 1, { ...this.editParticipant });
+    async updateParticipant() {
+      try {
+        const participantData = {
+          // Map frontend fields to backend structure
+          nom: this.editParticipant.name.split(' ')[1] || '',
+          prenom: this.editParticipant.name.split(' ')[0] || '',
+          email: this.editParticipant.email,
+          fonction: this.editParticipant.profession,
+          tel: this.editParticipant.phone,
+          pays: this.editParticipant.country,
+          etablissement: this.editParticipant.institution,
+          num_enfant: this.editParticipant.details.children,
+          num_adulte: this.editParticipant.details.adults,
+          supp_single: this.editParticipant.details.singleSupplement === 'Yes',
+          supp_nuit: this.editParticipant.details.extraNights > 0,
+          prix_total: this.editParticipant.details.total,
+          methode_paie: this.editParticipant.details.payment,
+          edition_id: this.selectedEditionId
+        };
+        console.log('Partcipant id:', this.participants[this.editIndex].id);
+        console.log('Updating participant with data:', participantData);
+        await ParticipantService.updateParticipant(
+          this.participants[this.editIndex].id,
+          participantData
+        );
+
+        this.toggleUpdateModal();
+        await this.fetchParticipants(); // Refresh the list
+      } catch (error) {
+        console.error('Error updating participant:', error);
       }
-      this.toggleUpdateModal();
     },
     openDeleteModal(index) {
       this.editParticipant = { ...this.participants[index], details: { ...this.participants[index].details } };
@@ -368,29 +377,64 @@ export default {
       this.showDeleteModal = !this.showDeleteModal;
       if (!this.showDeleteModal) this.resetEditParticipant();
     },
-    deleteParticipant() {
-      if (this.editIndex !== null) {
-        this.participants.splice(this.editIndex, 1);
+    async deleteParticipant() {
+      try {
+        await ParticipantService.deleteParticipant(this.participants[this.editIndex].id);
+        this.toggleDeleteModal();
+        await this.fetchParticipants(); // Refresh the list
+      } catch (error) {
+        console.error('Error deleting participant:', error);
       }
-      this.toggleDeleteModal();
     },
-    openPaymentModal(index) {
+    async openPaymentModal(index) {
       this.paymentIndex = index;
-      this.showPaymentModal = true;
+      try {
+        const response = await ParticipantService.getParticipant(this.participants[index].id);
+        this.currentPaymentProof = response.data.recu_paie;
+        this.showPaymentModal = true;
+      } catch (error) {
+        console.error('Error fetching payment proof:', error);
+      }
+    },
+    getImageUrl(imagePath) {
+      return `http://localhost:8000/storage/${imagePath}`;
     },
     closePaymentModal() {
       this.showPaymentModal = false;
       this.paymentIndex = null;
     },
-    downloadPaymentProof() {
-      const imageUrl = require('@/assets/coeur.png');
-      const link = document.createElement('a');
-      link.href = imageUrl;
-      link.download = `payment_proof_${this.participants[this.paymentIndex].name.replace(/\s+/g, '_')}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      this.closePaymentModal();
+    async downloadPaymentProof() {
+      if (!this.currentPaymentProof) return;
+
+      try {
+        const imageUrl = this.getImageUrl(this.currentPaymentProof);
+
+        // Fetch the image as blob
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+
+        // Create object URL from blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Create download link
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `payment_proof_${this.participants[this.paymentIndex].name.replace(/\s+/g, '_')}.${this.currentPaymentProof.split('.').pop()}`;
+
+        // Append to body, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up object URL
+        window.URL.revokeObjectURL(url);
+
+        this.closePaymentModal();
+      } catch (error) {
+        console.error('Error downloading payment proof:', error);
+        // Fallback: open in new tab
+        window.open(this.getImageUrl(this.currentPaymentProof), '_blank');
+      }
     },
     resetEditParticipant() {
       this.editParticipant = {

@@ -235,7 +235,6 @@ export default {
       this.selectedEditionId = edition.id;
       this.selectedEditionName = edition.name;
       this.dropdownOpen = false;
-      localStorage.setItem('selectedEditionId', edition.id);
       await this.fetchSpeakers();
     },
     openAddModal() {

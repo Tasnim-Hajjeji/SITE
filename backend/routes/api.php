@@ -60,7 +60,7 @@ Route::prefix('participants')->group(function () {
     Route::get('/', [ParticipantController::class, 'index']);
     Route::get('/{id}', [ParticipantController::class, 'show']);
     Route::post('/', [ParticipantController::class, 'store']);
-    Route::put('/{id}', [ParticipantController::class, 'update']);
+    Route::post('/{id}', [ParticipantController::class, 'update']);
     Route::delete('/{id}', [ParticipantController::class, 'destroy']);
     Route::get('/edition/{editionId}', [ParticipantController::class, 'getByEdition']);
 });
