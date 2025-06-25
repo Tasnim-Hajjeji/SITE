@@ -34,14 +34,14 @@
           </div>
           <div class="details">
             <div class="detail">
-              <i class="fas fa-map-marker-alt text-blue-700"></i>
+              <i class="fas fa-map-marker-alt"></i>
               <div>
                 <strong>Lieu</strong>
                 <p>{{ edition.place }}</p>
               </div>
             </div>
             <div class="detail">
-              <i class="fas fa-calendar-alt text-blue-700"></i>
+              <i class="fas fa-calendar-alt"></i>
               <div>
                 <strong>Date</strong>
                 <p>{{ formatDateRange(edition.start_date, edition.end_date) }}</p>
@@ -55,46 +55,63 @@
       </div>
     </div>
 
-    <!-- Modal -->
-    <div v-if="showModal" class="modal-overlay">
-      <div class="modal-content">
-        <h3 class="text-xl font-bold text-blue-700 mb-4">Nouvelle Édition</h3>
-        <form @submit.prevent="addEdition" class="space-y-4">
-          <input type="text" v-model="newEdition.name" placeholder="Nom" required
-            class="w-full p-2 border border-gray-300 rounded-lg" />
-          <textarea v-model="newEdition.description_fr" placeholder="Description (FR)" required
-            class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
-          <textarea v-model="newEdition.description_en" placeholder="Description (EN)" required
-            class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
-          <input type="date" v-model="newEdition.start_date" required
-            class="w-full p-2 border border-gray-300 rounded-lg" />
-          <input type="date" v-model="newEdition.end_date" required
-            class="w-full p-2 border border-gray-300 rounded-lg" />
-          <input type="text" v-model="newEdition.place" placeholder="Lieu" required
-            class="w-full p-2 border border-gray-300 rounded-lg" />
-
-          <!-- PDF upload field -->
-          <div class="file-upload">
-            <label for="sponsor-dossier" class="block mb-1 font-bold">Dossier Sponsoring (PDF):</label>
-            <div class="relative w-full">
-              <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelected" required
-                class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
-              <div
-                class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
-                <span class="text-gray-600">Choisir un fichier</span>
-                <i class="fas fa-download text-gray-600"></i>
-              </div>
-            </div>
-            <p v-if="pdfFileName" class="mt-1 text-sm text-gray-600">{{ pdfFileName }}</p>
-          </div>
-          <div class="modal-actions flex justify-end gap-2">
-            <button type="submit" class="add-btn">Ajouter</button>
-            <button type="button" class="cancel-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400"
-              @click="closeModal">Annuler</button>
-          </div>
-        </form>
+ <!-- Modal -->
+<div v-if="showModal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 class="text-xl font-bold text-blue-700 mb-4">Nouvelle Édition</h3>
+    <form @submit.prevent="addEdition" class="space-y-4">
+      <div>
+        <label for="edition-name" class="block mb-1 text-gray-600 text-sm">Nom:</label>
+        <input id="edition-name" type="text" v-model="newEdition.name" placeholder="Nom" required
+          class="w-full p-2 border border-gray-300 rounded-lg" />
       </div>
-    </div>
+      <div>
+        <label for="description-fr" class="block mb-1 text-gray-600 text-sm">Description (FR):</label>
+        <textarea id="description-fr" v-model="newEdition.description_fr" placeholder="Description (FR)" required
+          class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
+      </div>
+      <div>
+        <label for="description-en" class="block mb-1 text-gray-600 text-sm">Description (EN):</label>
+        <textarea id="description-en" v-model="newEdition.description_en" placeholder="Description (EN)" required
+          class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
+      </div>
+      <div>
+        <label for="start-date" class="block mb-1 text-gray-600 text-sm">Date de début:</label>
+        <input id="start-date" type="date" v-model="newEdition.start_date" required
+          class="w-full p-2 border border-gray-300 rounded-lg" />
+      </div>
+      <div>
+        <label for="end-date" class="block mb-1 text-gray-600 text-sm">Date de fin:</label>
+        <input id="end-date" type="date" v-model="newEdition.end_date" required
+          class="w-full p-2 border border-gray-300 rounded-lg" />
+      </div>
+      <div>
+        <label for="place" class="block mb-1 text-gray-600 text-sm">Lieu:</label>
+        <input id="place" type="text" v-model="newEdition.place" placeholder="Lieu" required
+          class="w-full p-2 border border-gray-300 rounded-lg" />
+      </div>
+      <!-- PDF upload field -->
+      <div class="file-upload">
+        <label for="sponsor-dossier" class="block mb-1 text-gray-600 text-sm">Dossier Sponsoring (PDF):</label>
+        <div class="relative w-full">
+          <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelected" required
+            class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
+          <div
+            class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
+            <span class="text-gray-600">Choisir un fichier</span>
+            <i class="fas fa-download text-gray-600"></i>
+          </div>
+        </div>
+        <p v-if="pdfFileName" class="mt-1 text-sm text-gray-600">{{ pdfFileName }}</p>
+      </div>
+      <div class="modal-actions flex justify-end gap-2">
+        <button type="submit" class="add-btn">Ajouter</button>
+        <button type="button" class="cancel-btn bg-gray-300 text-gray-800 px-6 py-2 rounded-lg" @click="closeModal">Annuler</button>
+      </div>
+    </form>
+  </div>
+
+</div>
   </section>
 </template>
 
@@ -162,7 +179,7 @@ const getEditionStatus = (edition) => {
 const formatDateRange = (startDate, endDate) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
-
+  
   // Same month and year
   if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
     return `${start.getDate()} - ${end.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()}`;
@@ -200,7 +217,7 @@ const addEdition = async () => {
     formData.append('start_date', newEdition.value.start_date);
     formData.append('end_date', newEdition.value.end_date);
     formData.append('place', newEdition.value.place);
-
+    
     if (newEdition.value.dossier_sponso) {
       formData.append('dossier_sponso', newEdition.value.dossier_sponso);
     }
@@ -251,7 +268,6 @@ const getRandomConferenceImage = () => {
   margin: auto;
   padding: 1rem;
   margin-top: 2rem;
-  /* Augmenté pour plus d'espace en haut */
 }
 
 .header {
@@ -304,7 +320,7 @@ const getRandomConferenceImage = () => {
 }
 
 .edition-card:hover {
-  transform: translateY Stan(-5px);
+  transform: translateY(-5px);
   box-shadow: 0 12px 50px rgba(0, 0, 0, 0.1);
 }
 
@@ -437,11 +453,8 @@ const getRandomConferenceImage = () => {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   animation: fadeInZoom 0.3s ease-out;
   max-height: 80vh;
-  /* Limit modal height to 80% of viewport height */
   overflow-y: auto;
-  /* Enable vertical scrolling */
   -webkit-overflow-scrolling: touch;
-  /* Smooth scrolling on mobile */
 }
 
 @keyframes fadeInZoom {
@@ -449,7 +462,6 @@ const getRandomConferenceImage = () => {
     opacity: 0;
     transform: scale(0.85);
   }
-
   100% {
     opacity: 1;
     transform: scale(1);
@@ -472,34 +484,24 @@ const getRandomConferenceImage = () => {
   font-size: 14px;
 }
 
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: #265985;
+  outline: none;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
-}
-
-.file-upload {
-  margin-bottom: 1rem;
-}
-
-.file-upload label {
-  display: “block”;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.file-upload input[type="file"] {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.file-name {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #666;
 }
 
 .add-btn {
@@ -516,6 +518,39 @@ const getRandomConferenceImage = () => {
 .add-btn:hover {
   background: #1e4b6b;
   transform: translateY(-2px);
+}
+
+.cancel-btn {
+  background: #d1d5db;
+  color: #1f2937;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: #9ca3af;
+  transform: translateY(-2px);
+}
+
+.file-upload {
+  margin-bottom: 1rem;
+}
+
+.file-upload input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.file-name {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 /* RESPONSIVE */
@@ -545,7 +580,6 @@ const getRandomConferenceImage = () => {
 
   .modal-content {
     max-height: 90vh;
-    /* Slightly more height on smaller screens */
     padding: 20px;
   }
 }
@@ -555,7 +589,6 @@ const getRandomConferenceImage = () => {
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
