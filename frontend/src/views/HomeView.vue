@@ -1,5 +1,6 @@
 <template>
   <div v-if="editionData && editionData.id">
+
     <HeroSection :edition-data="editionData" />
     <BlueSection :edition-data="editionData" />
     <TopicsCarousel :edition-id="editionData.id" />
