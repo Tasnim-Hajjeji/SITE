@@ -19,6 +19,7 @@
             <ImpDateAdmin :edition-id="editionId" />
             <KeynoteCarousel :edition-id="editionId" />
             <DocumentAdmin :edition-id="editionId" />
+            <Prizes :edition-id="editionId" />
             <PhotoGallery :edition-id="editionId" />
         </div>
     </div>
@@ -31,6 +32,7 @@ import PrevProgram from '@/components/PrevProgram.vue';
 import ImpDateAdmin from '@/components/ImpDateAdmin.vue';
 import KeynoteCarousel from '@/components/KeynoteCarousel.vue';
 import DocumentAdmin from '@/components/DocumentAdmin.vue';
+import Prizes from '@/components/Prizes.vue';
 import PhotoGallery from '@/components/PhotoGallery.vue';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
