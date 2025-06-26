@@ -5,7 +5,7 @@
       <span class="highlight">SITE 2025</span>
     </h2>
 
-    <form class="registration-form">
+    <form class="registration-form" ref="formElement" @submit.prevent="proceedIfValid" novalidate>
       <fieldset class="section">
         <legend>Accommodation *</legend>
         <label>
@@ -16,7 +16,9 @@
           <input type="radio" name="hebergement" value="no" v-model="form.hebergement" />
           No
         </label>
-        <ul class="tariffs">
+        <p class="error" v-if="errors.hebergement">{{ errors.hebergement }}</p>
+
+        <ul class="tariffs" v-if="form.hebergement === 'yes'">
           <li>Adult companion 220 DT /night/person</li>
           <li>Child companion + 2 Adults 110 DT /night/child</li>
           <li>Child companion + 1 Adult 155 DT /night/child</li>
@@ -31,8 +33,9 @@
           max="10"
           placeholder="0"
           v-model.number="form.childCompanions"
-          required
+          :disabled="form.hebergement === 'no'"
         />
+        <p class="error" v-if="errors.childCompanions">{{ errors.childCompanions }}</p>
       </div>
 
       <div class="input-group">
@@ -43,20 +46,22 @@
           max="10"
           placeholder="0"
           v-model.number="form.adultCompanions"
-          required
+          :disabled="form.hebergement === 'no'"
         />
+        <p class="error" v-if="errors.adultCompanions">{{ errors.adultCompanions }}</p>
       </div>
 
       <fieldset class="section">
         <legend>Single Supplement *</legend>
         <label>
-          <input type="radio" name="single" value="yes" v-model="form.singleSupplement" />
+          <input type="radio" name="single" value="yes" v-model="form.singleSupplement" :disabled="form.hebergement === 'no'" />
           Yes
         </label>
         <label>
-          <input type="radio" name="single" value="no" v-model="form.singleSupplement" />
+          <input type="radio" name="single" value="no" v-model="form.singleSupplement" :disabled="form.hebergement === 'no'" />
           No
         </label>
+        <p class="error" v-if="errors.singleSupplement">{{ errors.singleSupplement }}</p>
         <p>Single supplement 70 DT /night</p>
       </fieldset>
 
@@ -68,8 +73,9 @@
           max="10"
           placeholder="0"
           v-model.number="form.extraNights"
-          required
+          :disabled="form.hebergement === 'no' || form.singleSupplement === 'no'"
         />
+        <p class="error" v-if="errors.extraNights">{{ errors.extraNights }}</p>
         <p>Extra night 220 DT /night/person</p>
       </div>
     </form>
@@ -77,7 +83,7 @@
     <div class="note">
       <p>✅ After completing the online registration, please save/print the registration form.</p>
       <p>✅ The printed registration form can help you when preparing the purchase order.</p>
-      <p>✅ Please bring the printed registration form on the day of SNTS reception to facilitate your admission.</p>
+      <p>✅ Please bring the printed registration form on the day of reception to facilitate your admission.</p>
     </div>
 
     <div class="nav-buttons">
@@ -91,17 +97,20 @@
         <span :class="{ active: activeStep === 3 }"></span>
       </div>
 
-      <router-link to="/registration-final">
+      <a href="#" @click.prevent="proceedIfValid">
         <i class="fas fa-arrow-right"></i>
-      </router-link>
+      </a>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, watch } from "vue";
+import { reactive, ref, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
 
 const activeStep = 2;
+const router = useRouter();
+const formElement = ref(null);
 
 const form = reactive({
   hebergement: "",
@@ -111,7 +120,63 @@ const form = reactive({
   extraNights: 0,
 });
 
-// Charger les données sauvegardées à l'ouverture du composant
+const errors = reactive({
+  hebergement: "",
+  childCompanions: "",
+  adultCompanions: "",
+  singleSupplement: "",
+  extraNights: "",
+});
+
+function validateForm() {
+  let valid = true;
+
+  if (!form.hebergement) {
+    errors.hebergement = "Please select if accommodation is needed.";
+    valid = false;
+  } else {
+    errors.hebergement = "";
+  }
+
+  if (form.childCompanions < 0 || form.childCompanions > 10) {
+    errors.childCompanions = "Enter a value between 0 and 10.";
+    valid = false;
+  } else {
+    errors.childCompanions = "";
+  }
+
+  if (form.adultCompanions < 0 || form.adultCompanions > 10) {
+    errors.adultCompanions = "Enter a value between 0 and 10.";
+    valid = false;
+  } else {
+    errors.adultCompanions = "";
+  }
+
+  if (!form.singleSupplement) {
+    errors.singleSupplement = "Please indicate if you want the single supplement.";
+    valid = false;
+  } else {
+    errors.singleSupplement = "";
+  }
+
+  if (form.extraNights < 0 || form.extraNights > 10) {
+    errors.extraNights = "Enter a value between 0 and 10.";
+    valid = false;
+  } else {
+    errors.extraNights = "";
+  }
+
+  return valid;
+}
+
+function proceedIfValid() {
+  if (validateForm()) {
+    router.push("/registration-final");
+  } else {
+    formElement.value?.reportValidity?.();
+  }
+}
+
 onMounted(() => {
   const saved = localStorage.getItem("site2025_accommodation_form");
   if (saved) {
@@ -119,7 +184,6 @@ onMounted(() => {
   }
 });
 
-// Sauvegarder automatiquement les données à chaque changement
 watch(
   form,
   (newVal) => {
@@ -127,6 +191,21 @@ watch(
   },
   { deep: true }
 );
+
+watch(() => form.hebergement, (val) => {
+  if (val === 'no') {
+    form.childCompanions = 0;
+    form.adultCompanions = 0;
+    form.singleSupplement = '';
+    form.extraNights = 0;
+  }
+});
+
+watch(() => form.singleSupplement, (val) => {
+  if (val === 'no') {
+    form.extraNights = 0;
+  }
+});
 </script>
 
 <style scoped>
@@ -224,6 +303,12 @@ watch(
 input[type="radio"] {
   margin-right: 5px;
   accent-color: #145a7d;
+}
+
+.error {
+  color: #c62828;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
 }
 
 .note {

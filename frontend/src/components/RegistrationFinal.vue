@@ -1,19 +1,20 @@
 <template>
   <div class="payment-wrapper">
     <h2 class="title">
-      Fill in the form below to complete your registration for<span class="highlight">SITE 2025</span>
+      Fill in the form below to complete your registration for
+      <span class="highlight">SITE 2025</span>
     </h2>
 
     <form class="payment-form">
       <div class="form-center">
         <div class="total-box">
           <span>Total Amount:</span>
-          <span class="amount">200 TND</span>
+          <span class="amount">{{ calculateTotal() }}</span>
         </div>
 
         <div class="input-group">
           <label class="fixed-label">Payment Method *</label>
-          <select>
+          <select v-model="paymentMethod">
             <option disabled selected>Select a method</option>
             <option>Bank Transfer</option>
             <option>Cash</option>
@@ -39,18 +40,14 @@
     </ul>
 
     <div class="nav-buttons">
-      <!-- Flèche gauche (active) -->
       <router-link to="/registration">
         <i class="fas fa-arrow-left"></i>
       </router-link>
-
       <div class="dots">
         <span :class="{ active: activeStep === 1 }"></span>
         <span :class="{ active: activeStep === 2 }"></span>
         <span :class="{ active: activeStep === 3 }"></span>
       </div>
-
-      <!-- Flèche droite (désactivée) -->
       <button class="disabled-arrow-btn" disabled>
         <i class="fas fa-arrow-right"></i>
       </button>
@@ -59,7 +56,41 @@
 </template>
 
 <script setup>
+import { reactive, onMounted, ref } from 'vue'
+
 const activeStep = 3
+const paymentMethod = ref('')
+
+const formData = reactive({
+  hebergement: '',
+  adultCompanions: 0,
+  childCompanions: 0,
+  singleSupplement: '',
+  extraNights: 0,
+})
+
+onMounted(() => {
+  const saved = JSON.parse(localStorage.getItem('site2025_accommodation_form') || '{}')
+  Object.assign(formData, saved)
+})
+
+function calculateTotal() {
+  let total = 650
+  if (formData.hebergement === 'yes') {
+    const adults = formData.adultCompanions
+    const children = formData.childCompanions
+    const persons = adults + children
+
+    total += adults * 220
+    total += children * (adults === 2 ? 110 : 155)
+    total += formData.extraNights * 220 * persons
+
+    if (formData.singleSupplement === 'yes') {
+      total += 70 * persons
+    }
+  }
+  return total + ' TND'
+}
 </script>
 
 <style scoped>

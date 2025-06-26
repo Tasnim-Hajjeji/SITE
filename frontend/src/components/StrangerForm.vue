@@ -9,48 +9,61 @@
     <div class="form-card">
       <h3 class="card-title">Stranger <span class="price">400 EUR</span></h3>
 
-      <form class="registration-form">
+      <form class="registration-form" ref="formElement" novalidate>
         <div class="form-group">
           <label>First Name *</label>
-          <input type="text" v-model="form.firstName" placeholder="Samantha" required />
+          <input type="text" v-model="form.firstName" placeholder="Samantha" />
+          <p class="error" v-if="errors.firstName">{{ errors.firstName }}</p>
         </div>
 
         <div class="form-group">
           <label>Last Name *</label>
-          <input type="text" v-model="form.lastName" placeholder="William" required />
+          <input type="text" v-model="form.lastName" placeholder="William" />
+          <p class="error" v-if="errors.lastName">{{ errors.lastName }}</p>
         </div>
 
         <div class="form-group">
           <label>Email *</label>
-          <input type="email" v-model="form.email" placeholder="william@gmail.com" required />
+          <input type="email" v-model="form.email" placeholder="william@gmail.com" />
+          <p class="error" v-if="errors.email">{{ errors.email }}</p>
         </div>
 
         <div class="form-group">
           <label>Phone *</label>
-          <input type="tel" v-model="form.phone" placeholder="+1234567890" required />
+          <input type="tel" v-model="form.phone" placeholder="+1234567890" />
+          <p class="error" v-if="errors.phone">{{ errors.phone }}</p>
         </div>
 
         <div class="form-group">
           <label>Profession *</label>
-          <input type="text" v-model="form.profession" placeholder="Teacher, Student ..." required />
+          <input type="text" v-model="form.profession" placeholder="Teacher, Student ..." />
+          <p class="error" v-if="errors.profession">{{ errors.profession }}</p>
         </div>
 
         <div class="form-group">
           <label>Institution *</label>
-          <input type="text" v-model="form.institution" placeholder="Your institution?" required />
+          <input type="text" v-model="form.institution" placeholder="Your institution?" />
+          <p class="error" v-if="errors.institution">{{ errors.institution }}</p>
         </div>
 
         <div class="form-group">
           <label>Participation *</label>
           <div class="checkbox-group">
-            <label><input type="radio" value="With paper" v-model="form.participation" name="participation" /> With paper</label>
-            <label><input type="radio" value="Without paper" v-model="form.participation" name="participation" /> Without paper</label>
+            <label>
+              <input type="radio" value="With paper" v-model="form.participation" name="participation" />
+              With paper
+            </label>
+            <label>
+              <input type="radio" value="Without paper" v-model="form.participation" name="participation" />
+              Without paper
+            </label>
           </div>
+          <p class="error" v-if="errors.participation">{{ errors.participation }}</p>
         </div>
 
         <div class="form-group">
           <label>Country *</label>
-          <select v-model="form.country" required>
+          <select v-model="form.country">
             <option value="" disabled>-- Select your country --</option>
             <option value="fr">France</option>
             <option value="de">Germany</option>
@@ -58,6 +71,7 @@
             <option value="us">USA</option>
             <option value="uk">UK</option>
           </select>
+          <p class="error" v-if="errors.country">{{ errors.country }}</p>
         </div>
       </form>
     </div>
@@ -65,7 +79,7 @@
     <div class="note">
       <p>✅ After completing the online registration, please save/print the registration form.</p>
       <p>✅ The printed registration form can help you when preparing the purchase order.</p>
-      <p>✅ Please bring the printed registration form on the day of SNTS reception to facilitate your admission.</p>
+      <p>✅ Please bring the printed registration form on the day of reception to facilitate your admission.</p>
     </div>
 
     <div class="nav-buttons">
@@ -79,17 +93,20 @@
         <span :class="{ active: activeStep === 3 }"></span>
       </div>
 
-      <router-link to="/registration">
+      <a href="#" @click.prevent="proceedIfValid">
         <i class="fas fa-arrow-right"></i>
-      </router-link>
+      </a>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, watch } from 'vue'
+import { reactive, ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const activeStep = 1
+const router = useRouter()
+const formElement = ref(null)
 
 const form = reactive({
   firstName: '',
@@ -102,7 +119,89 @@ const form = reactive({
   country: ''
 })
 
-// Charger les données sauvegardées au montage du composant
+const errors = reactive({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  profession: '',
+  institution: '',
+  participation: '',
+  country: ''
+})
+
+function validateForm() {
+  let valid = true
+
+  if (!form.firstName.trim()) {
+    errors.firstName = 'First name is required.'
+    valid = false
+  } else {
+    errors.firstName = ''
+  }
+
+  if (!form.lastName.trim()) {
+    errors.lastName = 'Last name is required.'
+    valid = false
+  } else {
+    errors.lastName = ''
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(form.email)) {
+    errors.email = 'Enter a valid email address.'
+    valid = false
+  } else {
+    errors.email = ''
+  }
+
+  const phoneRegex = /^\+?\d{8,15}$/
+  if (!phoneRegex.test(form.phone)) {
+    errors.phone = 'Enter a valid phone number (8–15 digits).'
+    valid = false
+  } else {
+    errors.phone = ''
+  }
+
+  if (!form.profession.trim()) {
+    errors.profession = 'Profession is required.'
+    valid = false
+  } else {
+    errors.profession = ''
+  }
+
+  if (!form.institution.trim()) {
+    errors.institution = 'Institution is required.'
+    valid = false
+  } else {
+    errors.institution = ''
+  }
+
+  if (!form.participation) {
+    errors.participation = 'Please select a participation type.'
+    valid = false
+  } else {
+    errors.participation = ''
+  }
+
+  if (!form.country) {
+    errors.country = 'Please select a country.'
+    valid = false
+  } else {
+    errors.country = ''
+  }
+
+  return valid
+}
+
+function proceedIfValid() {
+  if (validateForm()) {
+    router.push('/registration')
+  } else {
+    formElement.value.reportValidity()
+  }
+}
+
 onMounted(() => {
   const saved = localStorage.getItem('site2025_stranger_form')
   if (saved) {
@@ -110,7 +209,6 @@ onMounted(() => {
   }
 })
 
-// Sauvegarder automatiquement à chaque modification des données
 watch(
   form,
   (newVal) => {
@@ -203,6 +301,12 @@ select {
   gap: 0.5rem;
 }
 
+.error {
+  color: #c62828;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+}
+
 .note {
   margin-top: 2rem;
   text-align: left;
@@ -231,6 +335,9 @@ select {
   font-size: 1.2rem;
   color: #444;
   transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-buttons a:hover {
