@@ -68,9 +68,6 @@ export default {
     return axios.post(`/participants/${id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
-      },
-      params: {
-        '_method': 'PUT' // Laravel's way to handle PUT via POST
       }
     });
   },
@@ -91,6 +88,7 @@ export default {
    */
    getParticipantsByEdition(editionId) {
     return axios.get(`/participants/edition/${editionId}`);
-  }
+  },
+  
 }
 

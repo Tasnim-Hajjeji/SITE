@@ -71,5 +71,9 @@ export default  {
       params: { date }
     });
   },
+
+  getProgramDates(editionId) {
+    return axios.get(`/programs/edition/${editionId}/dates`);
+  }
 }
 

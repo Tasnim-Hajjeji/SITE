@@ -92,8 +92,8 @@ class IntervenantController extends Controller
                 'profession_en' => 'sometimes|string',
                 'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:8192',
                 'edition_id' => 'sometimes|exists:edition,id',
-                'program_ids' => 'sometimes|array',
-                'program_ids.*' => 'exists:program,id',
+                // 'program_ids' => 'sometimes|array',
+                // 'program_ids.*' => 'exists:program,id',
                 'institut' => 'sometimes|string|max:255',
                 'code_pays' => 'sometimes|string|max:10'
             ]);
@@ -119,10 +119,13 @@ class IntervenantController extends Controller
             }
 
             $intervenant->update($validated);
+            $programIds = $request->has('program_ids') ?
+                (is_array($request->program_ids) ? $request->program_ids : []) :
+                null;
 
             // Sync programs if provided
-            if ($request->has('program_ids')) {
-                $intervenant->programs()->sync($request->program_ids);
+            if ($programIds !== null) {
+                $intervenant->programs()->sync($programIds);
             }
 
             return response()->json($intervenant->load('programs'));

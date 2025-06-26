@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('tel');
             $table->string('pays');
             $table->boolean('est_tunisien');
+            $table->string('participation');
+            $table->boolean('accomodation')->nullable();
             $table->string('etablissement')->nullable();
             $table->integer('num_enfant')->default(0);
             $table->integer('num_adulte')->default(0);
@@ -30,6 +32,7 @@ return new class extends Migration
             $table->integer('supp_nuit')->default(0);
             $table->integer('prix_total')->default(0);
             $table->string('methode_paie');
+
             $table->string('recu_paie');
             $table->timestamps();
         });

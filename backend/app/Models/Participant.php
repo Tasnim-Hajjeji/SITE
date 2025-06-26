@@ -16,6 +16,8 @@ class Participant extends Model
         'tel',
         'pays',
         'est_tunisien',
+        'participation',
+        'accomodation',
         'etablissement',
         'num_enfant',
         'num_adulte',
