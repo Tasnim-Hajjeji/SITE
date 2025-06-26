@@ -169,6 +169,7 @@
   .carousel-caption p {
     font-size: 0.95rem;
     opacity: 0.9;
+    margin-bottom: 1.3rem;
   }
   
   .carousel-button {

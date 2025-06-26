@@ -11,6 +11,7 @@ use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\FormPricesController;
 use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\KeynoteController;
+use App\Http\Controllers\GlobalSearchController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -133,3 +134,6 @@ Route::prefix('keynotes')->group(function () {
     Route::delete('/{id}', [KeynoteController::class, 'destroy']);
     Route::get('/edition/{editionId}', [KeynoteController::class, 'getByEdition']);
 });
+
+// Global Search Route
+Route::get('/global-search', [GlobalSearchController::class, 'search']);   

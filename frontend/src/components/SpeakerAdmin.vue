@@ -21,7 +21,7 @@
 
     <!-- Grid Speakers -->
     <div class="grid">
-      <div class="card" v-for="speaker in speakers" :key="speaker.id">
+      <div class="card" v-for="speaker in speakers" :key="speaker.id" :id="`speaker-${speaker.id}`">
         <h2 class="name">
           {{ speaker.full_name }}
           <img class="flag" :src="`https://flagcdn.com/${speaker.code_pays.toLowerCase()}.svg`"
@@ -189,17 +189,28 @@ export default {
     };
   },
   async created() {
-    await this.fetchEditions();
+    
 
     // Set initial edition from route params or localStorage
-    const routeEditionId = this.$route.params.editionId;
+    // const routeEditionId = this.$route.params.editionId;
     const storedEditionId = localStorage.getItem('selectedEditionId');
 
-    this.selectedEditionId = routeEditionId || storedEditionId || (this.editions.length > 0 ? this.editions[0].id : null);
+    this.selectedEditionId = storedEditionId ;
+    await this.fetchEditions();
 
     if (this.selectedEditionId) {
-      localStorage.setItem('selectedEditionId', this.selectedEditionId);
+      // localStorage.setItem('selectedEditionId', this.selectedEditionId);
       await this.fetchSpeakers();
+    }
+  },
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler(query) {
+        if (query.highlightType === 'speaker' && query.highlight) {
+          this.highlightSpeaker(parseInt(query.highlight, 10));
+        }
+      }
     }
   },
   methods: {
@@ -208,10 +219,11 @@ export default {
         const response = await EditionService.getAllEditions();
         this.editions = response.data;
 
-        if (this.editions.length > 0 && !this.selectedEditionId) {
-          this.selectedEditionId = this.editions[0].id;
-          this.selectedEditionName = this.editions[0].name;
-        } else if (this.selectedEditionId) {
+        // if (this.editions.length > 0 && !this.selectedEditionId) {
+        //   this.selectedEditionId = this.editions[0].id;
+        //   this.selectedEditionName = this.editions[0].name;
+        // } else 
+        if (this.selectedEditionId) {
           const selectedEdition = this.editions.find(e => e.id == this.selectedEditionId);
           this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
         }
@@ -382,13 +394,60 @@ export default {
       } finally {
         this.isUpdatingPrograms = false;
       }
-    }
-  },
+    },
+
+    highlightSpeaker(speakerId) {
+      if (this.speakers.length > 0) {
+        this.scrollToSpeaker(speakerId);
+        return;
+      }
+
+      const checkInterval = setInterval(() => {
+        if (this.speakers.length > 0) {
+          clearInterval(checkInterval);
+          this.scrollToSpeaker(speakerId);
+        }
+      }, 100);
+    },
+
+    scrollToSpeaker(speakerId) {
+      this.$nextTick(() => {
+        const element = document.getElementById(`speaker-${speakerId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('highlighted');
+          setTimeout(() => {
+            element.classList.remove('highlighted');
+          }, 3000);
+        }
+      });
+    },
+  }
 };
 </script>
 
 <style scoped>
-/* Your existing styles remain the same */
+.highlighted {
+  animation: highlight 3s ease;
+  box-shadow: 0 0 0 3px rgba(38, 89, 133, 0.5);
+  transform: translateY(-2px);
+}
+
+@keyframes highlight {
+  0% {
+    box-shadow: 0 0 0 4px rgba(38, 89, 133, 0.8);
+  }
+
+  70% {
+    box-shadow: 0 0 0 4px rgba(38, 89, 133, 0.8);
+  }
+
+  100% {
+    box-shadow: none;
+    transform: translateY(0);
+  }
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

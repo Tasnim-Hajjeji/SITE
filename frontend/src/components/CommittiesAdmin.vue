@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="title">Committees</h1>
+    <h1 class="title">Committees {{ this.selectedEditionName }}</h1>
 
     <div class="actions">
       <button class="btn add" @click="openAddModal">
@@ -54,7 +54,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="member in filteredMembers" :key="member.id" class="member-row">
+            <tr v-for="member in filteredMembers" :key="member.id" class="member-row" :id="`committee-${member.id}`">
               <td class="name-cell">
                 <div class="member-avatar"
                   :style="{ backgroundImage: member.image_url ? `url(${getImageUrl(member.image_url)})` : 'url(https://via.placeholder.com/150)' }">
@@ -318,6 +318,16 @@ export default {
     this.initializeSelectedEdition();
     await this.fetchMembers();
   },
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler(query) {
+        if (query.highlightType === 'committee' && query.highlight) {
+          this.highlightCommitteeMember(parseInt(query.highlight, 10));
+        }
+      }
+    }
+  },
   methods: {
     async fetchEditions() {
       try {
@@ -574,6 +584,34 @@ export default {
       } else {
         this.showToast("Please select a valid image file", "error");
       }
+    },
+    highlightCommitteeMember(memberId) {
+      // If members are already loaded
+      if (this.members.length > 0) {
+        this.scrollToCommitteeMember(memberId);
+        return;
+      }
+
+      // If members are loading, wait for them
+      const checkInterval = setInterval(() => {
+        if (this.members.length > 0) {
+          clearInterval(checkInterval);
+          this.scrollToCommitteeMember(memberId);
+        }
+      }, 100);
+    },
+
+    scrollToCommitteeMember(memberId) {
+      this.$nextTick(() => {
+        const element = document.getElementById(`committee-${memberId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('highlighted');
+          setTimeout(() => {
+            element.classList.remove('highlighted');
+          }, 3000);
+        }
+      });
     },
   },
 };
