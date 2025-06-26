@@ -1,10 +1,17 @@
 <template>
   <div class="programme-container">
-    <h1 class="title">Programme</h1>
+    <div class="header-row">
+      <h1 class="title">Programme</h1>
+      <div class="action-buttons">
+        <button class="add-btn" @click="showModal = true">
+          <i class="fas fa-plus"></i> Ajouter
+        </button>
+      </div>
+    </div>
 
     <!-- Loading state -->
     <div v-if="isLoading" class="loading">
-      Loading program data...
+      Chargement des données du programme...
     </div>
 
     <!-- Error message -->
@@ -14,13 +21,6 @@
 
     <!-- Content when loaded -->
     <div v-if="!isLoading && !error">
-      <!-- Action Button -->
-      <div class="action-buttons">
-        <button class="add-btn" @click="showModal = true">
-          <i class="fas fa-plus"></i> Add
-        </button>
-      </div>
-
       <!-- Date Selector -->
       <div class="date-selector">
         <button v-for="date in dates" :key="date" :class="['date-btn', { active: selectedDate === date }]"
@@ -32,7 +32,7 @@
       <!-- Timeline -->
       <div class="timeline">
         <div v-if="filteredPrograms.length === 0" class="no-events">
-          No programs scheduled for this date
+          Aucun programme prévu pour cette date
         </div>
 
         <div class="event" v-for="program in filteredPrograms" :key="program.id">
@@ -44,7 +44,7 @@
                 <button class="small-btn update-btn" @click="openUpdateModal(program)">
                   <i class="fas fa-pen"></i>
                 </button>
-                <button class="small-btn delete-btn" @click="deleteProgram(program.id)">
+                <button class="small-btn delete-btn" @click="confirmDelete(program.id)">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -56,118 +56,126 @@
       </div>
 
       <!-- Add Program Modal -->
-      <div v-if="showModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
-          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Add Program</h3>
-          <div class="space-y-4">
+      <div v-if="showModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un Programme</h3>
+          <form @submit.prevent="addProgram" class="space-y-0">
             <div>
-              <label class="block text-sm font-medium text-gray-700">Name (French)</label>
-              <input v-model="newProgram.name_fr" type="text" placeholder="Enter name in French"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                required />
+              <label for="name_fr" class="block mb-1 text-xs text-gray-500 font-medium">Nom (Français):</label>
+              <input v-model="newProgram.name_fr" id="name_fr" type="text" placeholder="Entrez le nom en français"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Name (English)</label>
-              <input v-model="newProgram.name_en" type="text" placeholder="Enter name in English"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                required />
+              <label for="name_en" class="block mb-1 text-xs text-gray-500 font-medium">Nom (Anglais):</label>
+              <input v-model="newProgram.name_en" id="name_en" type="text" placeholder="Entrez le nom en anglais"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Description (French)</label>
-              <textarea v-model="newProgram.description_fr" placeholder="Enter description in French"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                rows="3" required></textarea>
+              <label for="description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Description (Français):</label>
+              <textarea v-model="newProgram.description_fr" id="description_fr" placeholder="Entrez la description en français"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y" required></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Description (English)</label>
-              <textarea v-model="newProgram.description_en" placeholder="Enter description in English"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                rows="3" required></textarea>
+              <label for="description_en" class="block mb-1 text-xs text-gray-500 font-medium">Description (Anglais):</label>
+              <textarea v-model="newProgram.description_en" id="description_en" placeholder="Entrez la description en anglais"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y" required></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Start Time</label>
-              <input v-model="newProgram.time_start" type="datetime-local"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                required />
+              <label for="time_start" class="block mb-1 text-xs text-gray-500 font-medium">Heure de début:</label>
+              <input v-model="newProgram.time_start" id="time_start" type="datetime-local"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">End Time</label>
-              <input v-model="newProgram.time_end" type="datetime-local"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                required />
+              <label for="time_end" class="block mb-1 text-xs text-gray-500 font-medium">Heure de fin:</label>
+              <input v-model="newProgram.time_end" id="time_end" type="datetime-local"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
               <span class="mr-1">!</span> {{ error }}
             </div>
-          </div>
-          <div class="mt-6 flex justify-end space-x-3">
-            <button @click="showModal = false; resetNewProgramForm();" type="button"
-              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">
-              Cancel
-            </button>
-            <button @click="addProgram" type="button"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
-              Add Program
-            </button>
-          </div>
+            <div class="modal-actions flex justify-end gap-2 mt-6">
+              <button type="button"
+                class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+                @click="showModal = false; resetNewProgramForm();">
+                Annuler
+              </button>
+              <button type="submit"
+                class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+                Ajouter
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
       <!-- Update Program Modal -->
-      <div v-if="showUpdateModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
-          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Update Program</h3>
-          <div class="space-y-4">
+      <div v-if="showUpdateModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Mettre à jour le Programme</h3>
+          <form @submit.prevent="updateProgram" class="space-y-0">
             <div>
-              <label class="block text-sm font-medium text-gray-700">Name (French)</label>
-              <input v-model="selectedProgram.name_fr" type="text" placeholder="Enter name in French"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                required />
+              <label for="update_name_fr" class="block mb-1 text-xs text-gray-500 font-medium">Nom (Français):</label>
+              <input v-model="selectedProgram.name_fr" id="update_name_fr" type="text" placeholder="Entrez le nom en français"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Name (English)</label>
-              <input v-model="selectedProgram.name_en" type="text" placeholder="Enter name in English"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                required />
+              <label for="update_name_en" class="block mb-1 text-xs text-gray-500 font-medium">Nom (Anglais):</label>
+              <input v-model="selectedProgram.name_en" id="update_name_en" type="text" placeholder="Entrez le nom en anglais"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Description (French)</label>
-              <textarea v-model="selectedProgram.description_fr" placeholder="Enter description in French"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                rows="3" required></textarea>
+              <label for="update_description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Description (Français):</label>
+              <textarea v-model="selectedProgram.description_fr" id="update_description_fr" placeholder="Entrez la description en français"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y" required></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Description (English)</label>
-              <textarea v-model="selectedProgram.description_en" placeholder="Enter description in English"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                rows="3" required></textarea>
+              <label for="update_description_en" class="block mb-1 text-xs text-gray-500 font-medium">Description (Anglais):</label>
+              <textarea v-model="selectedProgram.description_en" id="update_description_en" placeholder="Entrez la description en anglais"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y" required></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Start Time</label>
-              <input v-model="selectedProgram.time_start" type="datetime-local"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                required />
+              <label for="update_time_start" class="block mb-1 text-xs text-gray-500 font-medium">Heure de début:</label>
+              <input v-model="selectedProgram.time_start" id="update_time_start" type="datetime-local"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">End Time</label>
-              <input v-model="selectedProgram.time_end" type="datetime-local"
-                class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                required />
+              <label for="update_time_end" class="block mb-1 text-xs text-gray-500 font-medium">Heure de fin:</label>
+              <input v-model="selectedProgram.time_end" id="update_time_end" type="datetime-local"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
               <span class="mr-1">!</span> {{ error }}
             </div>
-          </div>
-          <div class="mt-6 flex justify-end space-x-3">
-            <button @click="showUpdateModal = false" type="button"
-              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">
-              Cancel
+            <div class="modal-actions flex justify-end gap-2 mt-6">
+              <button type="button"
+                class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+                @click="showUpdateModal = false">
+                Annuler
+              </button>
+              <button type="submit"
+                class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+                Enregistrer
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div v-if="showDeleteModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmer la suppression</h3>
+          <p class="text-gray-600 mb-4">Êtes-vous sûr de vouloir supprimer le programme "{{ selectedProgramName }}" ? Cette action est irréversible.</p>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="showDeleteModal = false; selectedProgramId = null;">
+              Annuler
             </button>
-            <button @click="updateProgram" type="button"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
-              Update Program
+            <button type="button"
+              class="delete-btn bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-red-700 hover:to-red-600 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="deleteProgram">
+              Supprimer
             </button>
           </div>
         </div>
@@ -193,6 +201,9 @@ export default {
     const programs = ref([]);
     const showModal = ref(false);
     const showUpdateModal = ref(false);
+    const showDeleteModal = ref(false);
+    const selectedProgramId = ref(null);
+    const selectedProgramName = ref('');
     const error = ref(null);
     const isLoading = ref(true);
 
@@ -239,7 +250,7 @@ export default {
           selectedDate.value = dates.value[0];
         }
       } catch (err) {
-        error.value = 'Failed to load data: ' + err.message;
+        error.value = 'Échec du chargement des données : ' + err.message;
         console.error(err);
       } finally {
         isLoading.value = false;
@@ -256,12 +267,12 @@ export default {
 
       // Convert Set to Array and sort dates
       dates.value = Array.from(uniqueDates).sort((a, b) => {
-        // Convert dates to Date objects for comparison
         const dateA = dayjs(a, 'DD/MM/YYYY').toDate();
         const dateB = dayjs(b, 'DD/MM/YYYY').toDate();
         return dateA - dateB;
       });
     };
+
     // Filter programs by selected date
     const filteredPrograms = computed(() => {
       if (!selectedDate.value) return [];
@@ -284,24 +295,21 @@ export default {
     // Add new program
     const addProgram = async () => {
       try {
-        // Validate required fields
         if (!newProgram.value.name_fr || !newProgram.value.name_en) {
-          throw new Error('Both French and English names are required');
+          throw new Error('Les noms en français et en anglais sont requis');
         }
 
-        // Validate times
         const startDate = dayjs(newProgram.value.time_start);
         const endDate = dayjs(newProgram.value.time_end);
 
         if (!startDate.isValid() || !endDate.isValid()) {
-          throw new Error('Please enter valid start and end times');
+          throw new Error('Veuillez entrer des heures de début et de fin valides');
         }
 
         if (endDate.isBefore(startDate)) {
-          throw new Error('End time must be after start time');
+          throw new Error('L\'heure de fin doit être postérieure à l\'heure de début');
         }
 
-        // Format times with leading zeros
         newProgram.value.time_start = startDate.format('YYYY-MM-DD HH:mm');
         newProgram.value.time_end = endDate.format('YYYY-MM-DD HH:mm');
 
@@ -311,9 +319,8 @@ export default {
         resetNewProgramForm();
         showModal.value = false;
       } catch (err) {
-        error.value = 'Failed to add program: ' +
-          (err.response?.data?.error || err.message || 'Unknown error');
-        console.error('Error details:', err.response?.data || err);
+        error.value = 'Échec de l\'ajout du programme : ' + (err.response?.data?.error || err.message || 'Erreur inconnue');
+        console.error('Détails de l\'erreur:', err.response?.data || err);
       }
     };
 
@@ -330,15 +337,13 @@ export default {
     // Update program
     const updateProgram = async () => {
       try {
-        // Convert datetime-local input to proper format
         const startDate = dayjs(selectedProgram.value.time_start);
         const endDate = dayjs(selectedProgram.value.time_end);
 
         if (!startDate.isValid() || !endDate.isValid()) {
-          throw new Error('Please enter valid dates');
+          throw new Error('Veuillez entrer des dates valides');
         }
 
-        // Format dates for backend
         const dataToSend = {
           ...selectedProgram.value,
           time_start: startDate.format('YYYY-MM-DD HH:mm'),
@@ -350,33 +355,38 @@ export default {
           dataToSend
         );
 
-        // Update local programs list
         const index = programs.value.findIndex(p => p.id === selectedProgram.value.id);
         if (index !== -1) {
           programs.value[index] = response.data;
         }
 
-        // Close modal
         showUpdateModal.value = false;
       } catch (err) {
-        error.value = 'Failed to update program: ' + (err.response?.data?.error || err.message);
+        error.value = 'Échec de la mise à jour du programme : ' + (err.response?.data?.error || err.message);
         console.error(err);
       }
     };
 
-    // Delete program
-    const deleteProgram = async (id) => {
-      if (confirm('Are you sure you want to delete this program?')) {
-        try {
-          await ProgramService.deleteProgram(id);
-          programs.value = programs.value.filter(p => p.id !== id);
+    // Confirm delete
+    const confirmDelete = (id) => {
+      const program = programs.value.find(p => p.id === id);
+      selectedProgramId.value = id;
+      selectedProgramName.value = program ? program.name_en : '';
+      showDeleteModal.value = true;
+    };
 
-          // Update dates list
-          extractDates();
-        } catch (err) {
-          error.value = 'Failed to delete program: ' + err.message;
-          console.error(err);
-        }
+    // Delete program
+    const deleteProgram = async () => {
+      try {
+        await ProgramService.deleteProgram(selectedProgramId.value);
+        programs.value = programs.value.filter(p => p.id !== selectedProgramId.value);
+        extractDates();
+        showDeleteModal.value = false;
+        selectedProgramId.value = null;
+        selectedProgramName.value = '';
+      } catch (err) {
+        error.value = 'Échec de la suppression du programme : ' + err.message;
+        console.error(err);
       }
     };
 
@@ -403,14 +413,18 @@ export default {
       filteredPrograms,
       showModal,
       showUpdateModal,
+      showDeleteModal,
       newProgram,
       selectedProgram,
+      selectedProgramId,
+      selectedProgramName,
       error,
       isLoading,
       selectDate,
       addProgram,
       openUpdateModal,
       updateProgram,
+      confirmDelete,
       deleteProgram,
       formatTime,
       resetNewProgramForm
@@ -420,11 +434,13 @@ export default {
 </script>
 
 <style scoped>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
+
 .programme-container {
   padding: 2rem;
   max-width: 1200px;
   margin: auto;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   animation: fadeInUp 0.6s ease;
 }
 
@@ -455,25 +471,34 @@ export default {
     opacity: 0;
     transform: translateY(40px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.title {
-  font-size: 1.7rem;
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
-  color: black;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1b2d56;
+  margin: 0;
   position: relative;
 }
 
 .title::after {
   content: "";
-  width: 80px;
+  width: 100px;
   height: 4px;
-  background: #00a6a6;
+  background: #265985;
   display: block;
   margin-top: 8px;
   border-radius: 2px;
@@ -483,8 +508,6 @@ export default {
 .action-buttons {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
 }
 
 .action-buttons button {
@@ -497,14 +520,14 @@ export default {
 }
 
 .add-btn {
-  border-color: #268557;
-  color: #268557;
-  background-color: #fff;
+  border-color: #265985;
+  color: #265985;
+  background-color: white;
 }
 
 .add-btn:hover {
-  background-color: #268557;
-  color: #fff;
+  background-color: #265985;
+  color: white;
 }
 
 /* Date Selector */
@@ -516,7 +539,7 @@ export default {
 }
 
 .date-btn {
-  border: 2px solid #00a6a6;
+  border: 2px solid #265985;
   padding: 0.3rem 1.2rem;
   border-radius: 20px;
   background: white;
@@ -528,7 +551,7 @@ export default {
 }
 
 .date-btn.active {
-  background: #00a6a6;
+  background: #265985;
   color: white;
   font-weight: 700;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -538,7 +561,7 @@ export default {
 .timeline {
   position: relative;
   padding-left: 20px;
-  border-left: 2px solid #98c2e9;
+  border-left: 2px solid #8ab1d3;
   margin-bottom: 2rem;
 }
 
@@ -553,7 +576,7 @@ export default {
   width: 14px;
   height: 14px;
   background: white;
-  border: 2px solid #98c2e9;
+  border: 2px solid #8ab1d3;
   border-radius: 50%;
   position: absolute;
   left: -7px;
@@ -577,8 +600,8 @@ export default {
 }
 
 .small-btn {
-  padding: 4px 8px;
-  font-size: 0.8rem;
+  padding: 6px 10px;
+  font-size: 0.9rem;
   border-radius: 6px;
   border: 1px solid;
   cursor: pointer;
@@ -586,6 +609,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 32px;
+  height: 32px;
 }
 
 .update-btn {
@@ -630,11 +655,141 @@ export default {
   line-height: 1.5;
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+  text-align: center;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: #265985;
+  outline: none;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+  background: linear-gradient(to right, #e53935, #c62828);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right, #c62828, #b71c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
-  .action-buttons {
+  .header-row {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    width: 100%;
   }
 
   .action-buttons button {
@@ -654,6 +809,11 @@ export default {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  .modal-content {
+    max-height: 90vh;
+    padding: 20px;
   }
 }
 </style>

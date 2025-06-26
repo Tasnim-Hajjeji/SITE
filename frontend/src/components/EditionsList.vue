@@ -55,63 +55,62 @@
       </div>
     </div>
 
- <!-- Modal -->
-<div v-if="showModal" class="modal-overlay">
-  <div class="modal-content">
-    <h3 class="text-xl font-bold text-blue-700 mb-4">Nouvelle Édition</h3>
-    <form @submit.prevent="addEdition" class="space-y-4">
-      <div>
-        <label for="edition-name" class="block mb-1 text-gray-600 text-sm">Nom:</label>
-        <input id="edition-name" type="text" v-model="newEdition.name" placeholder="Nom" required
-          class="w-full p-2 border border-gray-300 rounded-lg" />
-      </div>
-      <div>
-        <label for="description-fr" class="block mb-1 text-gray-600 text-sm">Description (FR):</label>
-        <textarea id="description-fr" v-model="newEdition.description_fr" placeholder="Description (FR)" required
-          class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
-      </div>
-      <div>
-        <label for="description-en" class="block mb-1 text-gray-600 text-sm">Description (EN):</label>
-        <textarea id="description-en" v-model="newEdition.description_en" placeholder="Description (EN)" required
-          class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
-      </div>
-      <div>
-        <label for="start-date" class="block mb-1 text-gray-600 text-sm">Date de début:</label>
-        <input id="start-date" type="date" v-model="newEdition.start_date" required
-          class="w-full p-2 border border-gray-300 rounded-lg" />
-      </div>
-      <div>
-        <label for="end-date" class="block mb-1 text-gray-600 text-sm">Date de fin:</label>
-        <input id="end-date" type="date" v-model="newEdition.end_date" required
-          class="w-full p-2 border border-gray-300 rounded-lg" />
-      </div>
-      <div>
-        <label for="place" class="block mb-1 text-gray-600 text-sm">Lieu:</label>
-        <input id="place" type="text" v-model="newEdition.place" placeholder="Lieu" required
-          class="w-full p-2 border border-gray-300 rounded-lg" />
-      </div>
-      <!-- PDF upload field -->
-      <div class="file-upload">
-        <label for="sponsor-dossier" class="block mb-1 text-gray-600 text-sm">Dossier Sponsoring (PDF):</label>
-        <div class="relative w-full">
-          <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelected" required
-            class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
-          <div
-            class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
-            <span class="text-gray-600">Choisir un fichier</span>
-            <i class="fas fa-download text-gray-600"></i>
+    <!-- Modal -->
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 ">Nouvelle Édition</h3>
+        <form @submit.prevent="addEdition" class="space-y-0">
+          <div>
+            <label for="edition-name" class="block mb-1 text-xs text-gray-500 font-medium">Nom:</label>
+            <input id="edition-name" type="text" v-model="newEdition.name" placeholder="Nom" required
+              class="w-full p-2 border border-gray-300 rounded-lg" />
           </div>
-        </div>
-        <p v-if="pdfFileName" class="mt-1 text-sm text-gray-600">{{ pdfFileName }}</p>
+          <div>
+            <label for="description-fr" class="block mb-1 text-xs text-gray-500 font-medium">Description (FR):</label>
+            <textarea id="description-fr" v-model="newEdition.description_fr" placeholder="Description (FR)" required
+              class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
+          </div>
+          <div>
+            <label for="description-en" class="block mb-1 text-xs text-gray-500 font-medium">Description (EN):</label>
+            <textarea id="description-en" v-model="newEdition.description_en" placeholder="Description (EN)" required
+              class="w-full p-2 border border-gray-300 rounded-lg h-20 resize-y"></textarea>
+          </div>
+          <div>
+            <label for="start-date" class="block mb-1 text-xs text-gray-500 font-medium">Date de début:</label>
+            <input id="start-date" type="date" v-model="newEdition.start_date" required
+              class="w-full p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="end-date" class="block mb-1 text-xs text-gray-500 font-medium">Date de fin:</label>
+            <input id="end-date" type="date" v-model="newEdition.end_date" required
+              class="w-full p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="place" class="block mb-1 text-xs text-gray-500 font-medium">Lieu:</label>
+            <input id="place" type="text" v-model="newEdition.place" placeholder="Lieu" required
+              class="w-full p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <!-- PDF upload field -->
+          <div class="file-upload">
+            <label for="sponsor-dossier" class="block mb-1 text-xs text-gray-500 font-medium">Dossier Sponsoring (PDF):</label>
+            <div class="relative w-[95%]">
+              <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelected" required
+                class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
+              <div
+                class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
+                <span class="text-gray-600">Choisir un fichier</span>
+                <i class="fas fa-download text-gray-600"></i>
+              </div>
+            </div>
+            <p v-if="pdfFileName" class="mt-1 text-sm text-gray-600">{{ pdfFileName }}</p>
+          </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="submit" class="add-btn bg-gradient-to-r mt-4 from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">Ajouter</button>
+            <button type="button" class="cancel-btn bg-gradient-to-r mt-4 from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out" @click="closeModal">Annuler</button>
+          </div>
+        </form>
       </div>
-      <div class="modal-actions flex justify-end gap-2">
-        <button type="submit" class="add-btn">Ajouter</button>
-        <button type="button" class="cancel-btn bg-gray-300 text-gray-800 px-6 py-2 rounded-lg" @click="closeModal">Annuler</button>
-      </div>
-    </form>
-  </div>
-é
-</div>
+    </div>
   </section>
 </template>
 
@@ -442,6 +441,13 @@ const getRandomConferenceImage = () => {
   justify-content: center;
   align-items: center;
   z-index: 999;
+  
+}
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+  text-align: center;
 }
 
 .modal-content {
@@ -505,35 +511,39 @@ const getRandomConferenceImage = () => {
 }
 
 .add-btn {
-  background: #265985;
+  background: linear-gradient(to right, #265985, #1e4b6b);
   color: white;
   border: none;
-  padding: 0.7rem 1.2rem;
-  border-radius: 10px;
-  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .add-btn:hover {
-  background: #1e4b6b;
+  background: linear-gradient(to right, #1e4b6b, #163a52);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .cancel-btn {
-  background: #d1d5db;
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
   color: #1f2937;
   border: none;
-  padding: 0.7rem 1.2rem;
-  border-radius: 10px;
-  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .cancel-btn:hover {
-  background: #9ca3af;
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .file-upload {

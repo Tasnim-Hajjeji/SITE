@@ -4,16 +4,16 @@
       <h1>{{ edition.name }}</h1>
       <div class="action-buttons">
         <button class="delete-btn" @click="confirmDelete">
-          <i class="fas fa-trash"></i> Delete
+          <i class="fas fa-trash"></i> Supprimer
         </button>
 
         <button class="update-btn" @click="showUpdateModal = true">
-          <i class="fas fa-pen"></i> Update
+          <i class="fas fa-pen"></i> Mettre à jour
         </button>
 
         <!-- Dropdown Edition -->
         <div class="dropdown" @click.stop="toggleDropdown">
-          <button class="edition-btn">Edition ▼</button>
+          <button class="edition-btn">Édition ▼</button>
           <ul v-if="dropdownOpen" class="dropdown-menu">
             <li v-for="ed in editions" :key="ed.id" @click="selectEdition(ed.id)">
               {{ ed.name }}
@@ -30,14 +30,14 @@
           {{ editionStatus }}
         </button>
         <p class="description">
-          {{ edition.description_fr || 'No description available' }}
+          {{ edition.description_fr || 'Aucune description disponible' }}
         </p>
 
         <div class="info-row">
           <div class="info-item">
             <i class="fas fa-map-marker-alt"></i>
-            <span class="label">Place</span>
-            <span class="value">{{ edition.place || 'Not specified' }}</span>
+            <span class="label">Lieu</span>
+            <span class="value">{{ edition.place || 'Non spécifié' }}</span>
           </div>
 
           <div class="info-item">
@@ -49,109 +49,138 @@
           <div class="info-item">
             <i class="fas fa-chart-bar"></i>
             <span class="label">Participants</span>
-            <span class="value">{{participantCount}}</span>
+            <span class="value">{{ participantCount }}</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Update Modal -->
-    <div v-if="showUpdateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-      <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
-        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Update Edition</h3>
-        <div class="space-y-4">
+    <div v-if="showUpdateModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Mettre à jour l'Édition</h3>
+        <form @submit.prevent="updateEdition" class="space-y-0">
           <div>
-            <label for="update_name" class="block text-sm font-medium text-gray-700">Name</label>
+            <label for="update_name" class="block mb-1 text-xs text-gray-500 font-medium">Nom:</label>
             <input
               v-model="editionForm.name"
               id="update_name"
               type="text"
-              placeholder="Enter edition name"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              placeholder="Entrez le nom de l'édition"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg"
               required
             />
           </div>
           <div>
-            <label for="update_description_fr" class="block text-sm font-medium text-gray-700">French Description</label>
+            <label for="update_description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Description (FR):</label>
             <textarea
               v-model="editionForm.description_fr"
               id="update_description_fr"
-              placeholder="Enter French description"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              rows="4"
+              placeholder="Entrez la description en français"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y"
               required
             ></textarea>
           </div>
           <div>
-            <label for="update_description_en" class="block text-sm font-medium text-gray-700">English Description</label>
+            <label for="update_description_en" class="block mb-1 text-xs text-gray-500 font-medium">Description (EN):</label>
             <textarea
               v-model="editionForm.description_en"
               id="update_description_en"
-              placeholder="Enter English description"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              rows="4"
+              placeholder="Entrez la description en anglais"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y"
               required
             ></textarea>
           </div>
           <div>
-            <label for="update_start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+            <label for="update_start_date" class="block mb-1 text-xs text-gray-500 font-medium">Date de début:</label>
             <input
               v-model="editionForm.start_date"
               id="update_start_date"
               type="date"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg"
               required
             />
           </div>
           <div>
-            <label for="update_end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+            <label for="update_end_date" class="block mb-1 text-xs text-gray-500 font-medium">Date de fin:</label>
             <input
               v-model="editionForm.end_date"
               id="update_end_date"
               type="date"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg"
               required
             />
           </div>
           <div>
-            <label for="update_place" class="block text-sm font-medium text-gray-700">Place</label>
+            <label for="update_place" class="block mb-1 text-xs text-gray-500 font-medium">Lieu:</label>
             <input
               v-model="editionForm.place"
               id="update_place"
               type="text"
-              placeholder="Enter location"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              placeholder="Entrez le lieu"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg"
               required
             />
           </div>
-          <div>
-            <label for="update_dossier_sponso" class="block text-sm font-medium text-gray-700">Sponsorship File</label>
-            <input
-              id="update_dossier_sponso"
-              type="file"
-              @change="(e) => editionForm.dossier_sponso = e.target.files[0]"
-              accept=".pdf,.docx,.doc"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-            />
+          <div class="file-upload">
+            <label for="update_dossier_sponso" class="block mb-1 text-xs text-gray-500 font-medium">Dossier Sponsoring (PDF):</label>
+            <div class="relative w-[95%]">
+              <input
+                id="update_dossier_sponso"
+                type="file"
+                @change="(e) => editionForm.dossier_sponso = e.target.files[0]"
+                accept=".pdf"
+                class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer"
+              />
+              <div
+                class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer"
+              >
+                <span class="text-gray-600">Choisir un fichier</span>
+                <i class="fas fa-download text-gray-600"></i>
+              </div>
+            </div>
           </div>
           <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
             <span class="mr-1">!</span> {{ error }}
           </div>
-        </div>
-        <div class="mt-6 flex justify-end space-x-3">
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button
+              type="button"
+              class="cancel-btn bg-gradient-to-r mt-4 from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="showUpdateModal = false"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="add-btn bg-gradient-to-r mt-4 from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            >
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmer la suppression</h3>
+        <p class="text-gray-600 mb-4">Êtes-vous sûr de vouloir supprimer l'édition "{{ edition?.name }}" ? Cette action est irréversible.</p>
+        <div class="modal-actions flex justify-end gap-2 mt-6">
           <button
-            @click="showUpdateModal = false"
             type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200"
+            class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            @click="showDeleteModal = false"
           >
-            Cancel
+            Annuler
           </button>
           <button
-            @click="updateEdition"
             type="button"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+            class="delete-btn bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-red-700 hover:to-red-600 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            @click="deleteEdition"
           >
-            Save Changes
+            Supprimer
           </button>
         </div>
       </div>
@@ -159,7 +188,7 @@
   </section>
 
   <div v-if="isLoading" class="loading">
-    Loading edition data...
+    Chargement des données de l'édition...
   </div>
   <div v-if="error" class="error-message">
     {{ error }}
@@ -182,6 +211,7 @@ const isLoading = ref(true);
 const error = ref(null);
 const dropdownOpen = ref(false);
 const showUpdateModal = ref(false);
+const showDeleteModal = ref(false);
 const participantCount = ref(0);
 
 // Form for updates
@@ -213,17 +243,18 @@ const fetchParticipantCount = async () => {
     const response = await ParticipantService.getParticipantsByEdition(editionId.value);
     participantCount.value = response.data.length;
   } catch (err) {
-    console.error('Error fetching participant count:', err);
+    console.error('Erreur lors de la récupération du nombre de participants:', err);
     participantCount.value = 0;
   }
 };
+
 // Fetch all editions for dropdown
 const fetchEditions = async () => {
   try {
     const response = await EditionService.getAllEditions();
     editions.value = response.data;
   } catch (err) {
-    error.value = 'Failed to load editions: ' + err.message;
+    error.value = 'Échec du chargement des éditions : ' + err.message;
     console.error(err);
   }
 };
@@ -238,7 +269,7 @@ const fetchEditionDetails = async () => {
     editionForm.value = { ...response.data };
     await fetchParticipantCount();
   } catch (err) {
-    error.value = 'Failed to load edition details: ' + err.message;
+    error.value = 'Échec du chargement des détails de l\'édition : ' + err.message;
     console.error(err);
   } finally {
     isLoading.value = false;
@@ -258,7 +289,7 @@ const editionStatus = computed(() => {
 });
 
 const formattedDateRange = computed(() => {
-  if (!edition.value?.start_date || !edition.value?.end_date) return 'Dates not specified';
+  if (!edition.value?.start_date || !edition.value?.end_date) return 'Dates non spécifiées';
 
   const start = new Date(edition.value.start_date);
   const end = new Date(edition.value.end_date);
@@ -288,21 +319,23 @@ const selectEdition = (id) => {
 };
 
 // Edition operations
-const confirmDelete = async () => {
-  if (confirm('Are you sure you want to delete this edition?')) {
-    try {
-      await EditionService.deleteEdition(editionId.value);
-      router.push({ name: 'Editions' }); // Redirect to editions list
-    } catch (err) {
-      error.value = 'Failed to delete edition: ' + err.message;
-      console.error(err);
-    }
+const confirmDelete = () => {
+  showDeleteModal.value = true;
+};
+
+const deleteEdition = async () => {
+  try {
+    await EditionService.deleteEdition(editionId.value);
+    router.push({ name: 'Editions' });
+    showDeleteModal.value = false;
+  } catch (err) {
+    error.value = 'Échec de la suppression de l\'édition : ' + err.message;
+    console.error(err);
   }
 };
 
 const updateEdition = async () => {
   try {
-    // Create FormData for the update
     const formData = new FormData();
     Object.keys(editionForm.value).forEach(key => {
       if (edition.value[key] !== editionForm.value[key]) {
@@ -312,24 +345,24 @@ const updateEdition = async () => {
     if (editionForm.value.dossier_sponso instanceof File) {
       formData.append('dossier_sponso', editionForm.value.dossier_sponso);
     }
-    console.log('Updating edition with data:', Object.fromEntries(formData.entries()));
+    console.log('Mise à jour de l\'édition avec les données:', Object.fromEntries(formData.entries()));
     await EditionService.updateEdition(editionId.value, formData);
-    await fetchEditionDetails(); // Refresh data
+    await fetchEditionDetails();
     showUpdateModal.value = false;
   } catch (err) {
-    error.value = 'Failed to update edition: ' + err.message;
+    error.value = 'Échec de la mise à jour de l\'édition : ' + err.message;
     console.error(err);
   }
 };
 </script>
 
 <style scoped>
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
 
 .conference-card {
   font-family: 'Segoe UI', sans-serif;
-  margin-top: 80px; /* Espacement pour éviter la navbar */
-  max-width: 1000px; /* Limite la largeur */
+  margin-top: 80px;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
@@ -399,7 +432,6 @@ const updateEdition = async () => {
   color: #fff;
 }
 
-/* Edition dropdown styles */
 .dropdown {
   position: relative;
 }
@@ -529,18 +561,140 @@ const updateEdition = async () => {
   color: #777;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .conference-card {
-    margin-top: 60px; /* Ajustement mobile */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
   }
-  .card-body {
-    flex-direction: column;
-    padding: 1.5rem;
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
-  .action-buttons {
-    flex-wrap: wrap;
-  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+  text-align: center;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: #265985;
+  outline: none;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+  background: linear-gradient(to right, #e53935, #c62828);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right, #c62828, #b71c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.file-upload {
+  margin-bottom: 1rem;
+}
+
+.file-upload input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .loading,
@@ -553,5 +707,19 @@ const updateEdition = async () => {
   color: #e53935;
   background-color: #fee;
   border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .conference-card {
+    margin-top: 60px;
+  }
+  .card-body {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+  .action-buttons {
+    flex-wrap: wrap;
+  }
 }
 </style>

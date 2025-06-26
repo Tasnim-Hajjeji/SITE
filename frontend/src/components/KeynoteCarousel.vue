@@ -1,12 +1,14 @@
 <template>
   <section class="keynote-section">
-    <h2 class="title">Keynote Session</h2>
+    <div class="header-row">
+      <h2 class="title">Keynote Session</h2>
+      <div class="action-buttons">
+        <button class="add-btn" @click="showModal = true">
+          <i class="fas fa-plus"></i> Add
+        </button>
+      </div>
+    </div>
 
-    <div class="action-buttons">
-      <button class="add-btn" @click="showModal = true">
-        <i class="fas fa-plus"></i> Add
-      </button>
-    </div><br><br>
     <div v-if="isLoading" class="loading-message">
       Loading keynotes...
     </div>
@@ -28,7 +30,7 @@
           <div class="quote-icon">❝</div>
           <p class="text">{{ currentLanguage === 'fr' ? item.description_fr : item.description_en }}</p>
           <div class="profile">
-            <img :src="getImageUrl(item.image_url )|| 'https://i.pravatar.cc/50'" alt="Speaker photo" class="avatar" />
+            <img :src="getImageUrl(item.image_url) || 'https://i.pravatar.cc/50'" alt="Speaker photo" class="avatar" />
             <div>
               <h3>{{ item.speaker_name }}</h3>
               <p class="role">{{ item.speaker_role }}</p>
@@ -48,48 +50,42 @@
 
     <!-- Add New Keynote Modal -->
     <div v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-      <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
-        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Add New Keynote</h3>
-        <div class="space-y-4">
+      class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add New Keynote</h3>
+        <form @submit.prevent="addKeynote" class="space-y-0">
           <div>
-            <label for="description_fr" class="block text-sm font-medium text-gray-700">Quote (French)</label>
+            <label for="description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Quote (French)</label>
             <textarea v-model="newKeynote.description_fr" id="description_fr"
               placeholder="Enter the French keynote quote here..."
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              rows="4" required></textarea>
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
-            <label for="description_en" class="block text-sm font-medium text-gray-700">Quote (English)</label>
+            <label for="description_en" class="block mb-1 text-xs text-gray-500 font-medium">Quote (English)</label>
             <textarea v-model="newKeynote.description_en" id="description_en"
               placeholder="Enter the English keynote quote here..."
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              rows="4" required></textarea>
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
-            <label for="speaker_name" class="block text-sm font-medium text-gray-700">Speaker Name</label>
+            <label for="speaker_name" class="block mb-1 text-xs text-gray-500 font-medium">Speaker Name</label>
             <input v-model="newKeynote.speaker_name" id="speaker_name" type="text" placeholder="Enter speaker name"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required />
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="speaker_role" class="block text-sm font-medium text-gray-700">Role</label>
+            <label for="speaker_role" class="block mb-1 text-xs text-gray-500 font-medium">Role</label>
             <input v-model="newKeynote.speaker_role" id="speaker_role" type="text"
               placeholder="Enter speaker's role or title"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required />
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <!-- <div>
-            <label for="edition_id" class="block text-sm font-medium text-gray-700">Edition ID</label>
+            <label for="edition_id" class="block mb-1 text-xs text-gray-500 font-medium">Edition ID</label>
             <input v-model="newKeynote.edition_id" id="edition_id" type="text" placeholder="Enter edition ID"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required />
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div> -->
           <div>
-            <label for="image" class="block text-sm font-medium text-gray-700">Profile Image</label>
+            <label for="image" class="block mb-1 text-xs text-gray-500 font-medium">Profile Image</label>
             <input id="image" type="file" @change="handleImageUpload" accept="image/*"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required />
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             <div v-if="imagePreview" class="mt-2">
               <img :src="imagePreview" alt="Image Preview" class="w-20 h-20 object-cover rounded-md" />
             </div>
@@ -97,64 +93,60 @@
           <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
             <span class="mr-1">!</span> {{ error }}
           </div>
-        </div>
-        <div class="mt-6 flex justify-end space-x-3">
-          <button @click="showModal = false" type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">
-            Cancel
-          </button>
-          <button @click="addKeynote" type="button"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
-            Add Keynote
-          </button>
-        </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="showModal = false">
+              Cancel
+            </button>
+            <button type="submit"
+              class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+              Add Keynote
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
     <!-- Update Keynote Modal -->
     <div v-if="showUpdateModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-      <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
-        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Update Keynote</h3>
-        <div class="space-y-4">
+      class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Update Keynote</h3>
+        <form @submit.prevent="updateKeynote" class="space-y-0">
           <div>
-            <label for="update_description_fr" class="block text-sm font-medium text-gray-700">Quote (French)</label>
+            <label for="update_description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Quote (French)</label>
             <textarea v-model="selectedItem.description_fr" id="update_description_fr"
               placeholder="Enter the French keynote quote here..."
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              rows="4" required></textarea>
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
-            <label for="update_description_en" class="block text-sm font-medium text-gray-700">Quote (English)</label>
+            <label for="update_description_en" class="block mb-1 text-xs text-gray-500 font-medium">Quote (English)</label>
             <textarea v-model="selectedItem.description_en" id="update_description_en"
               placeholder="Enter the English keynote quote here..."
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              rows="4" required></textarea>
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
-            <label for="update_speaker_name" class="block text-sm font-medium text-gray-700">Speaker Name</label>
+            <label for="update_speaker_name" class="block mb-1 text-xs text-gray-500 font-medium">Speaker Name</label>
             <input v-model="selectedItem.speaker_name" id="update_speaker_name" type="text"
-              placeholder="Enter speaker ID"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required />
+              placeholder="Enter speaker name"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="update_speaker_role" class="block text-sm font-medium text-gray-700">Role</label>
+            <label for="update_speaker_role" class="block mb-1 text-xs text-gray-500 font-medium">Role</label>
             <input v-model="selectedItem.speaker_role" id="update_speaker_role" type="text"
               placeholder="Enter speaker's role or title"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required />
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="update_edition_id" class="block text-sm font-medium text-gray-700">Edition ID</label>
+            <label for="update_edition_id" class="block mb-1 text-xs text-gray-500 font-medium">Edition ID</label>
             <input v-model="selectedItem.edition_id" id="update_edition_id" type="text" placeholder="Enter edition ID"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required />
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="update_image" class="block text-sm font-medium text-gray-700">Profile Image</label>
+            <label for="update_image" class="block mb-1 text-xs text-gray-500 font-medium">Profile Image</label>
             <input id="update_image" type="file" @change="handleUpdateImageUpload" accept="image/*"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" />
             <div v-if="updateImagePreview" class="mt-2">
               <img :src="updateImagePreview" alt="Image Preview" class="w-20 h-20 object-cover rounded-md" />
             </div>
@@ -162,17 +154,18 @@
           <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
             <span class="mr-1">!</span> {{ error }}
           </div>
-        </div>
-        <div class="mt-6 flex justify-end space-x-3">
-          <button @click="showUpdateModal = false" type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">
-            Cancel
-          </button>
-          <button @click="updateKeynote" type="button"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
-            Update Keynote
-          </button>
-        </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="showUpdateModal = false">
+              Cancel
+            </button>
+            <button type="submit"
+              class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+              Update Keynote
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </section>
@@ -370,12 +363,13 @@ async function deleteKeynote(id) {
 </script>
 
 <style scoped>
-/* Keep all existing styles exactly the same */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
+
 .keynote-section {
   padding: 2rem;
   max-width: 1200px;
   margin: auto;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   animation: fadeInUp 0.6s ease;
 }
 
@@ -384,32 +378,41 @@ async function deleteKeynote(id) {
     opacity: 0;
     transform: translateY(40px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.title {
-  font-size: 1.7rem;
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
-  color: black;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1b2d56;
+  margin: 0;
   position: relative;
 }
 
 .title::after {
   content: "";
-  width: 80px;
+  width: 100px;
   height: 4px;
-  background: #00a6a6;
+  background: #265985;
   display: block;
   margin-top: 8px;
   border-radius: 2px;
 }
 
+/* Buttons */
 .action-buttons button {
-  margin-left: 1rem;
   padding: 8px 16px;
   border-radius: 25px;
   border: 1px solid;
@@ -419,16 +422,17 @@ async function deleteKeynote(id) {
 }
 
 .add-btn {
-  border-color: #268557;
-  color: #268557;
-  background-color: #fff;
+  border-color: #265985;
+  color: #265985;
+  background-color: white;
 }
 
 .add-btn:hover {
-  background-color: #268557;
-  color: #fff;
+  background-color: #265985;
+  color: white;
 }
 
+/* Carousel and Slide Styles (unchanged) */
 .carousel {
   display: flex;
   align-items: center;
@@ -490,7 +494,6 @@ async function deleteKeynote(id) {
     opacity: 0;
     transform: translateX(30px);
   }
-
   to {
     opacity: 1;
     transform: translateX(0);
@@ -539,11 +542,9 @@ async function deleteKeynote(id) {
   0% {
     transform: rotate(-10deg) scale(1);
   }
-
   50% {
     transform: rotate(-10deg) scale(1.05);
   }
-
   100% {
     transform: rotate(-10deg) scale(1);
   }
@@ -607,20 +608,172 @@ async function deleteKeynote(id) {
   0% {
     transform: scale(1);
   }
-
   50% {
     transform: scale(1.4);
   }
-
   100% {
     transform: scale(1);
   }
 }
 
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+  color: #666;
+}
+
+.empty-message {
+  text-align: center;
+  color: #999;
+  margin-top: 2rem;
+  font-style: italic;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+  text-align: center;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: #265985;
+  outline: none;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+  background: linear-gradient(to right, #e53935, #c62828);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right, #c62828, #b71c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .nav-btn {
     width: 57px;
     height: 45px;
+  }
+
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    width: 100%;
+  }
+
+  .action-buttons button {
+    width: 100%;
   }
 }
 </style>

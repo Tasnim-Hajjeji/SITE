@@ -1,36 +1,38 @@
 <template>
   <section class="photo-gallery">
-    <h2 class="title">Galerie Photo</h2>
+    <div class="header-row">
+      <h2 class="title">Galerie Photo</h2>
+      <div class="action-buttons">
+        <button class="delete-btn" @click="showDeleteAllModal = true">
+          <i class="fas fa-trash"></i> Delete All
+        </button>
+        <button class="add-btn" @click="showModal = true">
+          <i class="fas fa-plus"></i> Add
+        </button>
+      </div>
+    </div>
 
-    <div class="action-buttons">
-      <button class="delete-btn" @click="deleteAllImages">
-        <i class="fas fa-trash"></i> Delete All
-      </button>
-
-      <button class="add-btn" @click="showModal = true">
-        <i class="fas fa-plus"></i> Add
-      </button>
-    </div><br><br>
-
-    <div v-if="isLoading" class="loading-message">
+    <div v-if="isLoading" class="loading">
       Loading images...
     </div>
 
-    <div v-else-if="images.length === 0" class="empty-message">
+    <div v-else-if="images.length === 0" class="empty-msg">
       No images available.
     </div>
 
-    <div v-else class="carousel-container">
+    <div v-else class="carousel">
       <button class="nav-btn" @click="prevSlide" :disabled="currentIndex === 0">
         <i class="fas fa-arrow-left"></i>
       </button>
 
-      <div class="carousel-track">
-        <div v-for="(image, index) in visibleImages" :key="index" class="image-card">
+      <div class="slides-wrapper">
+        <div v-for="(image, index) in visibleImages" :key="index" class="slide">
+          <div class="action-icons">
+            <button class="delete-btn hover-button" @click="openDeleteModal(index)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
           <img :src="getImageUrl(image)" alt="Gallery photo" />
-          <button class="hover-button delete-btn" @click="deleteImage(index)">
-            Delete
-          </button>
         </div>
       </div>
 
@@ -39,21 +41,19 @@
       </button>
     </div>
 
-    <div v-if="!isLoading && images.length > 0" class="carousel-dots">
+    <div v-if="!isLoading && images.length > 0" class="dots">
       <span v-for="(dot, i) in totalDots" :key="i" :class="['dot', { active: i === currentIndex }]"></span>
     </div>
 
     <!-- Add Image Modal -->
-    <div v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-      <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
-        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Add Image</h3>
-        <div class="space-y-4">
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add Image</h3>
+        <form @submit.prevent="addImage" class="space-y-0">
           <div>
-            <label for="image_upload" class="block text-sm font-medium text-gray-700">Upload Image</label>
+            <label for="image_upload" class="block mb-1 text-xs text-gray-500 font-medium">Upload Image</label>
             <input id="image_upload" type="file" accept="image/*" @change="handleImageUpload"
-              class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              required />
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             <div v-if="imagePreview" class="mt-2">
               <img :src="imagePreview" alt="Image Preview" class="w-20 h-20 object-cover rounded-md" />
             </div>
@@ -61,16 +61,40 @@
           <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
             <span class="mr-1">!</span> {{ error }}
           </div>
-        </div>
-        <div class="mt-6 flex justify-end space-x-3">
-          <button @click="showModal = false" type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="showModal = false">
+              Cancel
+            </button>
+            <button type="submit"
+              class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              :disabled="!imagePreview || isAdding">
+              <span v-if="!isAdding">Add Image</span>
+              <span v-else class="flex items-center"><i class="fas fa-spinner fa-spin mr-2"></i> Adding...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteModal || showDeleteAllModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">
+          {{ showDeleteModal ? 'Delete Image' : 'Delete All Images' }}
+        </h3>
+        <p class="text-center mb-4">Are you sure you want to delete {{ showDeleteModal ? 'this image?' : 'all images?' }}</p>
+        <div class="modal-actions flex justify-end gap-2">
+          <button type="button"
+            class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            @click="cancelDelete">
             Cancel
           </button>
-          <button @click="addImage" type="button"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
-            :disabled="!imagePreview">
-            Add Image
+          <button type="button"
+            class="delete-btn bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-red-700 hover:to-red-900 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            @click="confirmDelete">
+            Confirm Delete
           </button>
         </div>
       </div>
@@ -87,12 +111,16 @@ const route = useRoute()
 const editionId = ref(localStorage.getItem('selectedEditionId') || route.params.editionId)
 const images = ref([])
 const currentIndex = ref(0)
-const visibleCount = ref(4)
+const visibleCount = ref(3) // Show 3 images at a time
 const showModal = ref(false)
 const imagePreview = ref(null)
 const selectedFile = ref(null)
 const error = ref(null)
 const isLoading = ref(true)
+const isAdding = ref(false) // Loading state for adding image
+const showDeleteModal = ref(false) // Modal for individual delete
+const showDeleteAllModal = ref(false) // Modal for delete all
+const deleteIndex = ref(null) // Store index for individual delete
 
 // Fetch edition images on component mount
 onMounted(() => {
@@ -140,20 +168,7 @@ function nextSlide() {
 }
 
 function handleResize() {
-  const width = window.innerWidth
-  if (width < 640) {
-    visibleCount.value = 1
-  } else if (width < 1024) {
-    visibleCount.value = 2
-  } else if (width < 1280) {
-    visibleCount.value = 3
-  } else {
-    visibleCount.value = 4
-  }
-
-  if (currentIndex.value > maxIndex.value) {
-    currentIndex.value = maxIndex.value
-  }
+  visibleCount.value = 3; // Fixed to 3 images
 }
 
 function handleImageUpload(event) {
@@ -179,33 +194,54 @@ async function addImage() {
       return
     }
 
+    isAdding.value = true // Start loading
     const formData = new FormData()
     formData.append('images[]', selectedFile.value)
 
     const response = await EditionService.addImages(editionId.value, formData)
     images.value = response.data.images || []
 
-    // Reset form
+    // Reset form and refresh
     imagePreview.value = null
     selectedFile.value = null
     error.value = null
+    isAdding.value = false
     showModal.value = false
-    fetchImages() // Refresh images after adding
+    await fetchImages() // Automatic refresh
   } catch (err) {
+    isAdding.value = false // Stop loading on error
     error.value = 'Error adding image: ' + (err.response?.data?.error || err.message)
   }
 }
 
+function openDeleteModal(index) {
+  deleteIndex.value = index
+  showDeleteModal.value = true
+}
+
+async function confirmDelete() {
+  if (showDeleteModal.value && deleteIndex.value !== null) {
+    await deleteImage(deleteIndex.value)
+  } else if (showDeleteAllModal.value) {
+    await deleteAllImages()
+  }
+  cancelDelete()
+}
+
+function cancelDelete() {
+  showDeleteModal.value = false
+  showDeleteAllModal.value = false
+  deleteIndex.value = null
+}
+
 async function deleteImage(index) {
   try {
-    if (confirm('Are you sure you want to delete this image?')) {
-      await EditionService.removeImage(editionId.value, index)
-      images.value.splice(index, 1)
-      if (currentIndex.value > maxIndex.value) {
-        currentIndex.value = maxIndex.value
-      }
+    await EditionService.removeImage(editionId.value, index)
+    images.value.splice(index, 1)
+    if (currentIndex.value > maxIndex.value) {
+      currentIndex.value = maxIndex.value
     }
-    fetchImages() // Refresh images after deletion
+    await fetchImages() // Automatic refresh
   } catch (err) {
     error.value = 'Error deleting image: ' + err.message
   }
@@ -213,25 +249,19 @@ async function deleteImage(index) {
 
 async function deleteAllImages() {
   try {
-    if (confirm('Are you sure you want to delete all images?')) {
-      // Delete images starting from the end to avoid index shifting
-      for (let i = images.value.length - 1; i >= 0; i--) {
-        await EditionService.removeImage(editionId.value, i)
-      }
-
-      // Refetch updated image list from backend
-      await fetchImages()
-
-      // Reset local state
-      images.value = []
-      currentIndex.value = 0
+    // Delete images starting from the end to avoid index shifting
+    for (let i = images.value.length - 1; i >= 0; i--) {
+      await EditionService.removeImage(editionId.value, i)
     }
+    // Reset local state and refresh
+    images.value = []
+    currentIndex.value = 0
+    await fetchImages() // Automatic refresh
   } catch (err) {
     console.error(err)
     error.value = 'Error deleting images: ' + (err.response?.data?.message || err.message)
   }
 }
-
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
@@ -239,39 +269,56 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
+
 .photo-gallery {
   padding: 2rem;
-  max-width: 1200px;
-  margin: auto;
-  font-family: 'Poppins', sans-serif;
+  max-width: 1500px;
+  margin-right: auto;
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .title {
-  font-size: 1.7rem;
-  margin-bottom: 1rem;
-  color: black;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1b2d56;
+  margin: 0;
   position: relative;
 }
 
 .title::after {
   content: "";
-  width: 80px;
+  width: 100px;
   height: 4px;
-  background: #00a6a6;
+  background: #265985;
   display: block;
   margin-top: 8px;
   border-radius: 2px;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-}
-
+/* Buttons */
 .action-buttons button {
-  margin-left: 1rem;
   padding: 8px 16px;
   border-radius: 25px;
   border: 1px solid;
@@ -283,42 +330,33 @@ onUnmounted(() => {
 .delete-btn {
   border-color: #e53935;
   color: #e53935;
-  background-color: #fff;
+  background-color: white;
 }
 
 .delete-btn:hover {
   background-color: #e53935;
-  color: #fff;
-}
-
-.update-btn {
-  border-color: #265985;
-  color: #265985;
-  background-color: #fff;
-}
-
-.update-btn:hover {
-  background-color: #265985;
-  color: #fff;
+  color: white;
 }
 
 .add-btn {
-  border-color: #268557;
-  color: #268557;
-  background-color: #fff;
+  border-color: #265985;
+  color: #265985;
+  background-color: white;
 }
 
 .add-btn:hover {
-  background-color: #268557;
-  color: #fff;
+  background-color: #265985;
+  color: white;
 }
 
-.carousel-container {
+/* Carousel and Slide Styles */
+.carousel {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   flex-wrap: nowrap;
+  transition: all 0.5s ease;
 }
 
 .nav-btn {
@@ -326,7 +364,7 @@ onUnmounted(() => {
   background: white;
   color: #1c1c3c;
   border-radius: 50%;
-  width: 48px;
+  width: 60px;
   height: 48px;
   font-size: 1.2rem;
   cursor: pointer;
@@ -342,48 +380,86 @@ onUnmounted(() => {
 }
 
 .nav-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-.carousel-track {
+.slides-wrapper {
   display: flex;
-  gap: 1.2rem;
-  flex-wrap: nowrap;
-  overflow: hidden;
+  justify-content: center;
   width: 100%;
-  max-width: 90%;
-}
-
-.image-card {
+  max-width: 900px; /* Match KeynoteSession slides-wrapper */
   position: relative;
-  flex: 0 0 auto;
-  width: 220px;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
-  background: white;
 }
 
-.image-card img {
+.slide {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  width: calc(33.33% - 0.8rem); /* 1/3 width with gap adjustment */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: slideIn 0.4s ease;
+  transition: transform 0.3s ease;
+  position: relative;
+  height: 300px; /* Consistent height for uniformity */
+  margin: 0 0.4rem; /* Half of gap for spacing */
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.action-icons {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.hover-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f2f2f2;
+}
+
+.hover-button:hover {
+  background-color: #e53935;
+  color: white;
+}
+
+.slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
-  transition: transform 0.3s ease;
+  max-height: 300px; /* Limit image height within slide */
+  border-radius: 10px;
 }
 
-.image-card:hover img {
+.slide:hover img {
   transform: scale(1.05);
 }
 
-.carousel-dots {
+.dots {
   display: flex;
   justify-content: center;
-  margin-top: 1.2rem;
   gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .dot {
@@ -396,40 +472,181 @@ onUnmounted(() => {
 
 .dot.active {
   background: #00a6a6;
-  transform: scale(1.2);
+  width: 12px;
+  height: 12px;
+  animation: bounce 0.4s ease;
 }
 
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+  color: #666;
+}
+
+.empty-msg {
+  text-align: center;
+  color: #666;
+  margin-top: 2rem;
+  font-style: italic;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+  text-align: center;
+}
+
+.modal-content input {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.modal-content input:focus {
+  border-color: #265985;
+  outline: none;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.add-btn:disabled {
+  background: #a3bffa;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
+  .photo-gallery {
+    margin-left: 0; /* Remove margin on mobile */
+    padding: 1rem;
+  }
+
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    width: 100%;
+  }
+
+  .action-buttons button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
   .nav-btn {
     width: 57px;
     height: 45px;
   }
-}
 
-.hover-button {
-  position: absolute;
-  bottom: 5%;
-  left: 5%;
-  z-index: 10;
-  display: none;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+  .slides-wrapper {
+    max-width: 100%; /* Allow full width on mobile */
+  }
 
-.image-card:hover .hover-button {
-  display: block;
-}
-
-.image-card img {
-  position: relative;
-  z-index: 1;
-  transition: opacity 0.3s ease;
-}
-
-.image-card:hover img {
-  opacity: 0.8;
+  .slide {
+    width: calc(50% - 0.4rem); /* 2 images per row on mobile */
+    margin: 0 0.2rem;
+  }
 }
 </style>
