@@ -11,15 +11,15 @@
       <div class="form-grid">
         <div class="form-field">
           <label>Full name</label>
-          <input type="text" value="Puerto Rico" readonly />
+          <input type="text" :value="formData.firstName + ' ' + formData.lastName" readonly />
         </div>
         <div class="form-field">
           <label>Email</label>
-          <input type="text" value="ghada@gmail.com" readonly />
+          <input type="text" :value="formData.email" readonly />
         </div>
         <div class="form-field">
           <label>Phone</label>
-          <input type="text" value="24625506" readonly />
+          <input type="text" :value="formData.phone" readonly />
         </div>
         <div class="form-field flag">
           <label>Country</label>
@@ -30,35 +30,35 @@
         </div>
         <div class="form-field">
           <label>Profession</label>
-          <input type="text" value="Teacher" readonly />
+          <input type="text" :value="formData.profession" readonly />
         </div>
         <div class="form-field">
           <label>Institution</label>
-          <input type="text" value="ensi" readonly />
+          <input type="text" :value="formData.institution" readonly />
         </div>
         <div class="form-field">
           <label>Participation</label>
-          <input type="text" value="with article" readonly />
+          <input type="text" :value="formData.participation" readonly />
         </div>
         <div class="form-field">
           <label>Accommodation</label>
-          <input type="text" value="yes" readonly />
+          <input type="text" :value="formData.hebergement" readonly />
         </div>
         <div class="form-field">
           <label>Number of accompanying adults</label>
-          <input type="text" value="2" readonly />
+          <input type="text" :value="formData.adultCompanions" readonly />
         </div>
         <div class="form-field">
           <label>Number of accompanying children</label>
-          <input type="text" value="2" readonly />
+          <input type="text" :value="formData.childCompanions" readonly />
         </div>
         <div class="form-field">
           <label>Single supplement</label>
-          <input type="text" value="yes" readonly />
+          <input type="text" :value="formData.singleSupplement" readonly />
         </div>
         <div class="form-field">
           <label>Extra night</label>
-          <input type="text" value="1" readonly />
+          <input type="text" :value="formData.extraNights" readonly />
         </div>
         <div class="form-field">
           <label>Payment method</label>
@@ -66,21 +66,86 @@
         </div>
         <div class="form-field">
           <label>Total amount</label>
-          <input type="text" value="200 TND" readonly />
+          <input type="text" :value="calculateTotal()" readonly />
         </div>
       </div>
-    </div><br>
+    </div>
+
+    <br />
 
     <div class="buttons">
       <button class="download">
         <i class="fas fa-download"></i> Download registration form
       </button>
       <button class="edit">Edit information</button>
-      <router-link to="/"><button class="home">Return to Home</button></router-link>
-
+      <button class="home" @click="handleReturnHome">Return to Home</button>
     </div>
   </div>
 </template>
+
+<script setup>
+import { reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const formData = reactive({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  profession: '',
+  institution: '',
+  participation: '',
+  hebergement: '',
+  childCompanions: 0,
+  adultCompanions: 0,
+  singleSupplement: '',
+  extraNights: 0
+})
+
+onMounted(() => {
+  const personalInfo = JSON.parse(localStorage.getItem('site2025_form') || '{}')
+  const accommodationInfo = JSON.parse(localStorage.getItem('site2025_accommodation_form') || '{}')
+  Object.assign(formData, personalInfo, accommodationInfo)
+})
+
+function calculateTotal() {
+  let total = 650 // Base price
+
+  if (formData.hebergement === 'yes') {
+    const adults = formData.adultCompanions
+    const children = formData.childCompanions
+
+    // Adult price
+    total += adults * 220
+
+    // Child price based on number of adults
+    if (adults === 2) {
+      total += children * 110
+    } else {
+      total += children * 155
+    }
+
+    // Extra nights per person
+    const persons = adults + children
+    total += formData.extraNights * 220 * persons
+
+    // Single supplement
+    if (formData.singleSupplement === 'yes') {
+      total += 70 * persons
+    }
+  }
+
+  return total + ' TND'
+}
+
+function handleReturnHome() {
+  localStorage.removeItem('site2025_form')
+  localStorage.removeItem('site2025_accommodation_form')
+  router.push('/')
+}
+</script>
 
 <style scoped>
 .registration-container {
