@@ -360,7 +360,7 @@ export default {
           num_enfant: this.editParticipant.details.children,
           num_adulte: this.editParticipant.details.adults,
           supp_single: this.editParticipant.details.singleSupplement === 'Yes',
-          supp_nuit: this.editParticipant.details.extraNights > 0,
+          supp_nuit: this.editParticipant.details.extraNights ,
           prix_total: this.editParticipant.details.total,
           methode_paie: this.editParticipant.details.payment,
           edition_id: this.selectedEditionId
