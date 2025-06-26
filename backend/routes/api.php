@@ -75,7 +75,7 @@ Route::prefix('programs')->group(function () {
     Route::post('/', [ProgramController::class, 'store']);
     Route::put('/{id}', [ProgramController::class, 'update']);
     Route::delete('/{id}', [ProgramController::class, 'destroy']);
-
+    Route::get('/edition/{editionId}/dates', [ProgramController::class, 'getProgramDates']);
 });
 
 // Committee Member Routes

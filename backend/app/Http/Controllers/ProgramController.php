@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Program;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProgramController extends Controller
 {
@@ -21,7 +22,7 @@ class ProgramController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        try {
 
             $validated = $request->validate([
                 'name_fr' => 'required|string|max:255',
@@ -32,13 +33,13 @@ class ProgramController extends Controller
                 'time_end' => 'required|date_format:Y-m-d H:i',
                 'edition_id' => 'required|exists:edition,id',
             ]);
-    
-            
+
+
             $program = Program::create($validated);
-    
+
             return response()->json($program, 201);
-        }catch (\Exception $e) {
-            return response()->json(['error' => 'Error while creating program: '.$e->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error while creating program: ' . $e->getMessage()], 500);
         }
     }
 
@@ -56,10 +57,10 @@ class ProgramController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try{
+        try {
 
             $program = Program::findOrFail($id);
-    
+
             $validated = $request->validate([
                 'name_fr' => 'sometimes|string|max:255',
                 'name_en' => 'sometimes|string|max:255',
@@ -72,11 +73,11 @@ class ProgramController extends Controller
                 'intervenant_ids' => 'nullable|array',
                 'intervenant_ids.*' => 'exists:intervenant,id',
             ]);
-    
+
             // Remove intervenant_ids from validated data before updating the program
             $programData = collect($validated)->except('intervenant_ids')->toArray();
             $program->update($programData);
-    
+
             // Sync intervenant if provided
             if ($request->has('intervenant_ids')) {
                 if (empty($request->intervenant_ids)) {
@@ -86,10 +87,10 @@ class ProgramController extends Controller
                     $program->intervenant()->sync($request->intervenant_ids);
                 }
             }
-    
+
             return response()->json($program->load(['edition', 'intervenants']));
-        }catch (\Exception $e) {
-            return response()->json(['error' => 'Error while updating program: '.$e->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error while updating program: ' . $e->getMessage()], 500);
         }
     }
 
@@ -122,20 +123,32 @@ class ProgramController extends Controller
      */
     public function getProgramsByDate(Request $request)
     {
-        try{
+        try {
 
             $validated = $request->validate([
                 'date' => 'required|date',
             ]);
-    
+
             $programs = Program::with('intervenants')
                 ->whereDate('time_start', $validated['date'])
                 ->orderBy('time_start', 'asc')
                 ->get();
-    
+
             return response()->json($programs);
-        }catch (\Exception $e) {
-            return response()->json(['error' => 'Error while fetching '.$e->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error while fetching ' . $e->getMessage()], 500);
         }
+    }
+
+    public function getProgramDates($editionId)
+    {
+
+        $dates = Program::select(DB::raw('DATE(time_start) as date'))
+            ->distinct()
+            ->where('edition_id', $editionId)
+            ->orderBy('date', 'asc')
+            ->pluck('date');
+
+        return response()->json($dates);
     }
 }
