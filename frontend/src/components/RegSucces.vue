@@ -7,7 +7,7 @@
       Print and bring the generated registration form on the day of the SITE 2025 welcome to facilitate your admission
     </p>
 
-    <div class="form-card">
+    <div class="form-card" ref="pdfContent">
       <div class="form-grid">
         <div class="form-field">
           <label>Full name</label>
@@ -74,7 +74,7 @@
     <br />
 
     <div class="buttons">
-      <button class="download">
+      <button class="download" @click="downloadPDF">
         <i class="fas fa-download"></i> Download registration form
       </button>
       <button class="edit">Edit information</button>
@@ -84,10 +84,13 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 
 const router = useRouter()
+const pdfContent = ref(null)
 
 const formData = reactive({
   firstName: '',
@@ -117,21 +120,17 @@ function calculateTotal() {
     const adults = formData.adultCompanions
     const children = formData.childCompanions
 
-    // Adult price
     total += adults * 220
 
-    // Child price based on number of adults
     if (adults === 2) {
       total += children * 110
     } else {
       total += children * 155
     }
 
-    // Extra nights per person
     const persons = adults + children
     total += formData.extraNights * 220 * persons
 
-    // Single supplement
     if (formData.singleSupplement === 'yes') {
       total += 70 * persons
     }
@@ -144,6 +143,30 @@ function handleReturnHome() {
   localStorage.removeItem('site2025_form')
   localStorage.removeItem('site2025_accommodation_form')
   router.push('/')
+}
+
+async function downloadPDF() {
+  const element = pdfContent.value
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true
+  })
+  const imgData = canvas.toDataURL('image/png')
+
+  const pdf = new jsPDF('p', 'mm', 'a4')
+  const pageWidth = pdf.internal.pageSize.getWidth()
+  const imgProps = pdf.getImageProperties(imgData)
+  const pdfWidth = pageWidth - 20
+  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
+
+  const x = (pageWidth - pdfWidth) / 2
+
+  pdf.setFontSize(20)
+  pdf.setTextColor('#051d37')
+  pdf.text('SITE 2025 - Registration Form', pageWidth / 2, 15, { align: 'center' })
+  pdf.addImage(imgData, 'PNG', x, 25, pdfWidth, pdfHeight)
+  pdf.save(`SITE2025_${formData.firstName}_${formData.lastName}.pdf`)
 }
 </script>
 
@@ -178,11 +201,6 @@ function handleReturnHome() {
   padding: 2rem;
   border-radius: 15px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-}
-
-.form-card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .form-grid {
