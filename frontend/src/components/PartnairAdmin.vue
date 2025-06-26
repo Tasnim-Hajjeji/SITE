@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <h1 class="title">Partners 2024</h1>
+    <h1 class="title">Partners  {{ this.selectedEditionName }}</h1>
 
     <div class="actions">
       <button class="btn add" @click="showAddModal = true">
-        <span class="plus">+</span> Add Partners
+        <span class="plus">+</span> Add Partners 
       </button>
 
       <div class="dropdown" @click="toggleDropdown">
@@ -18,7 +18,7 @@
     </div>
 
     <div class="grid">
-      <div v-for="partner in filteredPartners" :key="partner.id" class="card">
+      <div v-for="partner in filteredPartners" :key="partner.id" class="card" :id="`partner-${partner.id}`">
         <img :src="getImageUrl(partner.image_url)" alt="Partner logo" class="logo" />
         <h2 class="name">{{ partner.name }}</h2>
         <p class="desc">{{ partner.description }}</p>
@@ -98,6 +98,9 @@ export default {
       showUpdateModal: false,
       showDeleteModal: false,
       selectedEdition: null,
+      selectedEditionName: '',
+      selectedEditionId: null, 
+
       editions: [], // Will be loaded from API
       newPartner: {
         name: '',
@@ -120,17 +123,17 @@ export default {
     };
   },
   async created() {
-    await this.fetchEditions();
     
     // Get edition ID from route params or localStorage
-    const editionId = this.$route.params.editionId || localStorage.getItem('selectedEditionId');
-    
+    this.selectedEditionId = localStorage.getItem('selectedEditionId');
+    await this.fetchEditions();
+
     // Set default edition if available
-    if (editionId) {
-      this.selectedEdition = parseInt(editionId);
-      this.newPartner.edition_id = parseInt(editionId);
+    if (this.selectedEditionId) {
+      this.selectedEdition = parseInt(this.selectedEditionId);
+      this.newPartner.edition_id = parseInt(this.selectedEditionId);
     }
-    
+
     await this.fetchPartnersByEdition();
   },
   computed: {
@@ -138,26 +141,35 @@ export default {
       return this.partners; // Now we always show the filtered list from API
     }
   },
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler(query) {
+        if (query.highlightType === 'partner' && query.highlight) {
+          this.highlightPartner(parseInt(query.highlight, 10));
+        }
+      }
+    }
+  },
   methods: {
     async fetchEditions() {
       try {
         const response = await EditionService.getAllEditions();
         this.editions = response.data;
-        
+
         // If no edition is selected yet, select the first one by default
-        if (!this.selectedEdition && this.editions.length > 0) {
-          this.selectedEdition = this.editions[0].id;
-          this.newPartner.edition_id = this.editions[0].id;
-          localStorage.setItem('selectedEditionId', this.editions[0].id);
+        if (this.selectedEditionId ) {
+          const selectedEdition = this.editions.find(e => e.id == this.selectedEditionId);
+          this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
         }
       } catch (error) {
         console.error('Error fetching editions:', error);
       }
     },
-    
+
     async fetchPartnersByEdition() {
       if (!this.selectedEdition) return;
-      
+
       try {
         const response = await PartenaireService.getPartenairesByEdition(this.selectedEdition);
         this.partners = response.data;
@@ -165,22 +177,22 @@ export default {
         console.error('Error fetching partners:', error);
       }
     },
-    
+
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
-    
+
     onEditOption(editionName) {
       const edition = this.editions.find(e => e.name === editionName);
       if (edition) {
         this.selectedEdition = edition.id;
-        localStorage.setItem('selectedEditionId', edition.id);
+        // localStorage.setItem('selectedEditionId', edition.id);
         this.newPartner.edition_id = edition.id;
         this.fetchPartnersByEdition();
       }
       this.dropdownOpen = false;
     },
-    
+
     handleImageUpload(event, type) {
       const file = event.target.files[0];
       if (!file) return;
@@ -194,7 +206,7 @@ export default {
         };
         reader.readAsDataURL(file);
       }
-      
+
       if (type === 'update') {
         this.selectedPartner.image = file;
         // Create preview
@@ -208,7 +220,7 @@ export default {
     getImageUrl(imagePath) {
       return `http://localhost:8000/storage/${imagePath}`;
     },
-    
+
     async addPartner() {
       try {
         const formData = new FormData();
@@ -229,7 +241,7 @@ export default {
         console.error('Error adding partner:', error);
       }
     },
-    
+
     resetNewPartner() {
       this.newPartner = {
         name: '',
@@ -241,16 +253,16 @@ export default {
         email: ''
       };
     },
-    
+
     openUpdateModal(partner) {
-      this.selectedPartner = { 
+      this.selectedPartner = {
         ...partner,
         image: null,
         image_url: partner.logo || partner.image_url
       };
       this.showUpdateModal = true;
     },
-    
+
     async updatePartner() {
       try {
         const formData = new FormData();
@@ -264,24 +276,24 @@ export default {
         formData.append('email', this.selectedPartner.email);
 
         const response = await PartenaireService.updatePartenaire(this.selectedPartner.id, formData);
-        
+
         // Update local data
         const index = this.partners.findIndex(p => p.id === this.selectedPartner.id);
         if (index !== -1) {
           this.partners.splice(index, 1, response.data);
         }
-        
+
         this.showUpdateModal = false;
       } catch (error) {
         console.error('Error updating partner:', error);
       }
     },
-    
+
     openDeleteModal(partner) {
       this.selectedPartner = { ...partner };
       this.showDeleteModal = true;
     },
-    
+
     async deletePartner() {
       try {
         await PartenaireService.deletePartenaire(this.selectedPartner.id);
@@ -290,7 +302,35 @@ export default {
       } catch (error) {
         console.error('Error deleting partner:', error);
       }
-    }
+    },
+    highlightPartner(PartnerId) {
+      // If members are already loaded
+      if (this.members.length > 0) {
+        this.scrollToPhighlightPartner(PartnerId);
+        return;
+      }
+
+      // If members are loading, wait for them
+      const checkInterval = setInterval(() => {
+        if (this.members.length > 0) {
+          clearInterval(checkInterval);
+          this.scrollToPhighlightPartner(PartnerId);
+        }
+      }, 100);
+    },
+
+    scrollToPhighlightPartner(partnerId) {
+      this.$nextTick(() => {
+        const element = document.getElementById(`partner-${partnerId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('highlighted');
+          setTimeout(() => {
+            element.classList.remove('highlighted');
+          }, 3000);
+        }
+      });
+    },
   }
 };
 </script>
@@ -301,8 +341,10 @@ export default {
 
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;

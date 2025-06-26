@@ -14,7 +14,7 @@
     </div>
 
     <div class="cards-wrapper">
-      <div class="card" v-for="(participant, index) in participants" :key="index">
+      <div class="card" v-for="(participant, index) in participants" :key="index" :id="`participant-${participant.id}`">
         <div class="card-header">
           <div class="title-date">
             <h3 class="title">{{ participant.name }}</h3>
@@ -181,7 +181,7 @@
           <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete Participant
           </h3>
           <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete <strong>{{ editParticipant.name
-              }}</strong>?</p>
+          }}</strong>?</p>
           <div class="flex justify-end space-x-3">
             <button type="button" class="btn cancel" @click="toggleDeleteModal">
               Cancel
@@ -260,6 +260,16 @@ export default {
     this.setSelectedEdition();
     await this.fetchParticipants();
   },
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler(query) {
+        if (query.highlightType === 'participant' && query.highlight) {
+          this.highlightParticipant(parseInt(query.highlight, 10));
+        }
+      }
+    }
+  },
   methods: {
     async fetchEditions() {
       try {
@@ -275,7 +285,7 @@ export default {
     setSelectedEdition(editionId) {
       this.selectedEditionId = editionId || localStorage.getItem('selectedEditionId');
       const selectedEdition = this.editions.find(e => e.id == this.selectedEditionId);
-        this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
+      this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
       this.dropdownOpen = false;
       this.fetchParticipants();
     },
@@ -296,7 +306,7 @@ export default {
           email: p.email,
           phone: p.tel,
           details: {
-            participation: p.participation || 'N/A', 
+            participation: p.participation || 'N/A',
             accommodation: p.accommodation ? 'Yes' : 'No',
             children: p.num_enfant,
             adults: p.num_adulte,
@@ -458,6 +468,34 @@ export default {
         }
       };
       this.editIndex = null;
+    },
+    highlightParticipant(participantId) {
+      // If participants are already loaded
+      if (this.participants.length > 0) {
+        this.scrollToParticipant(participantId);
+        return;
+      }
+
+      // If participants are loading, wait for them
+      const checkInterval = setInterval(() => {
+        if (this.participants.length > 0) {
+          clearInterval(checkInterval);
+          this.scrollToParticipant(participantId);
+        }
+      }, 100);
+    },
+
+    scrollToParticipant(participantId) {
+      this.$nextTick(() => {
+        const element = document.getElementById(`participant-${participantId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('highlighted');
+          setTimeout(() => {
+            element.classList.remove('highlighted');
+          }, 3000);
+        }
+      });
     },
   },
 };

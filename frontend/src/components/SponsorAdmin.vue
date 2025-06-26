@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="title">Sponsors</h1>
+    <h1 class="title">Sponsors {{ this.selectedEditionName }}</h1>
 
     <div class="actions">
       <button class="btn add" @click="toggleAddModal">
@@ -15,6 +15,14 @@
           <li @click="setFilter('pending')">Pending</li>
         </ul>
       </div>
+      <div class="dropdown" @click="toggleDropdown">
+        <button class="btn edit">Edition ▼</button>
+        <ul v-if="dropdownOpen" class="dropdown-menu">
+          <li v-for="edition in editions" :key="edition.id" @click="onEditOption(edition.name)">
+            {{ edition.name }}
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div v-if="isLoading" class="loading-message">
@@ -26,11 +34,7 @@
     </div>
 
     <div v-else class="grid">
-      <div
-        v-for="(sponsor) in filteredSponsors"
-        :key="sponsor.id"
-        class="card"
-      >
+      <div v-for="(sponsor) in filteredSponsors" :key="sponsor.id" class="card" :id="`sponsor-${sponsor.id}`">
         <img :src="getImageUrl(sponsor.logo)" alt="logo" class="logo" />
         <h2 class="name">{{ sponsor.name }}</h2>
         <p class="desc">{{ sponsor.description }}</p>
@@ -51,7 +55,7 @@
           <button class="confirm" @click="updateStatus(sponsor.id, 'confirmed')">Confirm</button>
         </div>
 
-        <div class="status-dot" :class="{ 
+        <div class="status-dot" :class="{
           confirmed: sponsor.etat === 'confirmed',
           rejected: sponsor.etat === 'rejected'
         }"></div>
@@ -96,17 +100,21 @@
 
 <script>
 import SponsorService from '@/services/SponsorService'
+import EditionService from '@/services/EditionService'
 import { useRoute } from 'vue-router'
 
 export default {
   data() {
     return {
-      editionId: localStorage.getItem('selectedEditionId') || useRoute().params.editionId,
+      editionId: null ,
+      selectedEditionName: '',
+      editions: [],
       sponsors: [],
       filter: 'all',
       showFilter: false,
       showAddModal: false,
       showUpdateModal: false,
+      dropdownOpen: false,
       isLoading: true,
       newSponsor: {
         name: '',
@@ -142,9 +150,36 @@ export default {
     }
   },
   async created() {
+    this.editionId = localStorage.getItem('selectedEditionId') || useRoute().params.editionId;
+    await this.fetchEditions();
     await this.fetchSponsors()
+    console.log ('selected edition name', this.selectedEditionName)
+  },
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler(query) {
+        if (query.highlightType === 'sponsor' && query.highlight) {
+          this.highlightSponsor(parseInt(query.highlight, 10));
+        }
+      }
+    }
   },
   methods: {
+    async fetchEditions() {
+      try {
+        const response = await EditionService.getAllEditions();
+        this.editions = response.data;
+
+        // If no edition is selected yet, select the first one by default
+        if (this.editionId) {
+          const selectedEdition = this.editions.find(e => e.id == this.editionId);
+          this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
+        }
+      } catch (error) {
+        console.error('Error fetching editions:', error);
+      }
+    },
     async fetchSponsors() {
       try {
         this.isLoading = true
@@ -164,6 +199,19 @@ export default {
       this.filter = type
       this.showFilter = false
     },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    onEditOption(editionName) {
+      const edition = this.editions.find(e => e.name === editionName);
+      if (edition) {
+        this.editionId = edition.id;
+        // localStorage.setItem('selectedEditionId', edition.id);
+        this.fetchSponsors(); // Refresh sponsors for the selected edition
+      }
+      this.dropdownOpen = false;
+    },
+
     async updateStatus(id, status) {
       try {
         await SponsorService.updateSponsor(id, { etat: status })
@@ -205,14 +253,14 @@ export default {
         formData.append('email', this.newSponsor.email)
         formData.append('description', this.newSponsor.description)
         formData.append('edition_id', this.newSponsor.edition_id)
-        formData.append('etat', this.newSponsor.etat) 
+        formData.append('etat', this.newSponsor.etat)
         if (this.selectedFile) {
           formData.append('logo', this.selectedFile)
         }
-        
+
         await SponsorService.createSponsor(formData)
         await this.fetchSponsors() // Refresh the list
-        
+
         // Reset form
         this.resetNewSponsor()
         this.toggleAddModal()
@@ -261,12 +309,61 @@ export default {
     getImageUrl(imagePath) {
       return `http://localhost:8000/storage/${imagePath}`;
     },
+    highlightSponsor(sponsorId) {
+      // If sponsors are already loaded
+      if (this.sponsors.length > 0) {
+        this.scrollToSponsor(sponsorId);
+        return;
+      }
+
+      // If sponsors are loading, wait for them
+      const checkInterval = setInterval(() => {
+        if (this.sponsors.length > 0) {
+          clearInterval(checkInterval);
+          this.scrollToSponsor(sponsorId);
+        }
+      }, 100);
+    },
+
+    scrollToSponsor(sponsorId) {
+      this.$nextTick(() => {
+        const element = document.getElementById(`sponsor-${sponsorId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('highlighted');
+          setTimeout(() => {
+            element.classList.remove('highlighted');
+          }, 3000);
+        }
+      });
+    },
   }
 }
 </script>
 
 <style scoped>
-/* Add loading and empty state styles */
+
+.highlighted {
+  animation: highlight 3s ease;
+  box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.5);
+  transform: translateY(-2px);
+}
+
+@keyframes highlight {
+  0% {
+    box-shadow: 0 0 0 4px rgba(56, 161, 105, 0.8);
+  }
+
+  70% {
+    box-shadow: 0 0 0 4px rgba(56, 161, 105, 0.8);
+  }
+
+  100% {
+    box-shadow: none;
+    transform: translateY(0);
+  }
+}
+
 .loading-message,
 .empty-message {
   text-align: center;
@@ -283,15 +380,18 @@ export default {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: #ffcc00; /* pending - yellow */
+  background: #ffcc00;
+  /* pending - yellow */
 }
 
 .status-dot.confirmed {
-  background: #4CAF50; /* confirmed - green */
+  background: #4CAF50;
+  /* confirmed - green */
 }
 
 .status-dot.rejected {
-  background: #F44336; /* rejected - red */
+  background: #F44336;
+  /* rejected - red */
 }
 
 /* Keep all other existing styles exactly the same */
@@ -385,7 +485,7 @@ export default {
   padding: 1rem;
   position: relative;
   background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
@@ -458,8 +558,10 @@ export default {
 
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
