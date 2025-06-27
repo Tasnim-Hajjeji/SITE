@@ -79,5 +79,8 @@ export default {
    */
   getSponsorsByEdition(editionId) {
     return axios.get(`/sponsors/edition/${editionId}`);
+  },
+  getConfirmedSponsorsByEdition(editionId) {
+    return axios.get(`/sponsors/edition/${editionId}/confirmed`);
   }
 };

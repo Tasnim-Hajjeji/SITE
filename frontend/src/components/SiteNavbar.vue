@@ -39,7 +39,7 @@
                 {{ $t('navbar.speakers') }}
               </router-link>
             </li>
-            <li>
+            <li class="capitalize">
               <router-link
                 class="text-gray-500 hover:text-[#265985] transition-all duration-200"
                 :class="{ 'border-b-2 border-[#265985] font-bold text-[#265985] text-base': $route.path === '/sponsor' }"

@@ -4,9 +4,14 @@
       <h2>{{ $t('sponsors.title') }}</h2>
     </div>
     <div class="carousel" @mouseover="isHovered = true" @mouseleave="isHovered = false">
-      <div class="carousel-track" :class="{ paused: isHovered }">
+      <div v-if="duplicatedSponsors.length > 0" class="carousel-track" :class="{ paused: isHovered }">
         <div v-for="(sponsor, index) in duplicatedSponsors" :key="sponsor.id + '-' + index" class="logo">
           <img :src="getImageUrl(sponsor.logo)" alt="Sponsor logo" />
+        </div>
+      </div>
+      <div v-else class="no-sponsors">
+        <div class="logo">
+          <p>No Sponsors</p>
         </div>
       </div>
     </div>
@@ -42,7 +47,7 @@ export default {
   methods: {
     async fetchSponsors() {
       try {
-        const response = await SponsorService.getSponsorsByEdition(this.editionId);
+        const response = await SponsorService.getConfirmedSponsorsByEdition(this.editionId);
         this.sponsors = response.data;
       } catch (error) {
         console.error('Error fetching sponsors:', error);
@@ -100,6 +105,15 @@ export default {
   padding: 0.5rem 2rem;
   background-color: #fff;
   white-space: nowrap;
+}
+
+.no-sponsors {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  color: #0c5fa6;
+  font-size: x-large;
 }
 
 .carousel {

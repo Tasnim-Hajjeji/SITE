@@ -7,7 +7,7 @@
           <p class="subtitle">
             Promote your brand at the heart of tech and sustainability !
           </p>
-          <button class="download-btn">
+          <button class="download-btn" @click="openOrDownload(dossier_file)">
             <span class="icon">⬇️</span> Download sponsor file
           </button>
         </div>
@@ -29,6 +29,18 @@
   </template>
   
   <script setup>
+  import EditionService from '@/services/EditionService';
+  import { onMounted, ref } from 'vue';
+  const dossier_file = ref('');
+  onMounted(() => {
+    EditionService.getCurrentEdition().then(response => {
+      dossier_file.value = "http://localhost:8000/storage/" + response.data.dossier_sponso;
+    }).catch(error => console.log(error));
+  });
+
+  const openOrDownload = (url) => {
+    window.open(url, '_blank');
+  };
   </script>
   
   <style scoped>
@@ -77,6 +89,8 @@
     align-items: center;
     gap: 8px;
     transition: background-color 0.3s;
+    text-transform: capitalize;
+    width: 50%;
   }
   
   .download-btn:hover {
