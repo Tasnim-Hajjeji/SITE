@@ -1,6 +1,6 @@
 <template>
   <div class="gallery-container">
-    <h2 class="gallery-title">SITE 2024 Conference Gallery</h2>
+    <h2 class="gallery-title">{{ editionData.name }} Conference Gallery</h2>
     <p class="gallery-subtitle">
       Relive the highlights of previous editions through our photo gallery.<br />
       Discover the atmosphere, the speakers, and the discussions that marked each conference.
@@ -17,11 +17,7 @@
           :class="{ 'center-card': isCenterCard(index), 'partial-card': isPartialCard(index) }"
         >
           <div class="image-container">
-            <img :src="item.image" :alt="item.caption" @mouseover="showCaption(index)" @mouseleave="hideCaption(index)" />
-            <div v-if="item.showCaption" class="caption-overlay">
-              <p class="caption-title">{{ item.caption }}</p>
-              <p class="caption-desc">{{ item.description }}</p>
-            </div>
+            <img :src="`http://localhost:8000${item}`" :alt="`image${index}`" />
           </div>
         </div>
       </div>
@@ -40,69 +36,69 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
-
-// eslint-disable-next-line no-unused-vars
-const cardsPerPage = ref(3) // Suppressed warning, kept for potential future use
-// eslint-disable-next-line no-unused-vars
-const visibleSlides = computed(() => slides) // Suppressed warning, kept for potential future use
-
-const slides = [
-  { image: require('@/assets/souvenirPrevious1.png'), caption: 'Souvenir 1', description: 'Memories from 2023 opening ceremony.' },
-  { image: require('@/assets/souvenirPrevious2.png'), caption: 'Souvenir 2', description: 'Keynote speech highlights from 2022.' },
-  { image: require('@/assets/souvenirPrevious3.png'), caption: 'Souvenir 3', description: 'Networking event from 2021.' },
-  { image: require('@/assets/souvenirPrevious1.png'), caption: 'Souvenir 1', description: 'Memories from 2023 opening ceremony.' },
-  { image: require('@/assets/souvenirPrevious2.png'), caption: 'Souvenir 2', description: 'Keynote speech highlights from 2022.' },
-  { image: require('@/assets/souvenirPrevious3.png'), caption: 'Souvenir 3', description: 'Networking event from 2021.' },
-  { image: require('@/assets/souvenirPrevious1.png'), caption: 'Souvenir 1', description: 'Memories from 2023 opening ceremony.' },
-  { image: require('@/assets/souvenirPrevious2.png'), caption: 'Souvenir 2', description: 'Keynote speech highlights from 2022.' },
-  { image: require('@/assets/souvenirPrevious3.png'), caption: 'Souvenir 3', description: 'Networking event from 2021.' },
-]
-
-const currentIndex = ref(0)
-
-const totalPages = computed(() =>
-  Math.ceil(slides.length / 3)
-)
-
-function nextSlide() {
-  if (currentIndex.value < slides.length - 4) { // Ajusté pour inclure la 4ème image
-    currentIndex.value += 1 // Défilement d'une image à la fois
+<script>
+export default {
+  name: 'ConferenceGallery',
+  props: {
+    editionData: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      currentIndex: 0,
+      cardsPerPage: 3
+    }
+  },
+  computed: {
+    slides() {
+      if (Array.isArray(this.editionData.images_url)) {
+        return this.editionData.images_url
+      } else if (typeof this.editionData.images_url === 'string' && this.editionData.images_url) {
+        return [this.editionData.images_url]
+      } else {
+        return []
+      }
+    },
+    totalPages() {
+      return Math.ceil(this.slides.length / 3)
+    },
+    visibleSlides() {
+      return this.slides
+    }
+  },
+  methods: {
+    nextSlide() {
+      if (this.currentIndex < this.slides.length - 4) {
+        this.currentIndex += 1
+      }
+    },
+    prevSlide() {
+      if (this.currentIndex > 0) {
+        this.currentIndex -= 1
+      }
+    },
+    goToSlide(page) {
+      this.currentIndex = page * 3
+    },
+    isCenterCard(index) {
+      const centerIndex = this.currentIndex + 1
+      return index === centerIndex
+    },
+    isPartialCard(index) {
+      const lastIndex = this.currentIndex + 3
+      return index === lastIndex && index < this.slides.length
+    }
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize)
   }
 }
 
-function prevSlide() {
-  if (currentIndex.value > 0) {
-    currentIndex.value -= 1 // Défilement d'une image à la fois
-  }
-}
-
-function goToSlide(page) {
-  currentIndex.value = page * 3 // Aller à la page correspondante (début du groupe de 3)
-}
-
-function showCaption(index) {
-  slides[index].showCaption = true
-}
-
-function hideCaption(index) {
-  slides[index].showCaption = false
-}
-
-function isCenterCard(index) {
-  const centerIndex = currentIndex.value + 1 // L'index central dans le groupe visible
-  return index === centerIndex
-}
-
-function isPartialCard(index) {
-  const lastIndex = currentIndex.value + 3 // Dernier index du groupe visible
-  return index === lastIndex && index < slides.length
-}
-
-window.addEventListener('resize', () => {
-  currentIndex.value = 0
-})
 </script>
 
 <style scoped>

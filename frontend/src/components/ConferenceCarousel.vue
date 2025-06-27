@@ -55,7 +55,7 @@
     }
   ];
   onMounted(() => {
-      EditionService.getAllEditions().then(response => {
+      EditionService.getPreviousEditions().then(response => {
         editions.value = response.data
       }).catch(error => {
         console.error('Error fetching editions:', error)

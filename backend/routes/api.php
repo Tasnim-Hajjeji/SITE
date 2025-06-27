@@ -97,6 +97,7 @@ Route::prefix('documents')->group(function () {
     Route::post('/', [DocumentController::class, 'store']);
     Route::post('/{id}', [DocumentController::class, 'update']);
     Route::delete('/{id}', [DocumentController::class, 'destroy']);
+    Route::get('/edition/{editionId}', [DocumentController::class, 'getByEdition']);
 });
 // Add this to your existing routes
 Route::prefix('partenaires')->group(function () {

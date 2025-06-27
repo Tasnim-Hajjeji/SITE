@@ -87,7 +87,9 @@ const messages = {
             carousel_subtitle_1: 'From inspiring talks to vibrant exchanges, each edition brought something unique.',
             carousel_subtitle_2: ' Relive the highlights through photos and memories.',
             button: 'See More'
-
+        },
+        prevTimeLine :{
+            title: 'The Program'
         },
         partners: {
             title: 'Our Partners',
@@ -190,6 +192,9 @@ const messages = {
             carousel_subtitle_1: 'Des discours inspirants aux échanges vibrants, chaque édition a apporté quelque chose d\'unique.',
             carousel_subtitle_2: 'Revivez les moments forts à travers des photos et des souvenirs.',
             button: 'Voir plus'
+        },
+        prevTimeLine :{
+            title: 'Le Programme'
         },
         partners: {
             title: 'Nos Partenaires',

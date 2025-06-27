@@ -9,10 +9,10 @@
     <div class="cards-wrapper">
       <transition-group name="fade-up" tag="div" class="cards-row" v-for="(chunk, rowIndex) in chunkedPersons" :key="rowIndex">
         <div class="card" v-for="(person, index) in chunk" :key="index">
-          <img :src="person.img" :alt="person.name" class="card-img" />
-          <h3 class="card-title">{{ person.name }}</h3>
-          <p class="card-role">{{ person.role }}</p>
-          <p class="card-desc" v-html="person.desc"></p>
+          <img :src="`http://localhost:8000/storage/${person.image_url}`" :alt="person.speaker_name" class="card-img" />
+          <h3 class="card-title">{{ person.speaker_name }}</h3>
+          <p class="card-role">{{ person.speaker_role }}</p>
+          <p class="card-desc" v-html="person_desc(person.description_fr,person.description_en)"></p>
         </div>
       </transition-group>
     </div>
@@ -20,36 +20,18 @@
 </template>
 
 <script>
+import KeynoteService from '@/services/KeynoteService';
 export default {
   name: 'KeynoteSection',
+  props: {
+      editionId: {
+        type: Number,
+        required: true
+      }
+    },
   data() {
     return {
-      persons: [
-        {
-          name: 'Accusamus etc',
-          role: 'Printing And Tv',
-          img: require('@/assets/keynote1.png'),
-          desc: `Jose emigrated to the Los Angeles area at a young age... where his research is focused on developing imaging and diffraction technologies for chemical and biomedical science. He has published over 50 peer-reviewed papers and holds several patents in advanced imaging techniques.`
-        },
-        {
-          name: 'Dan Gostovic',
-          role: 'President',
-          img: require('@/assets/keynote2.png'),
-          desc: `Dan Gostovic PhD, co-founded Microedlab.com... Dan is most passionate about quality time with family and friends across the world. Additionally, he actively mentors young entrepreneurs and contributes to STEM education initiatives globally.`
-        },
-        {
-          name: 'Hosea Nelson',
-          role: 'President Every',
-          img: require('@/assets/keynote3.png'),
-          desc: `"AT VERO EOS ET ACCUSAMUS ET IUSTO ODIO DIGNISSIM PLEASURE ITSELF... His work extends to innovative teaching methods, influencing educational reforms across multiple continents over the past decade."`
-        },
-        {
-          name: 'Hosea Nelson',
-          role: 'President Every',
-          img: require('@/assets/keynote4.png'),
-          desc: `"AT VERO EOS ET ACCUSAMUS ET IUSTO ODIO DIGNISSIM PLEASURE ITSELF... He is also recognized for his contributions to sustainable technology, leading projects that reduce carbon footprints in industrial applications."`
-        }
-      ]
+      persons: []
     };
   },
   computed: {
@@ -59,6 +41,32 @@ export default {
         result.push(this.persons.slice(i, i + 2));
       }
       return result;
+    }
+  },
+  mounted() {
+    KeynoteService.getKeynotesByEdition(this.editionId)
+      .then(response => {
+        if (Array.isArray(response)) {
+          this.persons = response;
+        } else if (response && Array.isArray(response.data)) {
+          this.persons = response.data;
+        } else {
+          try {
+            this.persons = JSON.parse(response);
+          } catch (e) {
+            console.error('Unexpected keynote format:', response);
+            this.persons = [];
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching keynotes:', error);
+        this.persons = [];
+      });
+  },
+  methods: {
+    person_desc(desc_fr,desc_en) {
+      return this.$i18n.locale === 'fr' ? desc_fr : desc_en;
     }
   }
 };

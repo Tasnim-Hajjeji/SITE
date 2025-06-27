@@ -118,4 +118,10 @@ class DocumentController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function getByEdition($editionId)
+    {
+        $documents = Document::where('edition_id', $editionId)->get();
+        return response()->json($documents);
+    }
 }

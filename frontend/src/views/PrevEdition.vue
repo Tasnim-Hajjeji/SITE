@@ -1,12 +1,12 @@
 <template>
     <div v-if="editionData && editionData.id">
         <HeaderEdition :edition-data="editionData" />
-        <PrevTimeLine />
+        <PrevTimeLine :edition-id="editionData.id" />
         <PrevTopicsCarousel />
-        <Keynote />
-        <!--<Document />-->
-        <ConferenceGallery />
-        <GuestGrid />
+        <Keynote :edition-id="editionData.id" />
+        <Document :edition-id="editionData.id" />
+        <ConferenceGallery :edition-data="editionData" />
+        <GuestGrid :edition-id="editionData.id" />
     </div>
     <div v-else-if="editionData && !editionData.id">
         <h1 class="text-center text-2xl font-bold">No previous edition available</h1>
@@ -23,7 +23,7 @@ import HeaderEdition from '@/components/HeaderEdition.vue';
 import PrevTimeLine from '@/components/PrevTimeLine.vue';
 import PrevTopicsCarousel from '@/components/PrevTopicsCarousel.vue';
 import Keynote from '@/components/Keynote.vue';
-//import Document from '@/components/Document.vue';
+import Document from '@/components/Document.vue';
 import ConferenceGallery from '@/components/ConferenceGallery.vue';
 import GuestGrid from '@/components/GuestGrid.vue';
 import { ref, onMounted } from 'vue';

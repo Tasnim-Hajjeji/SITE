@@ -3,7 +3,7 @@
       <h2 class="title">Articles</h2>
   
       <div class="article-preview" @click="toggleDropdown">
-        <i class="fas fa-file-pdf"></i> {{ articles[0]?.name || 'No articles available' }}
+        <i class="fas fa-file-pdf"></i> {{ articles[0] ? 'Documents List' : 'No articles available' }}
         <i :class="['fas', dropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down']" class="toggle-icon"></i>
       </div>
   
@@ -14,39 +14,56 @@
           class="dropdown-item"
           @click="openOrDownload(article.url)"
         >
-          <i class="fas fa-file-pdf"></i> {{ article.name }}
+          <i class="fas fa-file-pdf"></i> {{ file_name(article) }}
         </div>
       </div>
     </section>
   </template>
   
-  <script setup>
-  import { ref, onMounted } from 'vue'
+  <script>
   import axios from 'axios'
-  
-  const dropdownOpen = ref(false)
-  const articles = ref([])
-  
-  function toggleDropdown() {
-    dropdownOpen.value = !dropdownOpen.value
-  }
-  
-  function openOrDownload(url) {
-    window.open(url, '_blank')
-  }
-  
-  onMounted(async () => {
-    try {
-      const response = await axios.get('http://localhost:8000/api/user-articles')
-      articles.value = response.data.map(file => ({
-        name: file.name,
-        url: `http://localhost:8000/storage/${file.path}`
-      }))
-    } catch (error) {
-      console.error('Failed to load articles:', error)
+
+  export default {
+    name: 'Document',
+    props: {
+      editionId: {
+        type: Number,
+        required: true
+      }
+    },
+    data() {
+      return {
+        dropdownOpen: false,
+        articles: []
+      }
+    },
+    methods: {
+      file_name(file) {
+        return this.$i18n.locale === 'fr' ? file.name_fr : file.name_en
+      },
+      toggleDropdown() {
+        this.dropdownOpen = !this.dropdownOpen
+      },
+      openOrDownload(url) {
+        window.open(url, '_blank')
+      }
+    },
+    mounted() {
+      axios.get('http://localhost:8000/api/documents/edition/'+this.editionId)
+        .then(response => {
+          this.articles = response.data.map(file => ({
+            name_fr: file.name_fr,
+            name_en: file.name_en,
+            url: `http://localhost:8000${file.url}`
+          }))
+        })
+        .catch(error => {
+          console.error('Failed to load articles:', error)
+        })
     }
-  })
+  }
   </script>
+  
   
   <style scoped>
   .user-article-section {

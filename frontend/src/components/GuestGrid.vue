@@ -6,72 +6,38 @@
     </p>
     <div class="guest-grid">
       <div v-for="(guest, index) in guests" :key="index" class="guest-card">
-        <img :src="guest.image" alt="Guest photo" class="guest-image" />
-        <h3 class="guest-name">{{ guest.name }}</h3>
-        <p class="guest-title">{{ guest.title }}</p>
-        <img v-if="guest.flag" :src="guest.flag" alt="Flag" class="guest-flag" />
+        <div class="img_container">
+          <img :src="`http://localhost:8000/storage/${guest.image_url}`" alt="Guest photo" class="guest-image" />
+        </div>
+        <h3 class="guest-name">{{ guest.full_name }}</h3>
+        <p class="guest-title">{{ guest.from_etablissement }}</p>
       </div>
     </div>
   </section>
 </template>
 
-<script setup>
-const guests = [
-  {
-    name: "LINDSAY LABAHN",
-    title: "iset bz",
-    image: require('@/assets/guest1.png'),
-    flag: "https://flagcdn.com/tn.svg"
+<script>
+import CommitteeMemberService from '@/services/CommitteeMemberService';
+export default {
+  name: "GuestGrid",
+  props: {
+    editionId: {
+      type: Number,
+      required: true
+    }
   },
-  {
-    name: "LINDSAY LABAHN",
-    title: "ensi",
-    image: require('@/assets/guest2.png'),
-    flag: "https://flagcdn.com/fr.svg"
+  data() {
+    return {
+      guests: []
+    };
   },
-  {
-    name: "LINDSAY LABAHN",
-    title: "enib",
-    image: require('@/assets/guest3.png'),
-    flag: "https://flagcdn.com/tn.svg"
-  },
-  {
-    name: "LINDSAY LABAHN",
-    title: "adt",
-    image: require('@/assets/guest4.png'),
-    flag: "https://flagcdn.com/dz.svg"
-  },
-  {
-    name: "LINDSAY LABAHN",
-    title: "Design Engineer",
-    image: require('@/assets/guest5.png'),
-    flag: "https://flagcdn.com/tn.svg"
-  },
-  {
-    name: "LINDSAY LABAHN",
-    title: "Design Engineer",
-    image: require('@/assets/guest1.png'),
-    flag: "https://flagcdn.com/tn.svg"
-  },
-  {
-    name: "LINDSAY LABAHN",
-    title: "Design Engineer",
-    image: require('@/assets/guest2.png'),
-    flag: "https://flagcdn.com/tn.svg"
-  },
-  {
-    name: "LINDSAY LABAHN",
-    title: "Design Engineer",
-    image: require('@/assets/guest3.png'),
-    flag: "https://flagcdn.com/tn.svg"
-  },
-  {
-    name: "LINDSAY LABAHN",
-    title: "Design Engineer",
-    image: require('@/assets/guest4.png'),
-    flag: "https://flagcdn.com/tn.svg"
+  mounted(){
+    CommitteeMemberService.getMembersByEditionAndCommittee(this.editionId, 'honor')
+    .then(response => {
+      this.guests = response.data
+    }).catch(error => {console.log(error)})
   }
-];
+};
 </script>
 
 <style scoped>
@@ -86,6 +52,11 @@ const guests = [
   color: #1c3d6e;
   margin-bottom: 0.5rem;
   font-weight: bold;
+}
+
+.img_container{
+  display: flex;
+  justify-content: center;
 }
 
 .description {
