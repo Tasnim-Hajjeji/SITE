@@ -112,7 +112,7 @@ const messages = {
         },
         contact: {
             title: 'Contact Us',
-            description: 'We’d love to hear from you! Please fill out the form below to get in touch with the SITE 2025 team.',
+            description: 'We\'d love to hear from you! Please fill out the form below to get in touch with the SITE 2025 team.',
             name: 'Name',
             namePlaceholder: 'Enter your full name',
             email: 'Email',
@@ -195,9 +195,9 @@ const messages = {
         footer: {
             contact: 'Contactez-nous',
             backToTop: 'Retour en haut',
-            description: 'SITE 2025 : Conférence internationale sur l’excellence en logiciels et technologies de l’information.',
-            subtitle: 'Rejoignez-nous pour façonner l’avenir de la technologie.',
-            copyright: 'Droits d’auteur © 2025 SITE. Tous droits réservés.'
+            description: 'SITE 2025 : Conférence internationale sur l\'excellence en logiciels et technologies de l\'information.',
+            subtitle: 'Rejoignez-nous pour façonner l\'avenir de la technologie.',
+            copyright: 'Droits d\'auteur © 2025 SITE. Tous droits réservés.'
         },
         schedule: {
             title: 'Conférence',
@@ -235,7 +235,7 @@ const messages = {
         },
         contact: {
             title: 'Nous Contacter',
-            description: 'Nous serions ravis d’avoir de vos nouvelles ! Veuillez remplir le formulaire ci-dessous pour contacter l’équipe SITE 2025.',
+            description: 'Nous serions ravis d\'avoir de vos nouvelles ! Veuillez remplir le formulaire ci-dessous pour contacter l\'équipe SITE 2025.',
             name: 'Nom',
             namePlaceholder: 'Entrez votre nom complet',
             email: 'Email',
