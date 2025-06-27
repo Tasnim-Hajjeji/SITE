@@ -20,6 +20,7 @@ import RegistrationFinalvue from '@/views/RegistrationFinalvue.vue';
 import RegSuccesvue from '@/views/RegSuccesvue.vue';
 import PageSponsorvue from '@/views/PageSponsorvue.vue';
 import SponsorAdminvue from '@/views/SponsorAdminvue.vue';
+import ContactUs from '@/views/ContactUs.vue';
 const routes = [
   {
     path: '/',
@@ -162,6 +163,12 @@ const routes = [
     name: 'SponsorAdmin', 
     component: SponsorAdminvue,
     meta: { layout: 'admin' }
+  },
+  {
+    path: '/contactUs',
+    name: 'ContactUs',
+    component: ContactUs,
+    meta: { layout: 'default' }
   }
 
 ];
