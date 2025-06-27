@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n';
+import cookieUtils from '@/utils/cookieUtils.js';
 
 const messages = {
     en: {
@@ -70,11 +71,15 @@ const messages = {
         },
         footer: {
             contact: 'Contact us',
+            backToTop: 'Back to top',
+            description: 'SITE 2025: International Conference on Software and Information Technology Excellence.',
+            subtitle: 'Join us in shaping the future of technology.',
+            copyright: 'Copyright © 2025 SITE. All rights reserved.'
         },
         schedule: {
             title: 'Conference',
             sched: 'Schedule',
-            description: "Explore the full schedule of our conference, including keynotes, workshops, sessions, and networking moments."
+            description: 'Explore the full schedule of our conference, including keynotes, workshops, sessions, and networking moments.'
         },
         voices: {
             title: 'Voices of ',
@@ -104,6 +109,20 @@ const messages = {
             title_honor: 'Honor Committee',
             description_honor1: 'The Honorary Committee brings together influential figures who share our vision and support our mission.',
             description_honor2: 'Their presence reflects the quality and credibility of this conference.'
+        },
+        contact: {
+            title: 'Contact Us',
+            description: 'We’d love to hear from you! Please fill out the form below to get in touch with the SITE 2025 team.',
+            name: 'Name',
+            namePlaceholder: 'Enter your full name',
+            email: 'Email',
+            emailPlaceholder: 'Enter your email address',
+            subject: 'Subject',
+            subjectPlaceholder: 'Enter the subject of your message',
+            message: 'Message',
+            messagePlaceholder: 'Enter your message here',
+            submit: 'Send Message',
+            successMessage: 'Thank you for your message! We will get back to you soon.'
         }
     },
     fr: {
@@ -175,11 +194,15 @@ const messages = {
         },
         footer: {
             contact: 'Contactez-nous',
+            backToTop: 'Retour en haut',
+            description: 'SITE 2025 : Conférence internationale sur l’excellence en logiciels et technologies de l’information.',
+            subtitle: 'Rejoignez-nous pour façonner l’avenir de la technologie.',
+            copyright: 'Droits d’auteur © 2025 SITE. Tous droits réservés.'
         },
         schedule: {
             title: 'Conférence',
             sched: 'Programme',
-            description: "Explorez le programme complet de notre conférence, y compris les conférences, ateliers, sessions et moments de réseautage."
+            description: 'Explorez le programme complet de notre conférence, y compris les conférences, ateliers, sessions et moments de réseautage.'
         },
         voices: {
             title: 'Voix de ',
@@ -209,11 +232,23 @@ const messages = {
             title_honor: 'Comité d\'Honneur',
             description_honor1: 'Le Comité d\'honneur réunit des personnalités influentes qui partagent notre vision et soutiennent notre mission.',
             description_honor2: 'Leur présence reflète la qualité et la crédibilité de cette conférence.'
+        },
+        contact: {
+            title: 'Nous Contacter',
+            description: 'Nous serions ravis d’avoir de vos nouvelles ! Veuillez remplir le formulaire ci-dessous pour contacter l’équipe SITE 2025.',
+            name: 'Nom',
+            namePlaceholder: 'Entrez votre nom complet',
+            email: 'Email',
+            emailPlaceholder: 'Entrez votre adresse email',
+            subject: 'Sujet',
+            subjectPlaceholder: 'Entrez le sujet de votre message',
+            message: 'Message',
+            messagePlaceholder: 'Entrez votre message ici',
+            submit: 'Envoyer le Message',
+            successMessage: 'Merci pour votre message ! Nous vous répondrons bientôt.'
         }
     }
 };
-
-import cookieUtils from '@/utils/cookieUtils.js';
 
 const savedLanguage = cookieUtils.getCookie('userLanguage');
 const browserLanguage = navigator.language.split('-')[0];
