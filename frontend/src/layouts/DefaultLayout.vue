@@ -6,16 +6,16 @@
     <LoginAdmin />
 
     <slot />
-    <div id="contact">
-      <ContactUs />
+    <div >
+      <Footer />
     </div>
   </div>
 </template>
 
 <script setup>
 import SiteNavbar from '@/components/SiteNavbar.vue'
-import ContactUs from '@/components/ContactUs.vue'
 import BandeLandingPage from '@/components/bandeLandingPage.vue'
+import Footer from '@/components/Footer.vue'
 import LoginAdmin from '@/components/LoginAdmin.vue'
 
 import { onMounted, onUnmounted } from 'vue';
