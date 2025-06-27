@@ -25,8 +25,6 @@ class DocumentController extends Controller
         $validated = $request->validate([
             'name_fr' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
-            'description_fr' => 'required|string',
-            'description_en' => 'required|string',
             'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:5120',
             'edition_id' => 'nullable|exists:edition,id',
         ]);
@@ -35,8 +33,8 @@ class DocumentController extends Controller
         $validated['url'] = null;
         // Handle file upload
         if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('public/documents');
-            $validated['url'] = Storage::url($path);
+            $path = $request->file('file')->store('documents','public');
+            $validated['url'] = $path;
         }
 
         $document = Document::create($validated);
@@ -92,8 +90,8 @@ class DocumentController extends Controller
                 Storage::delete($oldPath);
             }
 
-            $path = $request->file('file')->store('public/documents');
-            $validated['url'] = Storage::url($path);
+            $path = $request->file('file')->store('documents','public');
+            $validated['url'] = $path;
         }
 
         $document->update($validated);
