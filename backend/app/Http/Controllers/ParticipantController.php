@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Participant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\ParticipantRejectedMail;
+use Illuminate\Support\Facades\Mail;
 
 class ParticipantController extends Controller
 {
@@ -22,7 +24,7 @@ class ParticipantController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        try {
 
             $validated = $request->validate([
                 'nom' => 'required|string|max:255',
@@ -53,9 +55,9 @@ class ParticipantController extends Controller
             $validated['supp_single'] = filter_var($validated['supp_single'], FILTER_VALIDATE_BOOLEAN);
             $validated['accomodation'] = filter_var($validated['accomodation'], FILTER_VALIDATE_BOOLEAN);
             $participant = Participant::create($validated);
-    
+
             return response()->json($participant, 201);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Error creating participant: ' . $e->getMessage()], 500);
         }
     }
@@ -79,7 +81,7 @@ class ParticipantController extends Controller
             $validated = $request->validate([
                 'nom' => 'sometimes|string|max:255',
                 'prenom' => 'sometimes|string|max:255',
-                'email' => 'sometimes|email' ,
+                'email' => 'sometimes|email',
                 'fonction' => 'sometimes|string|max:255',
                 'tel' => 'sometimes|string|max:255',
                 'pays' => 'sometimes|string|max:255',
@@ -127,7 +129,7 @@ class ParticipantController extends Controller
 
             return response()->json($participant);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Participant not found or invalid data'.$e->getMessage()], 404);
+            return response()->json(['error' => 'Participant not found or invalid data' . $e->getMessage()], 404);
         }
     }
 
@@ -140,7 +142,12 @@ class ParticipantController extends Controller
         if (!$participant) {
             return response()->json(['error' => 'Participant not found'], 404);
         }
-
+        $participantName = $participant->prenom . ' ' . $participant->nom;
+        try {
+            Mail::to($participant->email)->send(new ParticipantRejectedMail($participantName));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to send email: ' . $e->getMessage()], 500);
+        }
         // Delete associated recu_paie
         if ($participant->recu_paie) {
             $path = str_replace('/storage', 'public', $participant->recu_paie);
@@ -161,5 +168,4 @@ class ParticipantController extends Controller
             ->get();
         return response()->json($participants);
     }
-    
 }
