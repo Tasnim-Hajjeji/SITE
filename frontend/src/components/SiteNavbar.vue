@@ -1,3 +1,4 @@
+```vue
 <template>
   <nav class="bg-white shadow-xl sticky top-0 z-50">
     <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
@@ -113,13 +114,33 @@
           </ul>
 
           <div class="flex items-center gap-4">
-            <!-- Notification Icon -->
-            <button class="relative text-gray-600 hover:text-[#265985] transition">
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V5a2 2 0 10-4 0v.083A6 6 0 004 11v3.159c0 .538-.214 1.055-.595 1.436L2 17h5m4 0a2 2 0 11-4 0h4z"></path>
-              </svg>
-              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
-            </button>
+            <!-- Notification Icon with Dropdown -->
+            <div class="relative">
+              <button
+                class="relative text-gray-600 hover:text-[#265985] transition"
+                @click="toggleNotificationDropdown"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V5a2 2 0 10-4 0v.083A6 6 0 004 11v3.159c0 .538-.214 1.055-.595 1.436L2 17h5m4 0a2 2 0 11-4 0h4z"></path>
+                </svg>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">{{ notifications.length }}</span>
+              </button>
+              <ul
+                :class="['notification-dropdown absolute top-full right-0 bg-white shadow-md rounded-md py-2 min-w-[400px] z-50', { 'hidden': !notificationDropdownOpen }]"
+              >
+                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Recent Notifications</li>
+                <li v-for="(notification, index) in notifications" :key="index" class="list-row flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-all duration-200">
+                  <div class="icon-container">
+                    <img class="size-10 rounded-box" src="../assets/notification.png" alt="Notification Icon" />
+                  </div>
+                  <div class="list-col-grow">
+                    <div class="font-semibold text-gray-800">{{ notification.title }}</div>
+                    <div class="text-xs text-gray-500">{{ notification.message }}</div>
+                    <div class="text-xs opacity-60">{{ formatDate(notification.date) }}</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
 
             <!-- Language Switch -->
             <div class="lang-switch flex gap-2">
@@ -162,9 +183,29 @@ import { useRoute } from 'vue-router';
 
 const toggleMenu = ref(false);
 const dropdownOpen = ref(false);
+const notificationDropdownOpen = ref(false);
 const { locale } = useI18n();
 const currentLanguage = ref(locale.value);
-const route = useRoute(); // Used in template via $route
+const route = useRoute();
+
+// Sample notifications data
+const notifications = ref([
+  {
+    title: 'New Participant Registered',
+    message: 'John Doe has registered for SITE 2025. John Doe has registered for SITE 2025. John Doe has registered for SITE 2025. John Doe has registered for SITE 2025. John Doe has registered for SITE 2025.',
+    date: '2025-06-27T10:00:00Z',
+  },
+  {
+    title: 'Program Updated',
+    message: 'The schedule for Day 2 has been updated.',
+    date: '2025-06-26T15:30:00Z',
+  },
+  {
+    title: 'Payment Received',
+    message: 'Payment from Jane Smith has been confirmed.',
+    date: '2025-06-25T09:20:00Z',
+  },
+]);
 
 const switchLanguage = (lang) => {
   currentLanguage.value = lang;
@@ -174,6 +215,23 @@ const switchLanguage = (lang) => {
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
+  notificationDropdownOpen.value = false; // Close notification dropdown when opening committees
+};
+
+const toggleNotificationDropdown = () => {
+  notificationDropdownOpen.value = !notificationDropdownOpen.value;
+  dropdownOpen.value = false; // Close committees dropdown when opening notifications
+};
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
 </script>
 
@@ -194,13 +252,69 @@ html {
   display: block;
 }
 
-.dropdown-menu.hidden {
+.dropdown-menu.hidden,
+.notification-dropdown.hidden {
   display: none;
 }
 
 .border-b-2 {
   border-bottom-width: 2px;
   border-bottom-style: solid;
+}
+
+.notification-dropdown {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  list-style: none;
+  padding: 0;
+  min-width: 400px;
+  overflow: hidden;
+}
+
+.notification-dropdown li {
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.notification-dropdown li:hover {
+  background-color: #f0f4ff;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.list-col-grow {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
+}
+
+.list-col-grow .text-xs {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.icon-container {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.icon-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rounded-box {
+  border-radius: 8px;
 }
 
 @media (max-width: 768px) {
@@ -239,7 +353,8 @@ html {
     background-color: #f1f5f9;
   }
 
-  .dropdown-menu {
+  .dropdown-menu,
+  .notification-dropdown {
     position: static;
     box-shadow: none;
     width: 100%;
@@ -249,7 +364,8 @@ html {
     background: #f9fafb;
   }
 
-  .dropdown-menu li a {
+  .dropdown-menu li a,
+  .notification-dropdown li {
     padding: 0.4rem 1rem;
   }
 
@@ -267,3 +383,4 @@ html {
   }
 }
 </style>
+```
