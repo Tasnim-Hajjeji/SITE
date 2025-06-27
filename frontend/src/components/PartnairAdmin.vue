@@ -1,14 +1,14 @@
 <template>
   <div class="container">
-    <h1 class="title">Partners  {{ this.selectedEditionName }}</h1>
+    <h1 class="title">Partenaires {{ this.selectedEditionName }}</h1>
 
     <div class="actions">
       <button class="btn add" @click="showAddModal = true">
-        <span class="plus">+</span> Add Partners 
+        <span class="plus">+</span> Ajouter un Partenaire
       </button>
 
       <div class="dropdown" @click="toggleDropdown">
-        <button class="btn edit">Edition ▼</button>
+        <button class="btn edit">Édition ▼</button>
         <ul v-if="dropdownOpen" class="dropdown-menu">
           <li v-for="edition in editions" :key="edition.id" @click="onEditOption(edition.name)">
             {{ edition.name }}
@@ -19,7 +19,7 @@
 
     <div class="grid">
       <div v-for="partner in filteredPartners" :key="partner.id" class="card" :id="`partner-${partner.id}`">
-        <img :src="getImageUrl(partner.image_url)" alt="Partner logo" class="logo" />
+        <img :src="getImageUrl(partner.image_url)" alt="Logo du partenaire" class="logo" />
         <h2 class="name">{{ partner.name }}</h2>
         <p class="desc">{{ partner.description }}</p>
         <div class="info"><i class="fas fa-phone icon"></i><span>{{ partner.phone }}</span></div>
@@ -33,52 +33,114 @@
 
     <!-- Modal Ajout -->
     <div v-if="showAddModal" class="modal-overlay">
-      <div class="modal">
-        <h2>Add Partner</h2>
-        <input name="name" type="text" v-model="newPartner.name" placeholder="Name" />
-        <input name="image_url" type="file" @change="handleImageUpload($event, 'new')" />
-        <select name="edition_id" v-model.number="newPartner.edition_id">
-          <option disabled value="">Select Edition</option>
-          <option v-for="edition in editions" :key="edition.id" :value="edition.id">{{ edition.name }}</option>
-        </select>
-        <input name="description" type="text" v-model="newPartner.description" placeholder="Description" />
-        <input name="phone" type="text" v-model="newPartner.phone" placeholder="Phone Number" />
-        <input name="email" type="email" v-model="newPartner.email" placeholder="Email" />
-        <div class="modal-actions">
-          <button @click="addPartner">Add</button>
-          <button class="cancel" @click="showAddModal = false">Cancel</button>
-        </div>
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un Partenaire</h3>
+        <form @submit.prevent="addPartner" class="space-y-0">
+          <div>
+            <label for="name_input" class="block mb-1 text-xs text-gray-500 font-medium">Nom</label>
+            <input id="name_input" name="name" type="text" v-model="newPartner.name" placeholder="Nom" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="image_input" class="block mb-1 text-xs text-gray-500 font-medium">Logo</label>
+            <input id="image_input" name="image_url" type="file" @change="handleImageUpload($event, 'new')" class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="edition_input" class="block mb-1 text-xs text-gray-500 font-medium">Édition</label>
+            <select id="edition_input" name="edition_id" v-model.number="newPartner.edition_id" class="w-[95%] p-2 border border-gray-300 rounded-lg" required>
+              <option disabled value="">Sélectionner une édition</option>
+              <option v-for="edition in editions" :key="edition.id" :value="edition.id">{{ edition.name }}</option>
+            </select>
+          </div>
+          <div>
+            <label for="desc_input" class="block mb-1 text-xs text-gray-500 font-medium">Description</label>
+            <input id="desc_input" name="description" type="text" v-model="newPartner.description" placeholder="Description" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="phone_input" class="block mb-1 text-xs text-gray-500 font-medium">Numéro de téléphone</label>
+            <input id="phone_input" name="phone" type="text" v-model="newPartner.phone" placeholder="Numéro de téléphone" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="email_input" class="block mb-1 text-xs text-gray-500 font-medium">Email</label>
+            <input id="email_input" name="email" type="email" v-model="newPartner.email" placeholder="Email" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="showAddModal = false">
+              Annuler
+            </button>
+            <button type="submit"
+              class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+              Ajouter
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
-    <!-- Modal Update -->
+    <!-- Modal Mise à jour -->
     <div v-if="showUpdateModal" class="modal-overlay">
-      <div class="modal">
-        <h2>Update Partner</h2>
-        <input name="name" type="text" v-model="selectedPartner.name" placeholder="Name" />
-        <input name="image_url" type="file" @change="handleImageUpload($event, 'update')" />
-        <select name="edition_id" v-model.number="selectedPartner.edition_id">
-          <option disabled value="">Select Edition</option>
-          <option v-for="edition in editions" :key="edition.id" :value="edition.id">{{ edition.name }}</option>
-        </select>
-        <input name="description" type="text" v-model="selectedPartner.description" placeholder="Description" />
-        <input name="phone" type="text" v-model="selectedPartner.phone" placeholder="Phone Number" />
-        <input name="email" type="email" v-model="selectedPartner.email" placeholder="Email" />
-        <div class="modal-actions">
-          <button @click="updatePartner">Update</button>
-          <button class="cancel" @click="showUpdateModal = false">Cancel</button>
-        </div>
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Mettre à jour le Partenaire</h3>
+        <form @submit.prevent="updatePartner" class="space-y-0">
+          <div>
+            <label for="update_name_input" class="block mb-1 text-xs text-gray-500 font-medium">Nom</label>
+            <input id="update_name_input" name="name" type="text" v-model="selectedPartner.name" placeholder="Nom" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="update_image_input" class="block mb-1 text-xs text-gray-500 font-medium">Logo</label>
+            <input id="update_image_input" name="image_url" type="file" @change="handleImageUpload($event, 'update')" class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="update_edition_input" class="block mb-1 text-xs text-gray-500 font-medium">Édition</label>
+            <select id="update_edition_input" name="edition_id" v-model.number="selectedPartner.edition_id" class="w-[95%] p-2 border border-gray-300 rounded-lg" required>
+              <option disabled value="">Sélectionner une édition</option>
+              <option v-for="edition in editions" :key="edition.id" :value="edition.id">{{ edition.name }}</option>
+            </select>
+          </div>
+          <div>
+            <label for="update_desc_input" class="block mb-1 text-xs text-gray-500 font-medium">Description</label>
+            <input id="update_desc_input" name="description" type="text" v-model="selectedPartner.description" placeholder="Description" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="update_phone_input" class="block mb-1 text-xs text-gray-500 font-medium">Numéro de téléphone</label>
+            <input id="update_phone_input" name="phone" type="text" v-model="selectedPartner.phone" placeholder="Numéro de téléphone" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="update_email_input" class="block mb-1 text-xs text-gray-500 font-medium">Email</label>
+            <input id="update_email_input" name="email" type="email" v-model="selectedPartner.email" placeholder="Email" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="showUpdateModal = false">
+              Annuler
+            </button>
+            <button type="submit"
+              class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+              Mettre à jour
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
-    <!-- Modal Delete -->
+    <!-- Modal Suppression -->
     <div v-if="showDeleteModal" class="modal-overlay">
-      <div class="modal">
-        <h2>Delete Partner</h2>
-        <p>Are you sure you want to delete <strong>{{ selectedPartner.name }}</strong>?</p>
-        <div class="modal-actions">
-          <button class="delete" @click="deletePartner">Yes, Delete</button>
-          <button class="cancel" @click="showDeleteModal = false">Cancel</button>
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Supprimer un Partenaire</h3>
+        <p class="text-center mb-4">Êtes-vous sûr de vouloir supprimer <strong>{{ selectedPartner.name }}</strong> ?</p>
+        <div class="modal-actions flex justify-end gap-2">
+          <button type="button"
+            class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            @click="showDeleteModal = false">
+            Annuler
+          </button>
+          <button type="button"
+            class="delete-btn bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-red-700 hover:to-red-900 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            @click="deletePartner">
+            Oui, Supprimer
+          </button>
         </div>
       </div>
     </div>
@@ -99,7 +161,7 @@ export default {
       showDeleteModal: false,
       selectedEdition: null,
       selectedEditionName: '',
-      selectedEditionId: null, 
+      selectedEditionId: null,
 
       editions: [], // Will be loaded from API
       newPartner: {
@@ -123,7 +185,6 @@ export default {
     };
   },
   async created() {
-    
     // Get edition ID from route params or localStorage
     this.selectedEditionId = localStorage.getItem('selectedEditionId');
     await this.fetchEditions();
@@ -157,13 +218,13 @@ export default {
         const response = await EditionService.getAllEditions();
         this.editions = response.data;
 
-        // If no edition is selected yet, select the first one by default
-        if (this.selectedEditionId ) {
+        // Si aucune édition n'est sélectionnée, sélectionner la première par défaut
+        if (this.selectedEditionId) {
           const selectedEdition = this.editions.find(e => e.id == this.selectedEditionId);
           this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
         }
       } catch (error) {
-        console.error('Error fetching editions:', error);
+        console.error('Erreur lors de la récupération des éditions :', error);
       }
     },
 
@@ -174,7 +235,7 @@ export default {
         const response = await PartenaireService.getPartenairesByEdition(this.selectedEdition);
         this.partners = response.data;
       } catch (error) {
-        console.error('Error fetching partners:', error);
+        console.error('Erreur lors de la récupération des partenaires :', error);
       }
     },
 
@@ -238,7 +299,7 @@ export default {
         this.resetNewPartner();
         this.showAddModal = false;
       } catch (error) {
-        console.error('Error adding partner:', error);
+        console.error('Erreur lors de l\'ajout du partenaire :', error);
       }
     },
 
@@ -285,7 +346,7 @@ export default {
 
         this.showUpdateModal = false;
       } catch (error) {
-        console.error('Error updating partner:', error);
+        console.error('Erreur lors de la mise à jour du partenaire :', error);
       }
     },
 
@@ -300,26 +361,26 @@ export default {
         this.partners = this.partners.filter(p => p.id !== this.selectedPartner.id);
         this.showDeleteModal = false;
       } catch (error) {
-        console.error('Error deleting partner:', error);
+        console.error('Erreur lors de la suppression du partenaire :', error);
       }
     },
-    highlightPartner(PartnerId) {
-      // If members are already loaded
-      if (this.members.length > 0) {
-        this.scrollToPhighlightPartner(PartnerId);
+    highlightPartner(partnerId) {
+      // If partners are already loaded
+      if (this.partners.length > 0) {
+        this.scrollToPartner(partnerId);
         return;
       }
 
-      // If members are loading, wait for them
+      // If partners are loading, wait for them
       const checkInterval = setInterval(() => {
-        if (this.members.length > 0) {
+        if (this.partners.length > 0) {
           clearInterval(checkInterval);
-          this.scrollToPhighlightPartner(PartnerId);
+          this.scrollToPartner(partnerId);
         }
       }, 100);
     },
 
-    scrollToPhighlightPartner(partnerId) {
+    scrollToPartner(partnerId) {
       this.$nextTick(() => {
         const element = document.getElementById(`partner-${partnerId}`);
         if (element) {
@@ -334,7 +395,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
@@ -352,44 +412,114 @@ export default {
   z-index: 1000;
 }
 
-.modal {
+.modal-content {
   background: white;
-  padding: 24px;
+  padding: 30px;
   border-radius: 12px;
+  max-width: 500px;
   width: 90%;
-  max-width: 400px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.modal input {
-  width: 100%;
-  padding: 10px;
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+  text-align: center;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  font-size: 14px;
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  border-color: #265985;
+  outline: none;
 }
 
-.modal-actions button {
-  padding: 8px 16px;
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
+  color: white;
   border: none;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.modal-actions .cancel {
-  background: #999;
-  color: white;
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.modal-actions .delete {
-  background: #c0392b;
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+  background: linear-gradient(to right, #e53935, #b71c1c);
   color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right, #d32f2f, #9a0007);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .container {

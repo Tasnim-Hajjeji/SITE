@@ -4,17 +4,17 @@
       <h2 class="title">Keynote Session</h2>
       <div class="action-buttons">
         <button class="add-btn" @click="showModal = true">
-          <i class="fas fa-plus"></i> Add
+          <i class="fas fa-plus"></i> Ajouter un Keynote
         </button>
       </div>
     </div>
 
     <div v-if="isLoading" class="loading-message">
-      Loading keynotes...
+      Chargement des keynotes...
     </div>
 
     <div v-else-if="items.length === 0" class="empty-message">
-      No keynotes available.
+      Aucun keynote disponible.
     </div>
     <div v-else class="carousel">
       <button class="nav-btn" @click="prevSlide" :disabled="currentIndex === 0">

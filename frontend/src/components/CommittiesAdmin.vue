@@ -1,3 +1,5 @@
+```vue
+イシナリオ
 <template>
   <div class="container">
     <h1 class="title">Committees {{ this.selectedEditionName }}</h1>
@@ -113,141 +115,145 @@
     </div>
 
     <!-- Modal Add Member -->
-    <div v-if="showAddModal" class="modal-overlay" @click.self="closeAddModal">
-      <div class="modal">
-        <h3>Add Committee Member</h3>
-        <form @submit.prevent="submitAddMember">
-          <label>
-            Full Name:
-            <input type="text" v-model="newMember.full_name" required />
-          </label>
-          <label>
-            Committee Type:
-            <select v-model="newMember.committee" required @change="handleCommitteeTypeChange">
-              <option disabled value="">Select Committee</option>
-              <option value="Honor">Honor</option>
-              <option value="Organizing">Organizing</option>
-              <option value="Scientific">Scientific</option>
-            </select>
-          </label>
-          <label v-if="showRoleField">
-            Role:
-            <input type="text" v-model="newMember.role" required />
-          </label>
-          <label>
-            Etablissement:
-            <input type="text" v-model="newMember.from_etablissement" required />
-          </label>
-          <label>
-            Image:
-            <input type="file" accept="image/*" @change="onImageSelected($event, 'add')" required />
-          </label>
-          <div v-if="newMember.image_url" class="preview-image">
-            <img :src="newMember.image_url" alt="Preview Image" />
-          </div>
-          <label>
-            Edition:
-            <select v-model="newMember.edition_id" required>
-              <option disabled value="">Select Edition</option>
-              <option v-for="edition in editions" :key="edition.id" :value="edition.id">
-                {{ edition.name }}
-              </option>
-            </select>
-          </label>
-          <label>
-            Email:
-            <input type="email" v-model="newMember.email" />
-          </label>
-          <label>
-            Phone:
-            <input type="tel" v-model="newMember.phone" />
-          </label>
-
-          <div class="modal-actions">
-            <button type="submit" class="btn add" :disabled="isSubmitting">
-              {{ isSubmitting ? 'Adding...' : 'Add Member' }}
-            </button>
-            <button type="button" class="btn" @click="closeAddModal">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal Edit Member -->
-    <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
-      <div class="modal">
-        <h3>Edit Committee Member</h3>
-        <form @submit.prevent="submitEditMember">
-          <label>
-            Full Name:
-            <input type="text" v-model="editMemberData.full_name" required />
-          </label>
-          <label>
-            Committee Type:
-            <select v-model="editMemberData.committee" required @change="handleEditCommitteeTypeChange">
-              <option disabled value="">Select Committee</option>
-              <option value="Honor">Honor</option>
-              <option value="Organizing">Organizing</option>
-              <option value="Scientific">Scientific</option>
-            </select>
-          </label>
-          <label v-if="showEditRoleField">
-            Role:
-            <input type="text" v-model="editMemberData.role" required />
-          </label>
-          <label>
-            Etablissement:
-            <input type="text" v-model="editMemberData.from_etablissement" required />
-          </label>
-          <label>
-            Image:
-            <input type="file" accept="image/*" @change="onImageSelected($event, 'edit')" />
-            <small>Leave empty to keep current image</small>
-          </label>
-          <div v-if="editMemberData.image_url" class="preview-image">
-            <img :src="getImageUrl(editMemberData.image_url)" alt="Preview Image" />
-          </div>
-          <label>
-            Edition:
-            <select v-model="editMemberData.edition_id" required>
-              <option disabled value="">Select Edition</option>
-              <option v-for="edition in editions" :key="edition.id" :value="edition.id">
-                {{ edition.name }}
-              </option>
-            </select>
-          </label>
-          <label>
-            Email:
-            <input type="email" v-model="editMemberData.email" />
-          </label>
-          <label>
-            Phone:
-            <input type="tel" v-model="editMemberData.phone" />
-          </label>
-
-          <div class="modal-actions">
-            <button type="submit" class="btn edit" :disabled="isSubmitting">
-              {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
-            </button>
-            <button type="button" class="btn" @click="closeEditModal">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal Delete Confirmation -->
-    <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
-      <div class="modal">
-        <h3>Confirm Delete</h3>
-        <p>Are you sure you want to delete member <strong>{{ deleteMemberData.full_name }}</strong>?</p>
-        <div class="modal-actions">
-          <button class="btn delete-btn" @click="confirmDeleteMember" :disabled="isSubmitting">
-            {{ isSubmitting ? 'Deleting...' : 'Delete' }}
-          </button>
-          <button class="btn" @click="closeDeleteModal">Cancel</button>
+    <transition name="fade">
+      <div v-if="showAddModal" class="modal-overlay" @click.self="closeAddModal">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add Committee Member</h3>
+          <form @submit.prevent="submitAddMember" class="space-y-4">
+            <label class="block text-sm font-medium text-gray-700">
+              Full Name:
+              <input type="text" v-model="newMember.full_name" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Committee Type:
+              <select v-model="newMember.committee" required @change="handleCommitteeTypeChange" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                <option disabled value="">Select Committee</option>
+                <option value="Honor">Honor</option>
+                <option value="Organizing">Organizing</option>
+                <option value="Scientific">Scientific</option>
+              </select>
+            </label>
+            <label v-if="showRoleField" class="block text-sm font-medium text-gray-700">
+              Role:
+              <input type="text" v-model="newMember.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Etablissement:
+              <input type="text" v-model="newMember.from_etablissement" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Image:
+              <input type="file" accept="image/*" @change="onImageSelected($event, 'add')" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <div v-if="newMember.image_url" class="preview-image">
+              <img :src="newMember.image_url" alt="Preview Image" />
+            </div>
+            <label class="block text-sm font-medium text-gray-700">
+              Edition:
+              <select v-model="newMember.edition_id" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                <option disabled value="">Select Edition</option>
+                <option v-for="edition in editions" :key="edition.id" :value="edition.id">
+                  {{ edition.name }}
+                </option>
+              </select>
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Email:
+              <input type="email" v-model="newMember.email" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Phone:
+              <input type="tel" v-model="newMember.phone" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <div class="modal-actions flex justify-end gap-2 mt-6">
+              <button type="button" class="cancel-btn" @click="closeAddModal">Cancel</button>
+              <button type="submit" class="add-btn" :disabled="isSubmitting">
+                {{ isSubmitting ? 'Adding...' : 'Add Member' }}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </div>
+    </transition>
+
+    <!-- Modal Edit Member -->
+    <transition name="fade">
+      <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Edit Committee Member</h3>
+          <form @submit.prevent="submitEditMember" class="space-y-4">
+            <label class="block text-sm font-medium text-gray-700">
+              Full Name:
+              <input type="text" v-model="editMemberData.full_name" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Committee Type:
+              <select v-model="editMemberData.committee" required @change="handleEditCommitteeTypeChange" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                <option disabled value="">Select Committee</option>
+                <option value="Honor">Honor</option>
+                <option value="Organizing">Organizing</option>
+                <option value="Scientific">Scientific</option>
+              </select>
+            </label>
+            <label v-if="showEditRoleField" class="block text-sm font-medium text-gray-700">
+              Role:
+              <input type="text" v-model="editMemberData.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Etablissement:
+              <input type="text" v-model="editMemberData.from_etablissement" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Image:
+              <input type="file" accept="image/*" @change="onImageSelected($event, 'edit')" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+              <small>Leave empty to keep current image</small>
+            </label>
+            <div v-if="editMemberData.image_url" class="preview-image">
+              <img :src="getImageUrl(editMemberData.image_url)" alt="Preview Image" />
+            </div>
+            <label class="block text-sm font-medium text-gray-700">
+              Edition:
+              <select v-model="editMemberData.edition_id" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                <option disabled value="">Select Edition</option>
+                <option v-for="edition in editions" :key="edition.id" :value="edition.id">
+                  {{ edition.name }}
+                </option>
+              </select>
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Email:
+              <input type="email" v-model="editMemberData.email" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <label class="block text-sm font-medium text-gray-700">
+              Phone:
+              <input type="tel" v-model="editMemberData.phone" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            </label>
+            <div class="modal-actions flex justify-end gap-2 mt-6">
+              <button type="button" class="cancel-btn" @click="closeEditModal">Cancel</button>
+              <button type="submit" class="add-btn" :disabled="isSubmitting">
+                {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Modal Delete Confirmation -->
+    <transition name="fade">
+      <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirm Delete</h3>
+          <p class="text-gray-600 mb-4 text-center">Are you sure you want to delete member <strong>{{ deleteMemberData.full_name }}</strong>?</p>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button" class="cancel-btn" @click="closeDeleteModal">Cancel</button>
+            <button type="button" class="delete-btn" @click="confirmDeleteMember" :disabled="isSubmitting">
+              {{ isSubmitting ? 'Deleting...' : 'Delete' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -618,94 +624,6 @@ export default {
 </script>
 
 <style scoped>
-/* Garde ton style précédent + ajouter styles pour modals */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  font-size: 16px;
-  color: #265985;
-  gap: 10px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px;
-  color: #6B7280;
-  font-size: 16px;
-  background: white;
-  border-radius: 16px;
-  margin-top: 20px;
-}
-
-.fa-spin {
-  animation: fa-spin 2s infinite linear;
-}
-
-@keyframes fa-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(359deg);
-  }
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.modal {
-  background-color: white;
-  border-radius: 16px;
-  padding: 24px;
-  width: 90%;
-  max-width: 480px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.modal h3 {
-  margin-bottom: 16px;
-  color: #265985;
-}
-
-.modal label {
-  display: block;
-  margin-bottom: 12px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.modal input,
-.modal select {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  margin-top: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
-.modal-actions {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
 
 .container {
@@ -852,14 +770,11 @@ export default {
 
 .name-cell {
   display: table-cell;
-  /* ← restores default cell behavior */
   vertical-align: middle;
-  /* padding is inherited from the generic td rule above */
 }
 
 .name-cell .member-avatar {
   margin-right: 12px;
-  /* ← simple spacing inside the cell */
 }
 
 .member-avatar {
@@ -929,7 +844,6 @@ export default {
   gap: 8px;
   align-items: center;
   justify-content: center;
-  /* or flex-start, if you like them flushed left */
 }
 
 .contact-btn {
@@ -1028,16 +942,194 @@ export default {
   background-color: #F44336;
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-size: 16px;
+  color: #265985;
+  gap: 10px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6B7280;
+  font-size: 16px;
+  background: white;
+  border-radius: 16px;
+  margin-top: 20px;
+}
+
+.fa-spin {
+  animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+  text-align: center;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+  border-color: #265985;
+  outline: none;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+  background: linear-gradient(to right, #e53935, #c62828);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right, #c62828, #b71c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.preview-image img {
+  max-width: 120px;
+  max-height: 120px;
+  margin-top: 8px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #d1d5db;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scale(0.85);
 }
 
 /* Responsive Design */
@@ -1048,6 +1140,10 @@ export default {
 
   .members-table {
     min-width: 800px;
+  }
+
+  .modal-content {
+    padding: 20px;
   }
 }
 
@@ -1084,6 +1180,10 @@ export default {
   .name-cell {
     min-width: 150px;
   }
+
+  .modal-content {
+    padding: 20px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1103,73 +1203,9 @@ export default {
   .members-table {
     min-width: 600px;
   }
-}
 
-
-/* Modal styles */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: #000000a0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1200;
-}
-
-.modal {
-  background: white;
-  border-radius: 12px;
-  max-width: 450px;
-  width: 100%;
-  padding: 22px 25px;
-  box-shadow: 0 0 12px rgb(0 0 0 / 0.2);
-  max-height: 95vh;
-  overflow-y: auto;
-}
-
-.modal h3 {
-  margin-top: 0;
-  font-weight: 700;
-  color: #003366;
-  margin-bottom: 15px;
-}
-
-.modal form label {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
-  font-weight: 600;
-  color: #333;
-  font-size: 0.95rem;
-}
-
-.modal form input[type="text"],
-.modal form input[type="email"],
-.modal form input[type="tel"],
-.modal form select,
-.modal form input[type="file"] {
-  padding: 7px 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-top: 6px;
-  font-weight: 400;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.preview-image img {
-  max-width: 120px;
-  max-height: 120px;
-  margin-top: 8px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 1px solid #ddd;
+  .modal-content {
+    padding: 20px;
+  }
 }
 </style>

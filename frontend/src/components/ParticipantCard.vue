@@ -1,3 +1,4 @@
+```vue
 <template>
   <div class="container">
     <h1>Participants {{ this.selectedEditionName }} ({{ participants.length }} participants)</h1>
@@ -62,10 +63,9 @@
     <!-- Update Modal -->
     <transition name="fade">
       <div v-if="showUpdateModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
-          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Update Participant
-          </h3>
+        class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Update Participant</h3>
           <form @submit.prevent="updateParticipant" class="space-y-4">
             <div>
               <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
@@ -160,11 +160,11 @@
               <input v-model="editParticipant.details.total" id="total" type="text" placeholder="Enter total amount"
                 class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
             </div>
-            <div class="flex justify-end space-x-3 mt-6">
-              <button type="button" class="btn cancel" @click="toggleUpdateModal">
+            <div class="modal-actions flex justify-end gap-2 mt-6">
+              <button type="button" class="cancel-btn" @click="toggleUpdateModal">
                 Cancel
               </button>
-              <button type="submit" class="btn add">
+              <button type="submit" class="add-btn">
                 Update
               </button>
             </div>
@@ -176,17 +176,15 @@
     <!-- Delete Modal -->
     <transition name="fade">
       <div v-if="showDeleteModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
-        <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-md font-poppins max-h-[90vh] overflow-y-auto">
-          <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Delete Participant
-          </h3>
-          <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete <strong>{{ editParticipant.name
-          }}</strong>?</p>
-          <div class="flex justify-end space-x-3">
-            <button type="button" class="btn cancel" @click="toggleDeleteModal">
+        class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Delete Participant</h3>
+          <p class="text-gray-600 mb-4 text-center">Are you sure you want to delete <strong>{{ editParticipant.name }}</strong>?</p>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button" class="cancel-btn" @click="toggleDeleteModal">
               Cancel
             </button>
-            <button type="button" class="btn delete" @click="deleteParticipant">
+            <button type="button" class="delete-btn" @click="deleteParticipant">
               Yes, Delete
             </button>
           </div>
@@ -360,7 +358,7 @@ export default {
           num_enfant: this.editParticipant.details.children,
           num_adulte: this.editParticipant.details.adults,
           supp_single: this.editParticipant.details.singleSupplement === 'Yes',
-          supp_nuit: this.editParticipant.details.extraNights ,
+          supp_nuit: this.editParticipant.details.extraNights,
           prix_total: this.editParticipant.details.total,
           methode_paie: this.editParticipant.details.payment,
           edition_id: this.selectedEditionId
@@ -533,15 +531,22 @@ h1 {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.add {
-  background-color: #265985;
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
   color: white;
   border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.add:hover {
-  background-color: #1e476b;
-  transform: scale(1.05);
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .edit {
@@ -550,12 +555,40 @@ h1 {
   background: white;
 }
 
-.cancel {
-  background: #999;
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+  background: linear-gradient(to right, #e53935, #c62828);
   color: white;
   border: none;
-  padding: 0.3rem 1rem;
-  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right, #c62828, #b71c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .confirm {
@@ -567,14 +600,6 @@ h1 {
   display: flex;
   align-items: center;
   gap: 5px;
-}
-
-.delete {
-  background: #eb5a5a;
-  color: white;
-  border: none;
-  padding: 0.3rem 1rem;
-  border-radius: 5px;
 }
 
 .dropdown {
@@ -733,13 +758,13 @@ h1 {
 /* Animation */
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.4s ease;
+  transition: all 0.3s ease-out;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: translateY(-5px);
+  transform: scale(0.85);
 }
 
 /* Modal styles */
@@ -747,10 +772,126 @@ h1 {
   font-family: 'Poppins', sans-serif;
 }
 
+/* Update and Delete Modal styles to match Programme.vue */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #1b2d56;
+  text-align: center;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+  border-color: #265985;
+  outline: none;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Payment Proof Modal retains original styles */
+.fixed.inset-0 {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  transition: opacity 0.3s ease;
+}
+
+.fixed.inset-0 > div {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 48rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.fixed.inset-0 h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 10;
+}
+
+.fixed.inset-0 .flex.justify-end {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
 /* Responsive */
 @media (max-width: 960px) {
   .cards-wrapper {
     justify-content: center;
+  }
+
+  .modal-content {
+    padding: 20px;
   }
 }
 
@@ -772,6 +913,10 @@ h1 {
   .actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .modal-content {
+    padding: 20px;
   }
 }
 </style>

@@ -1,16 +1,16 @@
 <template>
   <div class="container">
-    <h1 class="title">Speakers {{ selectedEditionName }}</h1>
+    <h1 class="title">Orateurs {{ selectedEditionName }}</h1>
 
     <!-- Actions -->
     <div class="actions">
       <button class="btn add" @click="openAddModal">
-        <span class="plus">+</span> Add speaker
+        <span class="plus">+</span> Ajouter un Orateur
       </button>
 
       <!-- Dropdown -->
       <div class="dropdown" @click="toggleDropdown">
-        <button class="btn edit">Edition ▼</button>
+        <button class="btn edit">Édition ▼</button>
         <ul v-if="dropdownOpen" class="dropdown-menu">
           <li v-for="edition in editions" :key="edition.id" @click="selectEdition(edition)">
             {{ edition.name }}
@@ -24,13 +24,11 @@
       <div class="card" v-for="speaker in speakers" :key="speaker.id" :id="`speaker-${speaker.id}`">
         <h2 class="name">
           {{ speaker.full_name }}
-          <img class="flag" :src="`https://flagcdn.com/${speaker.code_pays.toLowerCase()}.svg`"
-            :alt="speaker.code_pays" />
+          <img class="flag" :src="`https://flagcdn.com/${speaker.code_pays.toLowerCase()}.svg`" :alt="speaker.code_pays" />
         </h2>
         <p class="desc"><strong>Profession :</strong> {{ speaker.profession_fr }}</p>
         <p class="desc"><strong>Intervention :</strong> {{ speaker.description_fr }}</p>
-        <p class="info">📌 <span class="count">{{ speaker.programs ? speaker.programs.length : 0 }}</span>
-          Intervention(s)</p>
+        <p class="info"><i class="fas fa-map-pin icon"></i> <span class="count">{{ speaker.programs ? speaker.programs.length : 0 }}</span> Intervention(s)</p>
         <div class="info">
           <img class="avatar" :src="getImageUrl(speaker.image_url)" :alt="speaker.full_name" />
           <span>{{ speaker.institut }}</span>
@@ -45,48 +43,121 @@
 
     <!-- Modal Add -->
     <div v-if="showAddModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Add Speaker</h3>
-        <form @submit.prevent="addSpeaker">
-          <input v-model="newSpeaker.full_name" placeholder="Full Name" required />
-          <input v-model="newSpeaker.profession_fr" placeholder="Profession FR" required />
-          <input v-model="newSpeaker.profession_en" placeholder="Profession EN" required />
-          <textarea v-model="newSpeaker.description_fr" placeholder="Description FR"></textarea>
-          <textarea v-model="newSpeaker.description_en" placeholder="Description EN"></textarea>
-          <input v-model="newSpeaker.institut" placeholder="Institution" required />
-          <input v-model="newSpeaker.code_pays" placeholder="Country Code (e.g., TN)" required />
-          <input type="file" @change="handleImageUpload($event, newSpeaker)" required />
-          <button type="submit">Submit</button>
-          <button type="button" @click="showAddModal = false">Cancel</button>
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un Orateur</h3>
+        <form @submit.prevent="addSpeaker" class="space-y-0">
+          <div>
+            <label for="full_name_input" class="block mb-1 text-xs text-gray-500 font-medium">Nom complet</label>
+            <input id="full_name_input" v-model="newSpeaker.full_name" placeholder="Nom complet" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="profession_fr_input" class="block mb-1 text-xs text-gray-500 font-medium">Profession (FR)</label>
+            <input id="profession_fr_input" v-model="newSpeaker.profession_fr" placeholder="Profession FR" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="profession_en_input" class="block mb-1 text-xs text-gray-500 font-medium">Profession (EN)</label>
+            <input id="profession_en_input" v-model="newSpeaker.profession_en" placeholder="Profession EN" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="description_fr_input" class="block mb-1 text-xs text-gray-500 font-medium">Description (FR)</label>
+            <textarea id="description_fr_input" v-model="newSpeaker.description_fr" placeholder="Description FR" class="w-[95%] p-2 border border-gray-300 rounded-lg"></textarea>
+          </div>
+          <div>
+            <label for="description_en_input" class="block mb-1 text-xs text-gray-500 font-medium">Description (EN)</label>
+            <textarea id="description_en_input" v-model="newSpeaker.description_en" placeholder="Description EN" class="w-[95%] p-2 border border-gray-300 rounded-lg"></textarea>
+          </div>
+          <div>
+            <label for="institut_input" class="block mb-1 text-xs text-gray-500 font-medium">Institution</label>
+            <input id="institut_input" v-model="newSpeaker.institut" placeholder="Institution" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="code_pays_input" class="block mb-1 text-xs text-gray-500 font-medium">Code du pays</label>
+            <input id="code_pays_input" v-model="newSpeaker.code_pays" placeholder="Code du pays (ex. TN)" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="image_input" class="block mb-1 text-xs text-gray-500 font-medium">Image</label>
+            <button type="button" id="image_input" @click="$refs.fileInput.click()" class="w-[95%] p-2 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-gray-800">
+              <i class="fas fa-upload"></i> Télécharger une image
+            </button>
+            <input ref="fileInput" type="file" @change="handleImageUpload($event, newSpeaker)" class="hidden" required />
+          </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button" class="cancel-btn mt-4 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out" @click="showAddModal = false">
+              Annuler
+            </button>
+            <button type="submit" class="add-btn mt-4 bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+              Soumettre
+            </button>
+          </div>
         </form>
       </div>
     </div>
 
     <!-- Modal Edit -->
     <div v-if="showEditModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Edit Speaker</h3>
-        <form @submit.prevent="updateSpeaker">
-          <input v-model="editSpeaker.full_name" required />
-          <input v-model="editSpeaker.profession_fr" required />
-          <input v-model="editSpeaker.profession_en" required />
-          <textarea v-model="editSpeaker.description_fr"></textarea>
-          <textarea v-model="editSpeaker.description_en"></textarea>
-          <input v-model="editSpeaker.institut" required />
-          <input v-model="editSpeaker.code_pays" required />
-          <input type="file" @change="handleImageUpload($event, editSpeaker)" />
-          <button type="submit">Update</button>
-          <button type="button" @click="showEditModal = false">Cancel</button>
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Mettre à jour l'Orateur</h3>
+        <form @submit.prevent="updateSpeaker" class="space-y-0">
+          <div>
+            <label for="edit_full_name_input" class="block mb-1 text-xs text-gray-500 font-medium">Nom complet</label>
+            <input id="edit_full_name_input" v-model="editSpeaker.full_name" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="edit_profession_fr_input" class="block mb-1 text-xs text-gray-500 font-medium">Profession (FR)</label>
+            <input id="edit_profession_fr_input" v-model="editSpeaker.profession_fr" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="edit_profession_en_input" class="block mb-1 text-xs text-gray-500 font-medium">Profession (EN)</label>
+            <input id="edit_profession_en_input" v-model="editSpeaker.profession_en" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="edit_description_fr_input" class="block mb-1 text-xs text-gray-500 font-medium">Description (FR)</label>
+            <textarea id="edit_description_fr_input" v-model="editSpeaker.description_fr" class="w-[95%] p-2 border border-gray-300 rounded-lg"></textarea>
+          </div>
+          <div>
+            <label for="edit_description_en_input" class="block mb-1 text-xs text-gray-500 font-medium">Description (EN)</label>
+            <textarea id="edit_description_en_input" v-model="editSpeaker.description_en" class="w-[95%] p-2 border border-gray-300 rounded-lg"></textarea>
+          </div>
+          <div>
+            <label for="edit_institut_input" class="block mb-1 text-xs text-gray-500 font-medium">Institution</label>
+            <input id="edit_institut_input" v-model="editSpeaker.institut" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="edit_code_pays_input" class="block mb-1 text-xs text-gray-500 font-medium">Code du pays</label>
+            <input id="edit_code_pays_input" v-model="editSpeaker.code_pays" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div>
+            <label for="edit_image_input" class="block mb-1 text-xs text-gray-500 font-medium">Image</label>
+            <button type="button" id="edit_image_input" @click="$refs.editFileInput.click()" class="w-[95%] p-2 border border-gray-300 rounded-lg flex items-center justify-center text-gray-600 hover:text-gray-800">
+              <i class="fas fa-upload"></i> Télécharger une image
+            </button>
+            <input ref="editFileInput" type="file" @change="handleImageUpload($event, editSpeaker)" class="hidden" />
+          </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button" class="cancel-btn mt-4 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out" @click="showEditModal = false">
+              Annuler
+            </button>
+            <button type="submit" class="add-btn mt-4 bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+              Mettre à jour
+            </button>
+          </div>
         </form>
       </div>
     </div>
 
     <!-- Modal Delete -->
     <div v-if="showDeleteModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Are you sure you want to delete "{{ deleteSpeakerData.full_name }}"?</h3>
-        <button @click="deleteSpeaker">Yes, Delete</button>
-        <button @click="showDeleteModal = false">Cancel</button>
+      <div class="modal-content">
+        <h3 class="text-xl font-bold mb-4 text-center">Supprimer un Orateur</h3>
+        <p class="text-center mb-4">Êtes-vous sûr de vouloir supprimer "<strong>{{ deleteSpeakerData.full_name }}</strong>" ?</p>
+        <div class="modal-actions flex justify-end gap-2">
+          <button type="button" class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out" @click="showDeleteModal = false">
+            Annuler
+          </button>
+          <button type="button" class="delete-btn bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-red-700 hover:to-red-900 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out" @click="deleteSpeaker">
+            Oui, Supprimer
+          </button>
+        </div>
       </div>
     </div>
 
@@ -94,55 +165,48 @@
     <div v-if="showProgramModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 w-full max-w-2xl shadow-lg max-h-[80vh] overflow-y-auto">
         <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
-          Add/Remove Programmes for {{ selectedSpeaker.full_name }}
+          Ajouter/Supprimer des Programmes pour {{ selectedSpeaker.full_name }}
         </h3>
 
         <div class="flex justify-end mb-4">
-          <button @click="selectedPrograms = []" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-            :disabled="isUpdatingPrograms || selectedPrograms.length === 0">
-            Remove All
+          <button @click="selectedPrograms = []" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" :disabled="isUpdatingPrograms || selectedPrograms.length === 0">
+            Supprimer tous
           </button>
         </div>
 
         <div v-if="isLoadingPrograms" class="text-center py-4">
-          Loading programs...
+          Chargement des programmes...
         </div>
 
         <div v-else class="space-y-4">
-          <div v-for="(program, index) in programs" :key="index"
-            class="p-4 border rounded-lg flex justify-between items-center"
-            :class="{ 'border-2 border-blue-500': selectedPrograms.includes(program.id) }">
+          <div v-for="(program, index) in programs" :key="index" class="p-4 border rounded-lg flex justify-between items-center" :class="{ 'border-2 border-blue-500': selectedPrograms.includes(program.id) }">
             <div>
               <p class="text-sm font-medium text-gray-700">{{ program.name_fr }}</p>
-              <p class="text-xs text-gray-500">Start: {{ program.time_start }} - End: {{ program.time_end }}</p>
+              <p class="text-xs text-gray-500">Début : {{ program.time_start }} - Fin : {{ program.time_end }}</p>
               <p class="text-xs text-gray-500">{{ program.description_fr }}</p>
             </div>
             <div class="flex space-x-2">
-              <button @click="addProgram(program.id)" class="text-green-500 hover:text-green-700"
-                :disabled="isUpdatingPrograms">
+              <button @click="addProgram(program.id)" class="text-green-500 hover:text-green-700" :disabled="isUpdatingPrograms">
                 <i class="fas fa-plus"></i>
               </button>
-              <button @click="removeProgram(program.id)" class="text-red-500 hover:text-red-700"
-                :disabled="isUpdatingPrograms">
+              <button @click="removeProgram(program.id)" class="text-red-500 hover:text-red-700" :disabled="isUpdatingPrograms">
                 <i class="fas fa-minus"></i>
               </button>
             </div>
           </div>
 
           <div v-if="programs.length === 0" class="text-center py-4 text-gray-500">
-            No programs found for this edition.
+            Aucun programme trouvé pour cette édition.
           </div>
         </div>
 
         <div class="mt-6 flex justify-end space-x-4">
-          <button @click="closeProgramModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400"
-            :disabled="isUpdatingPrograms">
-            Cancel
+          <button @click="closeProgramModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400" :disabled="isUpdatingPrograms">
+            Annuler
           </button>
-          <button @click="confirmPrograms" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-            :disabled="isUpdatingPrograms">
-            <span v-if="isUpdatingPrograms">Saving...</span>
-            <span v-else>Confirm</span>
+          <button @click="confirmPrograms" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" :disabled="isUpdatingPrograms">
+            <span v-if="isUpdatingPrograms">Enregistrement...</span>
+            <span v-else>Confirmer</span>
           </button>
         </div>
       </div>
@@ -189,17 +253,12 @@ export default {
     };
   },
   async created() {
-    
-
     // Set initial edition from route params or localStorage
-    // const routeEditionId = this.$route.params.editionId;
     const storedEditionId = localStorage.getItem('selectedEditionId');
-
-    this.selectedEditionId = storedEditionId ;
+    this.selectedEditionId = storedEditionId;
     await this.fetchEditions();
 
     if (this.selectedEditionId) {
-      // localStorage.setItem('selectedEditionId', this.selectedEditionId);
       await this.fetchSpeakers();
     }
   },
@@ -219,25 +278,21 @@ export default {
         const response = await EditionService.getAllEditions();
         this.editions = response.data;
 
-        // if (this.editions.length > 0 && !this.selectedEditionId) {
-        //   this.selectedEditionId = this.editions[0].id;
-        //   this.selectedEditionName = this.editions[0].name;
-        // } else 
         if (this.selectedEditionId) {
           const selectedEdition = this.editions.find(e => e.id == this.selectedEditionId);
           this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
         }
       } catch (error) {
-        console.error('Error fetching editions:', error);
+        console.error('Erreur lors de la récupération des éditions :', error);
       }
     },
     async fetchSpeakers() {
       try {
         const response = await IntervenantService.getIntervenantsByEdition(this.selectedEditionId);
         this.speakers = response.data;
-        console.log('Speakers fetched:', this.speakers);
+        console.log('Orateurs récupérés :', this.speakers);
       } catch (error) {
-        console.error('Error fetching speakers:', error);
+        console.error('Erreur lors de la récupération des orateurs :', error);
       }
     },
     toggleDropdown() {
@@ -271,10 +326,9 @@ export default {
     },
     async addSpeaker() {
       try {
-        console.log('Adding speaker:', this.newSpeaker);
+        console.log('Ajout d\'un orateur :', this.newSpeaker);
         const formData = new FormData();
 
-        // Append all speaker data to formData
         Object.keys(this.newSpeaker).forEach(key => {
           if (key !== 'image' && this.newSpeaker[key] !== null) {
             formData.append(key, this.newSpeaker[key]);
@@ -284,7 +338,7 @@ export default {
         if (this.newSpeaker.image) {
           formData.append('photo', this.newSpeaker.image);
         }
-        console.log('Form data:', formData);
+        console.log('Données du formulaire :', formData);
         for (const [key, value] of formData.entries()) {
           console.log(`${key}: ${value}`);
         }
@@ -292,7 +346,7 @@ export default {
         this.showAddModal = false;
         await this.fetchSpeakers();
       } catch (error) {
-        console.error('Error adding speaker:', error);
+        console.error('Erreur lors de l\'ajout de l\'orateur :', error);
       }
     },
     getImageUrl(imagePath) {
@@ -306,7 +360,6 @@ export default {
       try {
         const formData = new FormData();
 
-        // Append all speaker data to formData
         Object.keys(this.editSpeaker).forEach(key => {
           if (key !== 'image' && this.editSpeaker[key] !== null && key !== 'image_url') {
             formData.append(key, this.editSpeaker[key]);
@@ -321,7 +374,7 @@ export default {
         this.showEditModal = false;
         await this.fetchSpeakers();
       } catch (error) {
-        console.error('Error updating speaker:', error);
+        console.error('Erreur lors de la mise à jour de l\'orateur :', error);
       }
     },
     openDeleteModal(speaker) {
@@ -334,7 +387,7 @@ export default {
         this.showDeleteModal = false;
         await this.fetchSpeakers();
       } catch (error) {
-        console.error('Error deleting speaker:', error);
+        console.error('Erreur lors de la suppression de l\'orateur :', error);
       }
     },
     async openProgramModal(speaker) {
@@ -347,8 +400,7 @@ export default {
         this.programs = response.data;
         this.showProgramModal = true;
       } catch (error) {
-        console.error('Error fetching programs:', error);
-        // Handle error (show notification, etc.)
+        console.error('Erreur lors de la récupération des programmes :', error);
       } finally {
         this.isLoadingPrograms = false;
       }
@@ -374,23 +426,19 @@ export default {
       try {
         const formData = new FormData();
 
-        // Add program_ids in a way Laravel will understand as an array
         this.selectedPrograms.forEach((id, index) => {
           formData.append(`program_ids[${index}]`, id);
         });
 
-        // Explicitly handle empty array case
         if (this.selectedPrograms.length === 0) {
-          formData.append('program_ids', ''); // Laravel will convert this to empty array
+          formData.append('program_ids', '');
         }
 
         await IntervenantService.updateIntervenant(this.selectedSpeaker.id, formData);
         await this.fetchSpeakers();
         this.closeProgramModal();
-
       } catch (error) {
-        console.error('Error updating speaker programs:', error);
-        // Show error notification to user
+        console.error('Erreur lors de la mise à jour des programmes de l\'orateur :', error);
       } finally {
         this.isUpdatingPrograms = false;
       }
@@ -460,45 +508,103 @@ export default {
   justify-content: center;
   z-index: 1000;
 }
+.modal-overlay h3 {
+  color: #265985;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
 
-.modal {
+.modal-content {
   background: white;
   border-radius: 12px;
-  padding: 20px;
+  padding: 30px;
   width: 90%;
   max-width: 500px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.modal h3 {
+.modal-content h3 {
   margin-bottom: 15px;
+  text-align: center;
 }
 
-.modal form input,
-.modal form textarea {
-  width: 100%;
+.modal-content input,
+.modal-content textarea {
+  width: 95%;
   margin-bottom: 10px;
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.modal button {
-  margin-right: 10px;
   padding: 8px 14px;
-  border: none;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  cursor: pointer;
 }
 
-.modal button:first-of-type {
-  background-color: #265985;
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: #265985;
+  outline: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
   color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.modal button:last-of-type {
-  background-color: #ccc;
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+  background: linear-gradient(to right, #e53935, #b71c1c);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right, #d32f2f, #9a0007);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
@@ -627,6 +733,10 @@ export default {
   font-size: 14px;
   color: #374151;
   margin-bottom: 8px;
+}
+
+.icon {
+  color: #265985;
 }
 
 .avatar {

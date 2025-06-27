@@ -1,36 +1,37 @@
 <template>
   <div class="container">
-    <h1 class="title">Sponsors {{ this.selectedEditionName }}</h1>
+    <h1 class="title">Les Sponsors de {{ this.selectedEditionName }}</h1>
 
     <div class="actions">
       <button class="btn add" @click="toggleAddModal">
-        <span class="plus">+</span> Add Sponsor
+        <span class="plus">+</span> Ajouter un Sponsor
       </button>
-
-      <div class="dropdown" @click="toggleFilter">
-        <button class="btn edit">Filter by ▼</button>
-        <ul v-if="showFilter" class="dropdown-menu">
-          <li @click="setFilter('all')">All</li>
-          <li @click="setFilter('confirmed')">Confirmed</li>
-          <li @click="setFilter('pending')">Pending</li>
-        </ul>
-      </div>
-      <div class="dropdown" @click="toggleDropdown">
-        <button class="btn edit">Edition ▼</button>
-        <ul v-if="dropdownOpen" class="dropdown-menu">
-          <li v-for="edition in editions" :key="edition.id" @click="onEditOption(edition.name)">
-            {{ edition.name }}
-          </li>
-        </ul>
+      <div class="dropdown-container">
+        <div class="dropdown" @click="toggleFilter">
+          <button class="btn edit">Filtrer par ▼</button>
+          <ul v-if="showFilter" class="dropdown-menu">
+            <li @click="setFilter('all')">Tous</li>
+            <li @click="setFilter('confirmed')">Confirmés</li>
+            <li @click="setFilter('pending')">En attente</li>
+          </ul>
+        </div>
+        <div class="dropdown" @click="toggleDropdown">
+          <button class="btn edit">Édition ▼</button>
+          <ul v-if="dropdownOpen" class="dropdown-menu">
+            <li v-for="edition in editions" :key="edition.id" @click="onEditOption(edition.name)">
+              {{ edition.name }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
     <div v-if="isLoading" class="loading-message">
-      Loading sponsors...
+      Chargement des sponsors...
     </div>
 
     <div v-else-if="sponsors.length === 0" class="empty-message">
-      No sponsors available.
+      Aucun sponsor disponible.
     </div>
 
     <div v-else class="grid">
@@ -42,7 +43,7 @@
         <div class="info"><i class="fas fa-envelope icon"></i>{{ sponsor.email }}</div>
 
         <div class="tools">
-          <button class="icon-btn" @click="deleteSponsor(sponsor.id)">
+          <button class="icon-btn" @click="openDeleteModal(sponsor.id)">
             <i class="fas fa-trash"></i>
           </button>
           <button class="icon-btn" @click="openUpdateModal(sponsor)">
@@ -51,47 +52,122 @@
         </div>
 
         <div class="buttons" v-if="sponsor.etat === 'pending'">
-          <button class="reject" @click="deleteSponsor(sponsor.id)">Reject</button>
-          <button class="confirm" @click="updateStatus(sponsor.id, 'confirmed')">Confirm</button>
+          <button class="reject" @click="deleteSponsor(sponsor.id)">Rejeter</button>
+          <button class="confirm" @click="updateStatus(sponsor.id, 'confirmed')">Confirmer</button>
         </div>
 
-        <div class="status-dot" :class="{
-          confirmed: sponsor.etat === 'confirmed',
-          rejected: sponsor.etat === 'rejected'
-        }"></div>
+        <div class="status-badge" :class="{ confirmed: sponsor.etat === 'confirmed', pending: sponsor.etat === 'pending', rejected: sponsor.etat === 'rejected' }">
+          <span v-if="sponsor.etat === 'confirmed'" class="badge-content"><i class="fas fa-check-circle"></i> Sponsor</span>
+          <span v-else-if="sponsor.etat === 'pending'" class="badge-content"><i class="fas fa-question-circle"></i> En attente</span>
+          <span v-else-if="sponsor.etat === 'rejected'" class="badge-content"><i class="fas fa-times-circle"></i> Rejeté</span>
+        </div>
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Ajouter -->
     <div v-if="showAddModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Add Sponsor</h3>
-        <input v-model="newSponsor.name" placeholder="Company name" />
-        <input v-model="newSponsor.adresse" placeholder="Address" />
-        <input v-model="newSponsor.phone" placeholder="Phone" />
-        <input v-model="newSponsor.email" placeholder="Email" />
-        <textarea v-model="newSponsor.description" placeholder="Description"></textarea>
-        <input type="file" @change="onFileChange" />
-        <div class="modal-actions">
-          <button @click="addSponsor">Add</button>
-          <button class="cancel" @click="toggleAddModal">Cancel</button>
-        </div>
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un Partenaire</h3>
+        <form @submit.prevent="addSponsor" class="space-y-0">
+          <div>
+            <label for="name_input" class="block mb-1 text-xs text-gray-500 font-medium">Nom de l'entreprise</label>
+            <input id="name_input" v-model="newSponsor.name" placeholder="Nom de l'entreprise" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="adresse_input" class="block mb-1 text-xs text-gray-500 font-medium">Adresse</label>
+            <input id="adresse_input" v-model="newSponsor.adresse" placeholder="Adresse" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="phone_input" class="block mb-1 text-xs text-gray-500 font-medium">Téléphone</label>
+            <input id="phone_input" v-model="newSponsor.phone" placeholder="Téléphone" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="email_input" class="block mb-1 text-xs text-gray-500 font-medium">Email</label>
+            <input id="email_input" v-model="newSponsor.email" placeholder="Email" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="desc_input" class="block mb-1 text-xs text-gray-500 font-medium">Description</label>
+            <textarea id="desc_input" v-model="newSponsor.description" placeholder="Description" class="w-[95%] p-2 border border-gray-300 rounded-lg" required></textarea>
+          </div>
+          <div>
+            <label for="logo_input" class="block mb-1 text-xs text-gray-500 font-medium">Logo</label>
+            <input id="logo_input" type="file" @change="onFileChange" class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="toggleAddModal">
+              Annuler
+            </button>
+            <button type="submit"
+              class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+              Ajouter
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
-    <!-- Update Modal -->
+    <!-- Modal Mettre à jour -->
     <div v-if="showUpdateModal" class="modal-overlay">
-      <div class="modal">
-        <h3>Update Sponsor</h3>
-        <input v-model="selectedSponsor.name" placeholder="Company name" />
-        <input v-model="selectedSponsor.adresse" placeholder="Address" />
-        <input v-model="selectedSponsor.phone" placeholder="Phone" />
-        <input v-model="selectedSponsor.email" placeholder="Email" />
-        <textarea v-model="selectedSponsor.description" placeholder="Description"></textarea>
-        <input type="file" @change="onFileChangeUpdate" />
-        <div class="modal-actions">
-          <button class="cancel" @click="closeUpdateModal">Cancel</button>
-          <button>Save</button>
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Mettre à jour le Partenaire</h3>
+        <form @submit.prevent="updateSponsor" class="space-y-0">
+          <div>
+            <label for="update_name_input" class="block mb-1 text-xs text-gray-500 font-medium">Nom de l'entreprise</label>
+            <input id="update_name_input" v-model="selectedSponsor.name" placeholder="Nom de l'entreprise" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="update_adresse_input" class="block mb-1 text-xs text-gray-500 font-medium">Adresse</label>
+            <input id="update_adresse_input" v-model="selectedSponsor.adresse" placeholder="Adresse" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="update_phone_input" class="block mb-1 text-xs text-gray-500 font-medium">Téléphone</label>
+            <input id="update_phone_input" v-model="selectedSponsor.phone" placeholder="Téléphone" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="update_email_input" class="block mb-1 text-xs text-gray-500 font-medium">Email</label>
+            <input id="update_email_input" v-model="selectedSponsor.email" placeholder="Email" class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+          </div>
+          <div>
+            <label for="update_desc_input" class="block mb-1 text-xs text-gray-500 font-medium">Description</label>
+            <textarea id="update_desc_input" v-model="selectedSponsor.description" placeholder="Description" class="w-[95%] p-2 border border-gray-300 rounded-lg" required></textarea>
+          </div>
+          <div>
+            <label for="update_logo_input" class="block mb-1 text-xs text-gray-500 font-medium">Logo</label>
+            <input id="update_logo_input" type="file" @change="onFileChangeUpdate" class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+          </div>
+          <div class="modal-actions flex justify-end gap-2 mt-6">
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="closeUpdateModal">
+              Annuler
+            </button>
+            <button type="submit"
+              class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
+              Sauvegarder
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Supprimer -->
+    <div v-if="showDeleteModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Supprimer le Sponsor</h3>
+        <p class="text-center mb-4">Êtes-vous sûr de vouloir supprimer ce sponsor ?</p>
+        <div class="modal-actions flex justify-end gap-2">
+          <button type="button"
+            class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            @click="cancelDelete">
+            Annuler
+          </button>
+          <button type="button"
+            class="delete-btn bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-red-700 hover:to-red-900 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+            @click="confirmDelete">
+            Confirmer la Suppression
+          </button>
         </div>
       </div>
     </div>
@@ -106,7 +182,7 @@ import { useRoute } from 'vue-router'
 export default {
   data() {
     return {
-      editionId: null ,
+      editionId: null,
       selectedEditionName: '',
       editions: [],
       sponsors: [],
@@ -114,6 +190,7 @@ export default {
       showFilter: false,
       showAddModal: false,
       showUpdateModal: false,
+      showDeleteModal: false,
       dropdownOpen: false,
       isLoading: true,
       newSponsor: {
@@ -139,6 +216,7 @@ export default {
       },
       selectedFile: null,
       selectedUpdateFile: null,
+      deleteSponsorId: null,
     }
   },
   computed: {
@@ -150,17 +228,17 @@ export default {
     }
   },
   async created() {
-    this.editionId = localStorage.getItem('selectedEditionId') || useRoute().params.editionId;
-    await this.fetchEditions();
+    this.editionId = localStorage.getItem('selectedEditionId') || useRoute().params.editionId
+    await this.fetchEditions()
     await this.fetchSponsors()
-    console.log ('selected edition name', this.selectedEditionName)
+    console.log('Nom de l\'édition sélectionnée', this.selectedEditionName)
   },
   watch: {
     '$route.query': {
       immediate: true,
       handler(query) {
         if (query.highlightType === 'sponsor' && query.highlight) {
-          this.highlightSponsor(parseInt(query.highlight, 10));
+          this.highlightSponsor(parseInt(query.highlight, 10))
         }
       }
     }
@@ -168,16 +246,16 @@ export default {
   methods: {
     async fetchEditions() {
       try {
-        const response = await EditionService.getAllEditions();
-        this.editions = response.data;
+        const response = await EditionService.getAllEditions()
+        this.editions = response.data
 
-        // If no edition is selected yet, select the first one by default
+        // Si aucune édition n'est sélectionnée, sélectionner la première par défaut
         if (this.editionId) {
-          const selectedEdition = this.editions.find(e => e.id == this.editionId);
-          this.selectedEditionName = selectedEdition ? selectedEdition.name : '';
+          const selectedEdition = this.editions.find(e => e.id == this.editionId)
+          this.selectedEditionName = selectedEdition ? selectedEdition.name : ''
         }
       } catch (error) {
-        console.error('Error fetching editions:', error);
+        console.error('Erreur lors de la récupération des éditions :', error)
       }
     },
     async fetchSponsors() {
@@ -185,9 +263,9 @@ export default {
         this.isLoading = true
         const response = await SponsorService.getSponsorsByEdition(this.editionId)
         this.sponsors = response.data
-        console.log('Sponsors fetched:', this.sponsors)
+        console.log('Partenaires récupérés :', this.sponsors)
       } catch (error) {
-        console.error('Error fetching sponsors:', error)
+        console.error('Erreur lors de la récupération des partenaires :', error)
       } finally {
         this.isLoading = false
       }
@@ -200,33 +278,46 @@ export default {
       this.showFilter = false
     },
     toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
+      this.dropdownOpen = !this.dropdownOpen
     },
     onEditOption(editionName) {
-      const edition = this.editions.find(e => e.name === editionName);
+      const edition = this.editions.find(e => e.name === editionName)
       if (edition) {
-        this.editionId = edition.id;
-        // localStorage.setItem('selectedEditionId', edition.id);
-        this.fetchSponsors(); // Refresh sponsors for the selected edition
+        this.editionId = edition.id
+        // localStorage.setItem('selectedEditionId', edition.id)
+        this.fetchSponsors() // Rafraîchir les partenaires pour l'édition sélectionnée
       }
-      this.dropdownOpen = false;
+      this.dropdownOpen = false
     },
-
     async updateStatus(id, status) {
       try {
         await SponsorService.updateSponsor(id, { etat: status })
-        await this.fetchSponsors() // Refresh the list
+        await this.fetchSponsors() // Rafraîchir la liste
       } catch (error) {
-        console.error('Error updating sponsor status:', error)
+        console.error('Erreur lors de la mise à jour du statut du partenaire :', error)
       }
     },
+    openDeleteModal(id) {
+      this.deleteSponsorId = id
+      this.showDeleteModal = true
+    },
+    async confirmDelete() {
+      if (this.deleteSponsorId) {
+        await this.deleteSponsor(this.deleteSponsorId)
+      }
+      this.cancelDelete()
+    },
+    cancelDelete() {
+      this.showDeleteModal = false
+      this.deleteSponsorId = null
+    },
     async deleteSponsor(id) {
-      if (confirm('Are you sure you want to delete this sponsor?')) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce partenaire ?')) {
         try {
           await SponsorService.deleteSponsor(id)
-          await this.fetchSponsors() // Refresh the list
+          await this.fetchSponsors() // Rafraîchir la liste
         } catch (error) {
-          console.error('Error deleting sponsor:', error)
+          console.error('Erreur lors de la suppression du partenaire :', error)
         }
       }
     },
@@ -259,13 +350,34 @@ export default {
         }
 
         await SponsorService.createSponsor(formData)
-        await this.fetchSponsors() // Refresh the list
+        await this.fetchSponsors() // Rafraîchir la liste
 
-        // Reset form
+        // Réinitialiser le formulaire
         this.resetNewSponsor()
         this.toggleAddModal()
       } catch (error) {
-        console.error('Error adding sponsor:', error)
+        console.error('Erreur lors de l\'ajout du partenaire :', error)
+      }
+    },
+    async updateSponsor() {
+      try {
+        const formData = new FormData()
+        formData.append('name', this.selectedSponsor.name)
+        formData.append('adresse', this.selectedSponsor.adresse)
+        formData.append('phone', this.selectedSponsor.phone)
+        formData.append('email', this.selectedSponsor.email)
+        formData.append('description', this.selectedSponsor.description)
+        formData.append('edition_id', this.selectedSponsor.edition_id)
+        formData.append('etat', this.selectedSponsor.etat)
+        if (this.selectedUpdateFile) {
+          formData.append('logo', this.selectedUpdateFile)
+        }
+
+        await SponsorService.updateSponsor(this.selectedSponsor.id, formData)
+        await this.fetchSponsors() // Rafraîchir la liste
+        this.closeUpdateModal()
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour du partenaire :', error)
       }
     },
     toggleAddModal() {
@@ -283,7 +395,7 @@ export default {
         description: '',
         logo: null,
         edition_id: localStorage.getItem('selectedEditionId') || useRoute().params.editionId,
-        etat: 'confirmed'
+        etat: 'confirmed',
       }
       this.selectedFile = null
     },
@@ -307,42 +419,38 @@ export default {
       this.selectedUpdateFile = null
     },
     getImageUrl(imagePath) {
-      return `http://localhost:8000/storage/${imagePath}`;
+      return `http://localhost:8000/storage/${imagePath}`
     },
     highlightSponsor(sponsorId) {
-      // If sponsors are already loaded
       if (this.sponsors.length > 0) {
-        this.scrollToSponsor(sponsorId);
-        return;
+        this.scrollToSponsor(sponsorId)
+        return
       }
 
-      // If sponsors are loading, wait for them
       const checkInterval = setInterval(() => {
         if (this.sponsors.length > 0) {
-          clearInterval(checkInterval);
-          this.scrollToSponsor(sponsorId);
+          clearInterval(checkInterval)
+          this.scrollToSponsor(sponsorId)
         }
-      }, 100);
+      }, 100)
     },
-
     scrollToSponsor(sponsorId) {
       this.$nextTick(() => {
-        const element = document.getElementById(`sponsor-${sponsorId}`);
+        const element = document.getElementById(`sponsor-${sponsorId}`)
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          element.classList.add('highlighted');
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          element.classList.add('highlighted')
           setTimeout(() => {
-            element.classList.remove('highlighted');
-          }, 3000);
+            element.classList.remove('highlighted')
+          }, 3000)
         }
-      });
+      })
     },
   }
 }
 </script>
 
 <style scoped>
-
 .highlighted {
   animation: highlight 3s ease;
   box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.5);
@@ -353,11 +461,9 @@ export default {
   0% {
     box-shadow: 0 0 0 4px rgba(56, 161, 105, 0.8);
   }
-
   70% {
     box-shadow: 0 0 0 4px rgba(56, 161, 105, 0.8);
   }
-
   100% {
     box-shadow: none;
     transform: translateY(0);
@@ -372,26 +478,46 @@ export default {
   font-style: italic;
 }
 
-/* Update status dot colors */
-.status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+/* Nouveau style pour le badge de statut */
+.status-badge {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: #ffcc00;
-  /* pending - yellow */
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.status-dot.confirmed {
-  background: #4CAF50;
-  /* confirmed - green */
+.status-badge.confirmed {
+  background-color: #f7f7f7;
+  color: rgb(60, 167, 83);
+  border: rgb(60, 167, 83) 1px solid;
 }
 
-.status-dot.rejected {
-  background: #F44336;
-  /* rejected - red */
+.status-badge.pending {
+  background-color: #ffffff;
+  color: #ffcc00;
+  border: #ffcc00 1px solid;
+}
+
+.status-badge.rejected {
+  background-color: #ffffff;
+  color: #F44336;
+  border: #F44336 1px solid;
+}
+
+.badge-content {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-content i {
+  font-size: 14px;
 }
 
 /* Keep all other existing styles exactly the same */
@@ -411,8 +537,13 @@ export default {
   margin-top: 3rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
   flex-wrap: wrap;
+}
+
+.dropdown-container {
+  display: flex;
+  gap: 1rem;
 }
 
 .btn {
@@ -558,48 +689,120 @@ export default {
 
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 999;
 }
 
-.modal {
+.modal-content {
   background: white;
-  padding: 2rem;
+  padding: 30px;
   border-radius: 10px;
-  width: 300px;
-}
-
-.modal input,
-.modal textarea {
+  max-width: 500px;
   width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInZoom 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.3rem;
   margin-bottom: 1rem;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  color: #1b2d56;
+  text-align: center;
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: space-between;
+.modal-content input,
+.modal-content textarea {
+  width: 95%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
 }
 
-.modal-actions button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: #265985;
+  outline: none;
 }
 
-.modal-actions .cancel {
-  background: #999;
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #265985, #1e4b6b);
   color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(to right, #1e4b6b, #163a52);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cancel-btn {
+  background: linear-gradient(to right, #d1d5db, #b0b7c3);
+  color: #1f2937;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to right, #b0b7c3, #9ca3af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+  background: linear-gradient(to right, #e53935, #b71c1c);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right, #d32f2f, #9a0007);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 600px) {

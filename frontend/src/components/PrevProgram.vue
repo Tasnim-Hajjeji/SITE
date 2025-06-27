@@ -4,7 +4,7 @@
       <h1 class="title">Programme</h1>
       <div class="action-buttons">
         <button class="add-btn" @click="showModal = true">
-          <i class="fas fa-plus"></i> Ajouter
+          <i class="fas fa-plus"></i> Ajouter un programme
         </button>
       </div>
     </div>
