@@ -203,7 +203,7 @@ function prev() {
   background-color: white;
   border-radius: 1rem;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  height: 300px; /* Hauteur fixe */
+  height: 350px; /* Hauteur fixe */
   width: 100%; /* Largeur fixe relative au conteneur */
   display: flex;
   flex-direction: column;

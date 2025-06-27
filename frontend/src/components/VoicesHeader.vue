@@ -11,7 +11,7 @@
 
 <style scoped>
 .voices-header {
-  background: url('../assets/i3.jpeg') center center / cover no-repeat;
+  background: url('../assets/i3.jpg') center center / cover no-repeat;
   background-size: cover;
   background-position: center;
   color: white;

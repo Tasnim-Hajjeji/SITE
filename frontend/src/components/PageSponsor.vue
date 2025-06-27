@@ -14,7 +14,7 @@
   
         <!-- RIGHT PART (Image) -->
         <div class="sponsor-image">
-          <img src="@/assets/i1.jpeg" alt="Sponsorship handshake" />
+          <img src="@/assets/i1.webp" alt="Sponsorship handshake" />
         </div>
       </div>
   
@@ -29,8 +29,6 @@
   </template>
   
   <script setup>
-  // You can also import the image directly like:
-  // import sponsorImage from '@/assets/sponsor-image.png'
   </script>
   
   <style scoped>

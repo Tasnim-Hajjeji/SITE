@@ -14,15 +14,16 @@
   
         <div class="carousel-main" :style="{ backgroundImage: `url(${slides[currentIndex].image})` }">
           <div class="carousel-overlay"></div>
-          <div class="carousel-caption">
-            <h3>{{ slides[currentIndex].title }}</h3>
-            <p>{{ slides[currentIndex].description }}</p>
-            <router-link to="/previous-editions/edition" class="carousel-button">
+          <div class="carousel-caption" v-if="editions.length > 0">
+            <h3>{{ editions[0].name }}</h3>
+            <p>{{ description_lang(editions[0]) }}</p>
+            <router-link :to="`/previous-editions/edition?id=${editions[0].id}`" class="carousel-button">
               {{ $t('previousEditions.button') }}
               <span>➜</span></router-link>
-            
-
-           </div>
+          </div>
+          <div class="carousel-caption" v-else>
+            <h3>Loading...</h3>
+          </div>
         </div>
   
         <div class="carousel-preview right-preview" :style="{ backgroundImage: `url(${getNextSlide().image})` }"></div>
@@ -37,33 +38,38 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
-  
+  import { onMounted, ref } from 'vue'
+  import EditionService from '@/services/EditionService.js'
+  const editions = ref([])
+  import { useI18n } from 'vue-i18n'
+  const { locale } = useI18n()
   const slides = [
     {
-      title: 'SITE 2024',
-      description: 'The second edition of the international conference on Smart Industry, Technology and Environment',
-      image: new URL('@/assets/i1.jpeg', import.meta.url).href,
-      buttonText: 'See More',
+      image: new URL('@/assets/i1.webp', import.meta.url).href
     },
     {
-      title: 'SITE 2023',
-      description: 'First edition — vibrant moments and tech inspiration.',
-      image: new URL('@/assets/i2.jpeg', import.meta.url).href,
-      buttonText: 'Discover More',
+      image: new URL('@/assets/i2.jpg', import.meta.url).href
     },
     {
-      title: 'SITE 2022',
-      description: 'Laying the foundations of an amazing journey.',
-      image: new URL('@/assets/i3.jpeg', import.meta.url).href,
-      buttonText: 'Explore',
-    },
-  ]
+      image: new URL('@/assets/i3.jpg', import.meta.url).href
+    }
+  ];
+  onMounted(() => {
+      EditionService.getAllEditions().then(response => {
+        editions.value = response.data
+      }).catch(error => {
+        console.error('Error fetching editions:', error)
+      })
+    })
   
   const currentIndex = ref(0)
   
   function nextSlide() {
     currentIndex.value = (currentIndex.value + 1) % slides.length
+  }
+
+  function description_lang(edition) {
+    return locale.value === 'fr' ? edition.description_fr : edition.description_en
   }
   
   function prevSlide() {
@@ -79,6 +85,8 @@
     const index = (currentIndex.value + 1) % slides.length
     return slides[index]
   }
+
+  // Removed duplicate export default block; <script setup> handles component export.
   </script>
   
   <style scoped>

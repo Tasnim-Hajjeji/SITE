@@ -40,7 +40,6 @@
           <div class="event-content">
             <div class="date">{{ event.date }}</div>
             <div class="name">{{ event.name }}</div>
-            <div class="day">{{ event.day }}</div>
             <div class="time">{{ event.time }}</div>
           </div>
         </div>
