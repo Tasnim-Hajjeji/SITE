@@ -3,6 +3,7 @@
     <bandeLandingPage />  
     <SiteNavbar />
     
+    <LoginAdmin />
 
     <slot />
     <div id="contact">
@@ -15,6 +16,7 @@
 import SiteNavbar from '@/components/SiteNavbar.vue'
 import ContactUs from '@/components/ContactUs.vue'
 import BandeLandingPage from '@/components/bandeLandingPage.vue'
+import LoginAdmin from '@/components/LoginAdmin.vue'
 
 import { onMounted, onUnmounted } from 'vue';
 onMounted(() => {

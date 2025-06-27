@@ -75,39 +75,39 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: Admin,
-    meta: { layout: 'admin' }
+    meta: { layout: 'admin', requiresAuth: true }
   },
   {
     path: '/admin/edition/:editionId',
     name: 'AdEdition',
     component: AdEdition,
     props: true,
-    meta: { layout: 'admin' }
+    meta: { layout: 'admin', requiresAuth: true }
 
   },
   {
     path: '/admin/partnair',
     name: 'AdPartnair',
     component: AdPartnair,
-    meta: { layout: 'admin' }
+    meta: { layout: 'admin', requiresAuth: true }
   },
   {
     path: '/admin/speaker',
     name: 'SpeakerAdmin',
     component: SpeakerAdmin,
-    meta: { layout: 'admin' }
+    meta: { layout: 'admin', requiresAuth: true }
   },
   {
     path: '/admin/participant-card',
     name: 'ParticipantCard',
     component: ParticipantCard,
-    meta: { layout: 'admin' }
+    meta: { layout: 'admin', requiresAuth: true }
   },
   {
     path: '/admin/committies',
     name: 'Committees',
     component: CommittiesAdmin,
-    meta: { layout: 'admin' }
+    meta: { layout: 'admin', requiresAuth: true }
   },
   {
     path: '/profile-selection',
@@ -137,7 +137,7 @@ const routes = [
     path: '/registration-final',
     name: 'RegistrationFinal',
     component: RegistrationFinalvue,
-    meta: { layout: 'default' } 
+    meta: { layout: 'default' }
   },
   {
     path: '/reg-success',
@@ -149,20 +149,21 @@ const routes = [
     path: '/admin/committies',
     name: 'Committees',
     component: CommittiesAdmin,
-    meta: { layout: 'admin' }
+    meta: { layout: 'admin', requiresAuth: true }
   },
   {
     path: '/sponsor',
-    name: 'PageSponsor',    
+    name: 'PageSponsor',
     component: PageSponsorvue,
     meta: { layout: 'default' }
   },
   {
     path: '/admin/sponsor',
-    name: 'SponsorAdmin', 
+    name: 'SponsorAdmin',
     component: SponsorAdminvue,
-    meta: { layout: 'admin' }
-  }
+    meta: { layout: 'admin', requiresAuth: true }
+  },
+
 
 ];
 
@@ -172,7 +173,25 @@ const router = createRouter({
   scrollBehavior() {
     // Always scroll to top
     return { top: 0 }
+  },
+
+});
+router.beforeEach((to, from, next) => {
+  // Check if the route requires authentication
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // Check if user is authenticated
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      // Redirect to home if not authenticated
+      next('/');
+    } else {
+      // Verify token is still valid (optional)
+      // You could add an API call here to verify token
+      next();
+    }
+  } else {
+    // Public route - allow access
+    next();
   }
 });
-
 export default router;
