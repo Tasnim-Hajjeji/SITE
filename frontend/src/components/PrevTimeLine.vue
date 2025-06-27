@@ -140,6 +140,11 @@
           this.program = [];
         }
       }
+      this.program.forEach((event, idx) => {
+        // Example logic: if time starts before 12:00, it's morning
+        event.top = 150;
+        event.left = this.getLeft(idx, this.program.length);
+      });
     }).catch(error => {
       console.error('Error fetching schedule:', error);
     });
@@ -155,7 +160,11 @@
         const startTime = dayjs(time_start).format('HH:mm')
         const endTime = dayjs(time_end).format('HH:mm')
         return `${startTime} - ${endTime}`
-      }
+      },
+      getLeft(slotIndex, totalSlots) {
+  // Distribute evenly across 0% to 100%
+  return (slotIndex / (totalSlots - 1)) * 50;
+}
     }
   }
   </script>
