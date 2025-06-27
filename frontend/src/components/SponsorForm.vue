@@ -8,12 +8,12 @@
       <form class="sponsor-form" @submit.prevent="handleSubmit">
         <div class="form-group">
           <label>Company Name *</label>
-          <input type="text" v-model="form.companyName" required />
+          <input type="text" v-model="form.name" required />
         </div>
   
         <div class="form-group">
           <label>Company address *</label>
-          <input type="text" v-model="form.companyAddress" required />
+          <input type="text" v-model="form.adresse" required />
         </div>
   
         <div class="form-group">
@@ -52,16 +52,20 @@
   </template>
   
   <script>
+  import cookieUtils from '@/utils/cookieUtils';
+  import SponsorService from '@/services/SponsorService';
   export default {
     data() {
       return {
         form: {
-          companyName: '',
-          companyAddress: '',
+          name: '',
+          adresse: '',
           email: '',
           phone: '',
           logo: null,
           description: '',
+          etat: 'pending',
+          edition_id: cookieUtils.getCookie("editionId")
         },
         showModal: false,
       };
@@ -73,7 +77,14 @@
       handleSubmit() {
         console.log("Form submitted:", this.form);
         // TODO: envoyer les données au backend via API
-        this.showModal = true;
+        SponsorService.createSponsor(this.form)
+          .then(response => {
+            console.log("Application submitted successfully:", response);
+            this.showModal = true;
+          })
+          .catch(error => {
+            console.error("Error submitting application:", error);
+          });
       },
     },
   };
@@ -114,6 +125,7 @@
   }
   
   .form-group {
+    text-transform: capitalize;
     margin-bottom: 20px;
     text-align: left;
   }
@@ -130,7 +142,7 @@
   input[type="tel"],
   input[type="file"],
   textarea {
-    width: 95%;
+    width: 100%;
     padding: 10px 14px;
     border: 1px solid #ccc;
     border-radius: 8px;

@@ -124,4 +124,14 @@ class SponsorController extends Controller
             return response()->json(['error' => 'Failed to retrieve sponsors: ' . $e->getMessage()], 500);
         }
     }
+
+    public function getConfirmedSponsorsByEdition($editionId)
+    {
+        try {
+            $sponsors = Sponsor::where('edition_id', $editionId)->where('etat', 'confirmed')->get();
+            return response()->json($sponsors);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve sponsors: ' . $e->getMessage()], 500);
+        }
+    }
 }

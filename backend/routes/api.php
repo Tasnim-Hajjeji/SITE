@@ -126,6 +126,7 @@ Route::prefix('form-prices')->group(function () {
 Route::prefix('sponsors')->group(function () {
     Route::get('/', [SponsorController::class, 'index']);
     Route::get('/edition/{editionId}', [SponsorController::class, 'getSponsorsByEdition']);
+    Route::get('/edition/{editionId}/confirmed', [SponsorController::class, 'getConfirmedSponsorsByEdition']);
     Route::get('/{id}', [SponsorController::class, 'show']);
     Route::post('/', [SponsorController::class, 'store']);
     Route::post('/{id}', [SponsorController::class, 'update']);
