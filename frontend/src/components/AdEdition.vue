@@ -62,79 +62,47 @@
         <form @submit.prevent="updateEdition" class="space-y-0">
           <div>
             <label for="update_name" class="block mb-1 text-xs text-gray-500 font-medium">Nom:</label>
-            <input
-              v-model="editionForm.name"
-              id="update_name"
-              type="text"
-              placeholder="Entrez le nom de l'édition"
-              class="w-[95%] p-2 border border-gray-300 rounded-lg"
-              required
-            />
+            <input v-model="editionForm.name" id="update_name" type="text" placeholder="Entrez le nom de l'édition"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="update_description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Description (FR):</label>
-            <textarea
-              v-model="editionForm.description_fr"
-              id="update_description_fr"
+            <label for="update_description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Description
+              (FR):</label>
+            <textarea v-model="editionForm.description_fr" id="update_description_fr"
               placeholder="Entrez la description en français"
-              class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y"
-              required
-            ></textarea>
+              class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y" required></textarea>
           </div>
           <div>
-            <label for="update_description_en" class="block mb-1 text-xs text-gray-500 font-medium">Description (EN):</label>
-            <textarea
-              v-model="editionForm.description_en"
-              id="update_description_en"
+            <label for="update_description_en" class="block mb-1 text-xs text-gray-500 font-medium">Description
+              (EN):</label>
+            <textarea v-model="editionForm.description_en" id="update_description_en"
               placeholder="Entrez la description en anglais"
-              class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y"
-              required
-            ></textarea>
+              class="w-[95%] p-2 border border-gray-300 rounded-lg h-20 resize-y" required></textarea>
           </div>
           <div>
             <label for="update_start_date" class="block mb-1 text-xs text-gray-500 font-medium">Date de début:</label>
-            <input
-              v-model="editionForm.start_date"
-              id="update_start_date"
-              type="date"
-              class="w-[95%] p-2 border border-gray-300 rounded-lg"
-              required
-            />
+            <input v-model="editionForm.start_date" id="update_start_date" type="date"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
             <label for="update_end_date" class="block mb-1 text-xs text-gray-500 font-medium">Date de fin:</label>
-            <input
-              v-model="editionForm.end_date"
-              id="update_end_date"
-              type="date"
-              class="w-[95%] p-2 border border-gray-300 rounded-lg"
-              required
-            />
+            <input v-model="editionForm.end_date" id="update_end_date" type="date"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
             <label for="update_place" class="block mb-1 text-xs text-gray-500 font-medium">Lieu:</label>
-            <input
-              v-model="editionForm.place"
-              id="update_place"
-              type="text"
-              placeholder="Entrez le lieu"
-              class="w-[95%] p-2 border border-gray-300 rounded-lg"
-              required
-            />
+            <input v-model="editionForm.place" id="update_place" type="text" placeholder="Entrez le lieu"
+              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div class="file-upload">
-            <label for="update_dossier_sponso" class="block mb-1 text-xs text-gray-500 font-medium">Dossier Sponsoring (PDF):</label>
+            <label for="update_dossier_sponso" class="block mb-1 text-xs text-gray-500 font-medium">Dossier Sponsoring
+              (PDF):</label>
             <div class="relative w-[95%]">
-              <input
-                id="update_dossier_sponso"
-                type="file"
-                @change="(e) => editionForm.dossier_sponso = e.target.files[0]"
-                accept=".pdf"
-                class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer"
-              />
+              <input id="update_dossier_sponso" type="file"
+                @change="(e) => editionForm.dossier_sponso = e.target.files[0]" accept=".pdf"
+                class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
               <div
-                class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer"
-              >
+                class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
                 <span class="text-gray-600">Choisir un fichier</span>
                 <i class="fas fa-download text-gray-600"></i>
               </div>
@@ -144,17 +112,13 @@
             <span class="mr-1">!</span> {{ error }}
           </div>
           <div class="modal-actions flex justify-end gap-2 mt-6">
-            <button
-              type="button"
+            <button type="button"
               class="cancel-btn bg-gradient-to-r mt-4 from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
-              @click="showUpdateModal = false"
-            >
+              @click="showUpdateModal = false">
               Annuler
             </button>
-            <button
-              type="submit"
-              class="add-btn bg-gradient-to-r mt-4 from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
-            >
+            <button type="submit"
+              class="add-btn bg-gradient-to-r mt-4 from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
               Enregistrer
             </button>
           </div>
@@ -166,20 +130,17 @@
     <div v-if="showDeleteModal" class="modal-overlay">
       <div class="modal-content">
         <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmer la suppression</h3>
-        <p class="text-gray-600 mb-4">Êtes-vous sûr de vouloir supprimer l'édition "{{ edition?.name }}" ? Cette action est irréversible.</p>
+        <p class="text-gray-600 mb-4">Êtes-vous sûr de vouloir supprimer l'édition "{{ edition?.name }}" ? Cette action
+          est irréversible.</p>
         <div class="modal-actions flex justify-end gap-2 mt-6">
-          <button
-            type="button"
+          <button type="button"
             class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
-            @click="showDeleteModal = false"
-          >
+            @click="showDeleteModal = false">
             Annuler
           </button>
-          <button
-            type="button"
+          <button type="button"
             class="delete-btn bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-red-700 hover:to-red-600 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
-            @click="deleteEdition"
-          >
+            @click="deleteEdition">
             Supprimer
           </button>
         </div>
@@ -326,7 +287,8 @@ const confirmDelete = () => {
 const deleteEdition = async () => {
   try {
     await EditionService.deleteEdition(editionId.value);
-    router.push({ name: 'Editions' });
+    localStorage.removeItem('selectedEditionId')
+    router.push("/admin");
     showDeleteModal.value = false;
   } catch (err) {
     error.value = 'Échec de la suppression de l\'édition : ' + err.message;
@@ -373,6 +335,7 @@ const updateEdition = async () => {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -589,6 +552,7 @@ const updateEdition = async () => {
     opacity: 0;
     transform: scale(0.85);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -714,10 +678,12 @@ const updateEdition = async () => {
   .conference-card {
     margin-top: 60px;
   }
+
   .card-body {
     flex-direction: column;
     padding: 1.5rem;
   }
+
   .action-buttons {
     flex-wrap: wrap;
   }

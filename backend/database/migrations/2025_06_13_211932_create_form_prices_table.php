@@ -18,7 +18,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->integer('prix_tun')->default(0);
             $table->integer('prix_international')->default(0);
-            $table->integer('prix_tun_sans_hebergement')->default(0);
+            $table->integer('prix_tun_hebergement')->default(0);
             $table->integer('prix_article')->default(0);
             $table->integer ('prix_acc_adulte')->default(0);
             $table->integer ('prix_acc_enfant')->default(0);
