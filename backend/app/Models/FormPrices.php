@@ -12,7 +12,7 @@ class FormPrices extends Model
         'edition_id',
         'prix_tun',
         'prix_international',
-        'prix_tun_sans_hebergement',
+        'prix_tun_hebergement',
         'prix_article',
         'prix_acc_adulte',
         'prix_acc_enfant',

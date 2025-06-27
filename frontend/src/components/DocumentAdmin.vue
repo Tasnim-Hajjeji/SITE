@@ -1,4 +1,3 @@
-```vue
 <template>
   <section class="article-section">
     <div class="header-row">
@@ -13,11 +12,11 @@
     <div v-if="isLoading" class="loading-message">Loading articles...</div>
     <div v-else-if="articles.length === 0" class="empty-message">No articles available.</div>
     <div v-else class="article-list">
-      <div class="article-card" v-for="(article, index) in articles" :key="index">
-        <div class="article-name" @click="openPDF(article.url)">
-          <i class="fas fa-file-pdf"></i> {{ article.name }}
+      <div class="article-card" v-for="(article) in articles" :key="article.id">
+        <div class="article-name" @click="openPDF(getPdfUrl(article.url))">
+          <i class="fas fa-file-pdf"></i> {{ article.name_en }}
         </div>
-        <button class="small-btn delete-btn" @click="confirmDelete(index)">
+        <button class="small-btn delete-btn" @click="confirmDelete(article.id, article.name_en)">
           <i class="fas fa-trash"></i>
         </button>
       </div>
@@ -28,14 +27,27 @@
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
           <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add Article (PDF)</h3>
-          <form @submit.prevent="addArticle" class="space-y-0">
+          <form @submit.prevent="addArticle" class="space-y-4">
+            <div>
+              <label for="name_en" class="block mb-1 text-xs text-gray-500 font-medium">English Name:</label>
+              <input id="name_en" v-model="newArticle.name_en" type="text"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+            </div>
+            <div>
+              <label for="name_fr" class="block mb-1 text-xs text-gray-500 font-medium">French Name:</label>
+              <input id="name_fr" v-model="newArticle.name_fr" type="text"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
+            </div>
             <div>
               <label for="pdf-upload" class="block mb-1 text-xs text-gray-500 font-medium">Select PDF:</label>
-              <input id="pdf-upload" type="file" accept="application/pdf" @change="handlePDFUpload" class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+              <input id="pdf-upload" type="file" accept="application/pdf" @change="handlePDFUpload"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div class="modal-actions flex justify-end gap-2 mt-6">
               <button type="button" class="cancel-btn" @click="showModal = false">Cancel</button>
-              <button type="submit" class="add-btn">Add</button>
+              <button type="submit" class="add-btn" :disabled="isSubmitting">
+                {{ isSubmitting ? 'Adding...' : 'Add' }}
+              </button>
             </div>
           </form>
         </div>
@@ -46,14 +58,15 @@
     <transition name="fade">
       <div v-if="showDeleteModal" class="modal-overlay">
         <div class="modal-content">
-          <h3 class="text-xl font-bold  mb-4 text-center">Confirm Deletion</h3>
-          <p class="text-gray-600 mb-4">Are you sure you want to delete the article "{{ selectedArticleName }}"? This action is irreversible.</p>
+          <h3 class="text-xl font-bold mb-4 text-center">Confirm Deletion</h3>
+          <p class="text-gray-600 mb-4">Are you sure you want to delete the article "{{ selectedArticleName }}"? This
+            action is irreversible.</p>
           <div class="modal-actions flex justify-end gap-2 mt-6">
-            <button type="button" class="cancel-btn mt-4" @click="showDeleteModal = false; selectedArticleIndex = null;">
+            <button type="button" class="cancel-btn mt-4" @click="showDeleteModal = false; selectedArticleId = null;">
               Cancel
             </button>
-            <button type="button" class="delete-btn mt-4" @click="deleteArticle(selectedArticleIndex)">
-              Delete
+            <button type="button" class="delete-btn mt-4" @click="deleteArticle" :disabled="isDeleting">
+              {{ isDeleting ? 'Deleting...' : 'Delete' }}
             </button>
           </div>
         </div>
@@ -63,52 +76,128 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import documentService from '@/services/DocumentService';
 
-const showModal = ref(false)
-const showDeleteModal = ref(false)
-const articles = ref([])
-const isLoading = ref(false)
-const uploadedPDF = ref(null)
-const selectedArticleIndex = ref(null)
-const selectedArticleName = ref('')
+const showModal = ref(false);
+const showDeleteModal = ref(false);
+const articles = ref([]);
+const isLoading = ref(false);
+const isSubmitting = ref(false);
+const isDeleting = ref(false);
+const selectedEditionId = ref(null);
+const selectedArticleId = ref(null);
+const selectedArticleName = ref('');
+const uploadedFile = ref(null);
 
-function handlePDFUpload(event) {
-  const file = event.target.files[0]
-  if (file && file.type === 'application/pdf') {
-    uploadedPDF.value = file
-  } else {
-    alert('Please select a PDF file.')
+const newArticle = ref({
+  name_en: '',
+  name_fr: '',
+  description_en: '',
+  description_fr: '',
+  edition_id: null,
+  file: null
+});
+
+onMounted(() => {
+  selectedEditionId.value = localStorage.getItem('selectedEditionId');
+  if (selectedEditionId.value) {
+
+    fetchDocuments(selectedEditionId);
+  }
+});
+
+async function fetchDocuments(editionId) {
+  try {
+    isLoading.value = true;
+    const response = await documentService.getDocumentsByEdition(editionId.value);
+    articles.value = response;
+  } catch (error) {
+    console.error('Error fetching documents:', error);
+    alert('Failed to load documents. Please try again.');
+  } finally {
+    isLoading.value = false;
   }
 }
 
-function addArticle() {
-  if (!uploadedPDF.value) return
-  const url = URL.createObjectURL(uploadedPDF.value)
-  articles.value.push({ name: uploadedPDF.value.name, url })
-  uploadedPDF.value = null
-  showModal.value = false
+function handlePDFUpload(event) {
+  const file = event.target.files[0];
+  if (file && file.type === 'application/pdf') {
+    uploadedFile.value = file;
+  } else {
+    alert('Please select a PDF file.');
+  }
+}
+
+async function addArticle() {
+  if (!uploadedFile.value) return;
+
+  try {
+    isSubmitting.value = true;
+
+    const formData = new FormData();
+    formData.append('name_en', newArticle.value.name_en);
+    formData.append('name_fr', newArticle.value.name_fr);
+    formData.append('description_en', newArticle.value.description_en || '');
+    formData.append('description_fr', newArticle.value.description_fr || '');
+    formData.append('file', uploadedFile.value);
+    formData.append('edition_id', selectedEditionId.value);
+
+    console.log("form data document");
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
+    const response = await documentService.addDocument(formData);
+    articles.value.push(response);
+
+    // Reset form
+    newArticle.value = {
+      name_en: '',
+      name_fr: '',
+      description_en: '',
+      description_fr: '',
+      edition_id: null,
+      file: null
+    };
+    uploadedFile.value = null;
+    showModal.value = false;
+  } catch (error) {
+    console.error('Error adding document:', error);
+    alert('Failed to add document. Please try again.');
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+function getPdfUrl(PdfPath) {
+  return `http://localhost:8000/storage/${PdfPath}`;
 }
 
 function openPDF(url) {
-  window.open(url, '_blank')
+  window.open(url, '_blank');
 }
 
-function confirmDelete(index) {
-  const article = articles.value[index]
-  if (article) {
-    selectedArticleIndex.value = index
-    selectedArticleName.value = article.name
-    showDeleteModal.value = true
-  }
+function confirmDelete(id, name) {
+  selectedArticleId.value = id;
+  selectedArticleName.value = name;
+  showDeleteModal.value = true;
 }
 
-function deleteArticle(index) {
-  if (index !== null) {
-    articles.value.splice(index, 1)
-    showDeleteModal.value = false
-    selectedArticleIndex.value = null
-    selectedArticleName.value = ''
+async function deleteArticle() {
+  if (!selectedArticleId.value) return;
+
+  try {
+    isDeleting.value = true;
+    await documentService.deleteDocument(selectedArticleId.value);
+    articles.value = articles.value.filter(article => article.id !== selectedArticleId.value);
+    showDeleteModal.value = false;
+    selectedArticleId.value = null;
+    selectedArticleName.value = '';
+  } catch (error) {
+    console.error('Error deleting document:', error);
+    alert('Failed to delete document. Please try again.');
+  } finally {
+    isDeleting.value = false;
   }
 }
 </script>
@@ -129,6 +218,7 @@ function deleteArticle(index) {
     opacity: 0;
     transform: translateY(40px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -275,16 +365,19 @@ function deleteArticle(index) {
   -webkit-overflow-scrolling: touch;
   font-family: 'Poppins', sans-serif;
 }
+
 .modal-content h3 {
   margin-bottom: 1rem;
   text-align: center;
   color: #265985;
 }
+
 @keyframes fadeInZoom {
   0% {
     opacity: 0;
     transform: scale(0.85);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);

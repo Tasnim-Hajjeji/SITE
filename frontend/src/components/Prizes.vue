@@ -3,13 +3,14 @@
     <div class="header-row">
       <h1 class="title">Registration Prizes</h1>
       <div class="action-buttons">
-        <button class="add-btn" @click="showModal = true" :disabled="prizesAdded">
+        <button class="add-btn" @click="showModal = true" v-if="!hasPrices">
           <i class="fas fa-plus"></i> Add
         </button>
       </div>
     </div>
 
-    <div v-if="prizes.length === 0" class="empty-message">
+    <div v-if="isLoading" class="loading-message">Loading prizes...</div>
+    <div v-else-if="!hasPrices" class="empty-message">
       No prizes added yet.
     </div>
 
@@ -19,6 +20,7 @@
           <th>Tunisian (DT)</th>
           <th>Foreign (€)</th>
           <th>Accommodation (DT)</th>
+          <th>Paper (DT)</th>
           <th>Adult Companion (DT)</th>
           <th>Child Companion (DT)</th>
           <th>Single Supplement (DT)</th>
@@ -27,19 +29,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(prize, index) in prizes" :key="index">
-          <td class="numeric">{{ prize.tunisian }}</td>
-          <td class="numeric">{{ prize.foreign }}</td>
-          <td class="numeric">{{ prize.accommodation }}</td>
-          <td class="numeric">{{ prize.adult }}</td>
-          <td class="numeric">{{ prize.child }}</td>
-          <td class="numeric">{{ prize.supplement }}</td>
-          <td class="numeric">{{ prize.extraNight }}</td>
+        <tr v-for="(prize) in prizes" :key="prize.id">
+          <td class="numeric">{{ prize.prix_tun }}</td>
+          <td class="numeric">{{ prize.prix_international }}</td>
+          <td class="numeric">{{ prize.prix_tun_hebergement }}</td>
+          <td class="numeric">{{ prize.prix_article }}</td>
+
+          <td class="numeric">{{ prize.prix_acc_adulte }}</td>
+          <td class="numeric">{{ prize.prix_acc_enfant }}</td>
+          <td class="numeric">{{ prize.prix_single_supp }}</td>
+          <td class="numeric">{{ prize.prix_nuit_supp }}</td>
           <td class="actions-cell">
-            <button class="small-btn update-btn" @click="openUpdateModal(prize, index)">
+            <button class="small-btn update-btn" @click="openUpdateModal(prize)">
               <i class="fas fa-pen"></i>
             </button>
-            <button class="small-btn delete-btn" @click="confirmDelete(index)">
+            <button class="small-btn delete-btn" @click="confirmDelete(prize.id)">
               <i class="fas fa-trash"></i>
             </button>
           </td>
@@ -51,22 +55,19 @@
     <transition name="fade">
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">{{ isUpdating ? 'Update Prize' : 'Add Prize' }}</h3>
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">{{ isUpdating ? 'Update Prize' : 'Add Prize' }}
+          </h3>
           <form @submit.prevent="isUpdating ? updatePrize() : addPrize()" class="space-y-0">
             <div v-for="(label, key) in fieldLabels" :key="key">
               <label :for="key" class="block mb-1 text-xs text-gray-500 font-medium">{{ label }}</label>
-              <input
-                v-model.number="form[key]"
-                :id="key"
-                :placeholder="label"
-                type="number"
-                min="0"
-                class="w-[95%] p-2 border border-gray-300 rounded-lg"
-              />
+              <input v-model.number="form[key]" :id="key" :placeholder="label" type="number" min="0"
+                class="w-[95%] p-2 border border-gray-300 rounded-lg" />
             </div>
             <div class="modal-actions flex justify-end gap-2 mt-6">
               <button type="button" class="cancel-btn" @click="cancelModal">Cancel</button>
-              <button type="submit" class="add-btn">{{ isUpdating ? 'Update' : 'Add' }}</button>
+              <button type="submit" class="add-btn" :disabled="isSubmitting">
+                {{ isSubmitting ? (isUpdating ? 'Updating...' : 'Adding...') : (isUpdating ? 'Update' : 'Add') }}
+              </button>
             </div>
           </form>
         </div>
@@ -80,11 +81,11 @@
           <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirm Deletion</h3>
           <p class="text-gray-600 mb-4">Are you sure you want to delete this prize? This action is irreversible.</p>
           <div class="modal-actions flex justify-end gap-2 mt-6">
-            <button type="button" class="cancel-btn" @click="showDeleteModal = false; selectedPrizeIndex = null;">
+            <button type="button" class="cancel-btn" @click="showDeleteModal = false; selectedPrizeId = null;">
               Cancel
             </button>
-            <button type="button" class="delete-btn" @click="deletePrize(selectedPrizeIndex)">
-              Delete
+            <button type="button" class="delete-btn" @click="deletePrize()" :disabled="isDeleting">
+              {{ isDeleting ? 'Deleting...' : 'Delete' }}
             </button>
           </div>
         </div>
@@ -94,86 +95,147 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue';
+import prizeService from '@/services/FormPrices';
 
-const prizes = ref([])
-const showModal = ref(false)
-const showDeleteModal = ref(false)
-const prizesAdded = ref(false)
-const isUpdating = ref(false)
-const updatingIndex = ref(null)
-const selectedPrizeIndex = ref(null)
+const prizes = ref([]);
+const showModal = ref(false);
+const showDeleteModal = ref(false);
+const isLoading = ref(false);
+const isSubmitting = ref(false);
+const isDeleting = ref(false);
+const isUpdating = ref(false);
+const selectedPrizeId = ref(null);
+const selectedEditionId = ref(null);
 
 const form = ref({
-  tunisian: '',
-  foreign: '',
-  accommodation: '',
-  adult: '',
-  child: '',
-  supplement: '',
-  extraNight: ''
-})
+  prix_tun: '',
+  prix_international: '',
+  prix_tun_sans_hebergement: '',
+  prix_acc_adulte: '',
+  prix_acc_enfant: '',
+  prix_single_supp: '',
+  prix_nuit_supp: '',
+  edition_id: null
+});
 
 const fieldLabels = {
-  tunisian: 'Tunisian (DT)',
-  foreign: 'Foreign (EUR)',
-  accommodation: 'Accommodation (DT)',
-  adult: 'Adult Companion (DT)',
-  child: 'Child Companion (DT)',
-  supplement: 'Single Supplement (DT)',
-  extraNight: 'Extra Night (DT)'
-}
+  prix_tun: 'Tunisian (DT)',
+  prix_international: 'Foreign (EUR)',
+  prix_tun_hebergement: 'Accommodation (DT)',
+  prix_article:'Article (DT)',
+  prix_acc_adulte: 'Adult Companion (DT)',
+  prix_acc_enfant: 'Child Companion (DT)',
+  prix_single_supp: 'Single Supplement (DT)',
+  prix_nuit_supp: 'Extra Night (DT)'
+};
 
-function addPrize() {
-  if (prizesAdded.value) return
-  prizes.value.push({ ...form.value })
-  prizesAdded.value = true
-  resetForm()
-}
+const hasPrices = computed(() => {
+  return prizes.value.length > 0;
+});
 
-function confirmDelete(index) {
-  selectedPrizeIndex.value = index
-  showDeleteModal.value = true
-}
+onMounted(() => {
+  selectedEditionId.value = localStorage.getItem('selectedEditionId');
+  if (selectedEditionId.value) {
+    fetchPrizes(selectedEditionId.value);
+  }
+});
 
-function deletePrize(index) {
-  if (index !== null) {
-    prizes.value.splice(index, 1)
-    prizesAdded.value = false
-    showDeleteModal.value = false
-    selectedPrizeIndex.value = null
+async function fetchPrizes(editionId) {
+  try {
+    isLoading.value = true;
+    const response = await prizeService.getPrizesByEdition(editionId);
+    prizes.value = response;
+  } catch (error) {
+    console.error('Error fetching prizes:', error);
+    alert('Failed to load prizes. Please try again.');
+  } finally {
+    isLoading.value = false;
   }
 }
 
-function openUpdateModal(prize, index) {
-  form.value = { ...prize }
-  isUpdating.value = true
-  updatingIndex.value = index
-  showModal.value = true
+async function addPrize() {
+  try {
+    isSubmitting.value = true;
+    form.value.edition_id = selectedEditionId.value;
+
+    const response = await prizeService.addPrize(form.value);
+    prizes.value.push(response);
+    resetForm();
+  } catch (error) {
+    console.error('Error adding prize:', error);
+    alert('Failed to add prize. Please try again.');
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
-function updatePrize() {
-  prizes.value[updatingIndex.value] = { ...form.value }
-  resetForm()
+function confirmDelete(id) {
+  selectedPrizeId.value = id;
+  showDeleteModal.value = true;
+}
+
+async function deletePrize() {
+  if (!selectedPrizeId.value) return;
+
+  try {
+    isDeleting.value = true;
+    await prizeService.deletePrize(selectedPrizeId.value);
+    prizes.value = prizes.value.filter(prize => prize.id !== selectedPrizeId.value);
+    showDeleteModal.value = false;
+    selectedPrizeId.value = null;
+  } catch (error) {
+    console.error('Error deleting prize:', error);
+    alert('Failed to delete prize. Please try again.');
+  } finally {
+    isDeleting.value = false;
+  }
+}
+
+function openUpdateModal(prize) {
+  form.value = { ...prize };
+  isUpdating.value = true;
+  selectedPrizeId.value = prize.id;
+  showModal.value = true;
+}
+
+async function updatePrize() {
+  try {
+    isSubmitting.value = true;
+    const response = await prizeService.updatePrize(selectedPrizeId.value, form.value);
+
+    const index = prizes.value.findIndex(p => p.id === selectedPrizeId.value);
+    if (index !== -1) {
+      prizes.value[index] = response;
+    }
+
+    resetForm();
+  } catch (error) {
+    console.error('Error updating prize:', error);
+    alert('Failed to update prize. Please try again.');
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
 function cancelModal() {
-  resetForm()
+  resetForm();
 }
 
 function resetForm() {
-  showModal.value = false
+  showModal.value = false;
   form.value = {
-    tunisian: '',
-    foreign: '',
-    accommodation: '',
-    adult: '',
-    child: '',
-    supplement: '',
-    extraNight: ''
-  }
-  isUpdating.value = false
-  updatingIndex.value = null
+    prix_tun: '',
+    prix_international: '',
+    prix_tun_sans_hebergement: '',
+    prix_acc_adulte: '',
+    prix_acc_enfant: '',
+    prix_single_supp: '',
+    prix_nuit_supp: '',
+    edition_id: null
+  };
+  isUpdating.value = false;
+  selectedPrizeId.value = null;
 }
 </script>
 
@@ -193,6 +255,7 @@ function resetForm() {
     opacity: 0;
     transform: translateY(40px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -215,6 +278,7 @@ function resetForm() {
   margin: 0;
   position: relative;
 }
+
 .title::after {
   content: "";
   width: 100px;
@@ -240,10 +304,12 @@ function resetForm() {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+
 .action-buttons .add-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 .action-buttons .add-btn:hover:not(:disabled) {
   background-color: #265985;
   color: white;
@@ -255,6 +321,7 @@ function resetForm() {
   margin-top: 1rem;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
+
 .prizes-table th {
   font-weight: 600;
   color: #1b2d56;
@@ -264,18 +331,22 @@ function resetForm() {
   text-align: center;
   font-size: 0.95rem;
 }
+
 .prizes-table td {
   padding: 0.75rem;
   border: 1px solid #e5e7eb;
   font-size: 0.95rem;
   color: #333;
 }
+
 .prizes-table tr:hover {
   background: #f9fafb;
 }
+
 .prizes-table .numeric {
   text-align: right;
 }
+
 .prizes-table .actions-cell {
   display: flex;
   justify-content: center;
@@ -294,18 +365,22 @@ function resetForm() {
   width: 32px;
   height: 32px;
 }
+
 .update-btn {
   border-color: #265985;
   color: #265985;
 }
+
 .update-btn:hover {
   background-color: #265985;
   color: white;
 }
+
 .delete-btn {
   border-color: #e53935;
   color: #e53935;
 }
+
 .delete-btn:hover {
   background-color: #e53935;
   color: white;
@@ -327,6 +402,7 @@ function resetForm() {
   align-items: center;
   z-index: 999;
 }
+
 .modal-content {
   background: white;
   padding: 30px;
@@ -338,11 +414,13 @@ function resetForm() {
   max-height: 80vh;
   overflow-y: auto;
 }
+
 @keyframes fadeInZoom {
   0% {
     opacity: 0;
     transform: scale(0.85);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -366,31 +444,37 @@ function resetForm() {
   cursor: pointer;
   transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .add-btn {
   background: linear-gradient(to right, #265985, #1e4b6b);
   color: white;
   border: none;
 }
+
 .add-btn:hover {
   background: linear-gradient(to right, #1e4b6b, #163a52);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
 .cancel-btn {
   background: linear-gradient(to right, #d1d5db, #b0b7c3);
   color: #1f2937;
   border: none;
 }
+
 .cancel-btn:hover {
   background: linear-gradient(to right, #b0b7c3, #9ca3af);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
 .delete-btn {
   background: linear-gradient(to right, #e53935, #c62828);
   color: white;
   border: none;
 }
+
 .delete-btn:hover {
   background: linear-gradient(to right, #c62828, #b71c1c);
   transform: translateY(-2px);
@@ -401,6 +485,7 @@ function resetForm() {
 .fade-leave-active {
   transition: opacity 0.3s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
