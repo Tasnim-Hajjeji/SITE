@@ -7,7 +7,7 @@
       <div class="cards-container">
         <router-link to="/tunisian-form" class="profile-card tunisian">
           <h3>Tunisian</h3>
-          <p class="price">650 TND</p>
+          <p class="price">{{ tunisian_price }} TND</p>
           <ul>
             <li><i class="fas fa-bed"></i> Hébergement 2 nuits ALL IN SOFT</li>
             <li><i class="fas fa-mug-hot"></i> Coffee breaks</li>
@@ -18,7 +18,7 @@
   
         <router-link to="/stranger-form" class="profile-card stranger">
           <h3>Stranger</h3>
-          <p class="price">400 £</p>
+          <p class="price">{{ stranger_price }} &euro;</p>
           <ul>
             <li><i class="fas fa-bed"></i> Hébergement 2 nuits ALL IN SOFT</li>
             <li><i class="fas fa-mug-hot"></i> Coffee breaks</li>
@@ -31,7 +31,28 @@
   </template>
   
   <script setup>
-  // rien à déclarer ici pour l'instant
+  import { ref, onMounted } from 'vue';
+  import cookieUtils from '@/utils/cookieUtils';
+  import priceService from '@/services/FormPrices'
+
+  const tunisian_price = ref(0);
+  const stranger_price = ref(0);
+
+  onMounted(() => {
+    let editionId = cookieUtils.getCookie('editionId')
+  priceService.getPrizesByEdition(editionId).then(dataArr => {
+    if (Array.isArray(dataArr) && dataArr.length > 0) {
+      stranger_price.value = dataArr[0].prix_international
+      tunisian_price.value = dataArr[0].prix_tun
+    } else {
+      stranger_price.value = 0
+      tunisian_price.value = 0
+      console.error('Stranger and Tunisian price data not found in response:', dataArr)
+    }
+  }).catch(error => {
+    console.error('Error fetching Stranger price:', error)
+  })
+  })
   </script>
   
   <style scoped>

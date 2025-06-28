@@ -7,7 +7,7 @@
     </h2>
 
     <div class="form-card">
-      <h3 class="card-title">Stranger <span class="price">400 EUR</span></h3>
+      <h3 class="card-title">Stranger <span class="price">{{ stranger_price }} EUR</span></h3>
 
       <form class="registration-form" ref="formElement" novalidate>
         <div class="form-group">
@@ -103,10 +103,13 @@
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import priceService from '@/services/FormPrices'
+import cookieUtils from '@/utils/cookieUtils'
 
 const activeStep = 1
 const router = useRouter()
 const formElement = ref(null)
+const stranger_price = ref(0)
 
 const form = reactive({
   firstName: '',
@@ -204,14 +207,27 @@ function proceedIfValid() {
 
 function backToPrevious() {
   localStorage.removeItem("stranger_form");
+  localStorage.removeItem("form_type");
   router.push('/profile-selection');
 }
 
 onMounted(() => {
+  localStorage.setItem('form_type', 'stranger')
   const saved = localStorage.getItem('stranger_form')
   if (saved) {
     Object.assign(form, JSON.parse(saved))
   }
+  let editionId = cookieUtils.getCookie('editionId')
+  priceService.getPrizesByEdition(editionId).then(dataArr => {
+    if (Array.isArray(dataArr) && dataArr.length > 0) {
+      stranger_price.value = dataArr[0].prix_international
+    } else {
+      stranger_price.value = 0
+      console.error('Stranger price data not found in response:', dataArr)
+    }
+  }).catch(error => {
+    console.error('Error fetching Stranger price:', error)
+  })
 })
 
 watch(

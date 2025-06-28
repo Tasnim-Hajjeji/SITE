@@ -185,17 +185,23 @@ function proceedIfValid() {
 
 function backToPrevious() {
   localStorage.removeItem("tunisian_form");
+  localStorage.removeItem("form_type");
   router.push('/profile-selection');
 }
 
 // Save to localStorage
 onMounted(() => {
+  localStorage.setItem('form_type', 'tunisian')
   const saved = localStorage.getItem('tunisian_form')
   if (saved) Object.assign(form, JSON.parse(saved))
   let editionId = cookieUtils.getCookie('editionId')
-  priceService.getTunisianPrice().then(response => {
-    let data = response.data
-    tunisian_price.value = data.prix_tun
+  priceService.getPrizesByEdition(editionId).then(dataArr => {
+    if (Array.isArray(dataArr) && dataArr.length > 0) {
+      tunisian_price.value = dataArr[0].prix_tun
+    } else {
+      tunisian_price.value = 0
+      console.error('Tunisian price data not found in response:', dataArr)
+    }
   }).catch(error => {
     console.error('Error fetching Tunisian price:', error)
   })
