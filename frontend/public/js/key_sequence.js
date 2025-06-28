@@ -8,6 +8,7 @@ const timeoutDuration = 15 * 1000; // 15 seconds
 
 // Track CapsLock state
 document.addEventListener('keydown', function (event) {
+    if (typeof event.getModifierState !== 'function') return;
     capsLockOn = event.getModifierState('CapsLock');
 
     // If recording is active, track sequence here
