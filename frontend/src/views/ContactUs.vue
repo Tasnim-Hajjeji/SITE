@@ -65,9 +65,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import ContactService from '@/services/ContactService';
 
-const { t } = useI18n();
 const form = ref({
   name: '',
   email: '',
@@ -75,10 +74,11 @@ const form = ref({
   message: ''
 });
 
-const submitForm = () => {
+const submitForm = async () => {
   console.log('Form submitted:', form.value);
-  // TODO: Integrate with backend API (e.g., similar to ImportantDatesService)
-  alert(t('contact.successMessage')); // Temporary feedback
+  const response = await ContactService.addContact(form.value);
+  console.log(response);
+
   form.value = { name: '', email: '', subject: '', message: '' }; // Reset form
 };
 </script>

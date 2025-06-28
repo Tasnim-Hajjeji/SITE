@@ -1,7 +1,7 @@
 <template>
   <section class="keynote-section">
     <div class="header-row">
-      <h2 class="title">Keynote Session</h2>
+      <h2 class="title">Session Keynote</h2>
       <div class="action-buttons">
         <button class="add-btn" @click="showModal = true">
           <i class="fas fa-plus"></i> Ajouter un Keynote
@@ -30,7 +30,7 @@
           <div class="quote-icon">❝</div>
           <p class="text">{{ currentLanguage === 'fr' ? item.description_fr : item.description_en }}</p>
           <div class="profile">
-            <img :src="getImageUrl(item.image_url) || 'https://i.pravatar.cc/50'" alt="Speaker photo" class="avatar" />
+            <img :src="getImageUrl(item.image_url) || 'https://i.pravatar.cc/50'" alt="Photo du conférencier" class="avatar" />
             <div>
               <h3>{{ item.speaker_name }}</h3>
               <p class="role">{{ item.speaker_role }}</p>
@@ -48,46 +48,41 @@
       <span v-for="(dot, i) in items.length" :key="i" :class="['dot', { active: i === currentIndex }]"></span>
     </div>
 
-    <!-- Add New Keynote Modal -->
+    <!-- Modal Ajouter un Keynote -->
     <div v-if="showModal"
       class="modal-overlay">
       <div class="modal-content">
-        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add New Keynote</h3>
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un nouveau Keynote</h3>
         <form @submit.prevent="addKeynote" class="space-y-0">
           <div>
-            <label for="description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Quote (French)</label>
+            <label for="description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Citation (Français)</label>
             <textarea v-model="newKeynote.description_fr" id="description_fr"
-              placeholder="Enter the French keynote quote here..."
+              placeholder="Entrez la citation en français ici..."
               class="w-[95%] p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
-            <label for="description_en" class="block mb-1 text-xs text-gray-500 font-medium">Quote (English)</label>
+            <label for="description_en" class="block mb-1 text-xs text-gray-500 font-medium">Citation (Anglais)</label>
             <textarea v-model="newKeynote.description_en" id="description_en"
-              placeholder="Enter the English keynote quote here..."
+              placeholder="Entrez la citation en anglais ici..."
               class="w-[95%] p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
-            <label for="speaker_name" class="block mb-1 text-xs text-gray-500 font-medium">Speaker Name</label>
-            <input v-model="newKeynote.speaker_name" id="speaker_name" type="text" placeholder="Enter speaker name"
+            <label for="speaker_name" class="block mb-1 text-xs text-gray-500 font-medium">Nom du conférencier</label>
+            <input v-model="newKeynote.speaker_name" id="speaker_name" type="text" placeholder="Entrez le nom du conférencier"
               class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="speaker_role" class="block mb-1 text-xs text-gray-500 font-medium">Role</label>
+            <label for="speaker_role" class="block mb-1 text-xs text-gray-500 font-medium">Rôle</label>
             <input v-model="newKeynote.speaker_role" id="speaker_role" type="text"
-              placeholder="Enter speaker's role or title"
+              placeholder="Entrez le rôle ou titre du conférencier"
               class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
-          <!-- <div>
-            <label for="edition_id" class="block mb-1 text-xs text-gray-500 font-medium">Edition ID</label>
-            <input v-model="newKeynote.edition_id" id="edition_id" type="text" placeholder="Enter edition ID"
-              class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
-          </div> -->
           <div>
-            <label for="image" class="block mb-1 text-xs text-gray-500 font-medium">Profile Image</label>
+            <label for="image" class="block mb-1 text-xs text-gray-500 font-medium">Image de profil</label>
             <input id="image" type="file" @change="handleImageUpload" accept="image/*"
               class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             <div v-if="imagePreview" class="mt-2">
-              <img :src="imagePreview" alt="Image Preview" class="w-20 h-20 object-cover rounded-md" />
+              <img :src="imagePreview" alt="Aperçu de l'image" class="w-20 h-20 object-cover rounded-md" />
             </div>
           </div>
           <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
@@ -97,58 +92,58 @@
             <button type="button"
               class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
               @click="showModal = false">
-              Cancel
+              Annuler
             </button>
             <button type="submit"
               class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
-              Add Keynote
+              Ajouter Keynote
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Update Keynote Modal -->
+    <!-- Modal Modifier un Keynote -->
     <div v-if="showUpdateModal"
       class="modal-overlay">
       <div class="modal-content">
-        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Update Keynote</h3>
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Modifier le Keynote</h3>
         <form @submit.prevent="updateKeynote" class="space-y-0">
           <div>
-            <label for="update_description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Quote (French)</label>
+            <label for="update_description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Citation (Français)</label>
             <textarea v-model="selectedItem.description_fr" id="update_description_fr"
-              placeholder="Enter the French keynote quote here..."
+              placeholder="Entrez la citation en français ici..."
               class="w-[95%] p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
-            <label for="update_description_en" class="block mb-1 text-xs text-gray-500 font-medium">Quote (English)</label>
+            <label for="update_description_en" class="block mb-1 text-xs text-gray-500 font-medium">Citation (Anglais)</label>
             <textarea v-model="selectedItem.description_en" id="update_description_en"
-              placeholder="Enter the English keynote quote here..."
+              placeholder="Entrez la citation en anglais ici..."
               class="w-[95%] p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
-            <label for="update_speaker_name" class="block mb-1 text-xs text-gray-500 font-medium">Speaker Name</label>
+            <label for="update_speaker_name" class="block mb-1 text-xs text-gray-500 font-medium">Nom du conférencier</label>
             <input v-model="selectedItem.speaker_name" id="update_speaker_name" type="text"
-              placeholder="Enter speaker name"
+              placeholder="Entrez le nom du conférencier"
               class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="update_speaker_role" class="block mb-1 text-xs text-gray-500 font-medium">Role</label>
+            <label for="update_speaker_role" class="block mb-1 text-xs text-gray-500 font-medium">Rôle</label>
             <input v-model="selectedItem.speaker_role" id="update_speaker_role" type="text"
-              placeholder="Enter speaker's role or title"
+              placeholder="Entrez le rôle ou titre du conférencier"
               class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="update_edition_id" class="block mb-1 text-xs text-gray-500 font-medium">Edition ID</label>
-            <input v-model="selectedItem.edition_id" id="update_edition_id" type="text" placeholder="Enter edition ID"
+            <label for="update_edition_id" class="block mb-1 text-xs text-gray-500 font-medium">ID de l'édition</label>
+            <input v-model="selectedItem.edition_id" id="update_edition_id" type="text" placeholder="Entrez l'ID de l'édition"
               class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
           </div>
           <div>
-            <label for="update_image" class="block mb-1 text-xs text-gray-500 font-medium">Profile Image</label>
+            <label for="update_image" class="block mb-1 text-xs text-gray-500 font-medium">Image de profil</label>
             <input id="update_image" type="file" @change="handleUpdateImageUpload" accept="image/*"
               class="w-[95%] p-2 border border-gray-300 rounded-lg" />
             <div v-if="updateImagePreview" class="mt-2">
-              <img :src="updateImagePreview" alt="Image Preview" class="w-20 h-20 object-cover rounded-md" />
+              <img :src="updateImagePreview" alt="Aperçu de l'image" class="w-20 h-20 object-cover rounded-md" />
             </div>
           </div>
           <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
@@ -158,11 +153,11 @@
             <button type="button"
               class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
               @click="showUpdateModal = false">
-              Cancel
+              Annuler
             </button>
             <button type="submit"
               class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
-              Update Keynote
+              Modifier Keynote
             </button>
           </div>
         </form>
@@ -170,6 +165,7 @@
     </div>
   </section>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'

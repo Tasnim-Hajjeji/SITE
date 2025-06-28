@@ -11,15 +11,6 @@
           <i class="fas fa-pen"></i> Mettre à jour
         </button>
 
-        <!-- Dropdown Edition -->
-        <div class="dropdown" @click.stop="toggleDropdown">
-          <button class="edition-btn">Édition ▼</button>
-          <ul v-if="dropdownOpen" class="dropdown-menu">
-            <li v-for="ed in editions" :key="ed.id" @click="selectEdition(ed.id)">
-              {{ ed.name }}
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
 
@@ -99,13 +90,29 @@
               (PDF):</label>
             <div class="relative w-[95%]">
               <input id="update_dossier_sponso" type="file"
-                @change="(e) => editionForm.dossier_sponso = e.target.files[0]" accept=".pdf"
+                @change="onPdfSelectedSponsor" accept=".pdf"
                 class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
               <div
                 class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
                 <span class="text-gray-600">Choisir un fichier</span>
                 <i class="fas fa-download text-gray-600"></i>
               </div>
+              <p class="mt-1 text-sm text-gray-600">{{ pdfFileNameSponsor }}</p>
+            </div>
+          </div>
+          <div class="file-upload">
+            <label for="update_dossier_sponso" class="block mb-1 text-xs text-gray-500 font-medium">Call For Paper
+              (PDF):</label>
+            <div class="relative w-[95%]">
+              <input id="update_dossier_sponso" type="file"
+                @change="onPdfSelectedCall" accept=".pdf"
+                class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
+              <div
+                class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
+                <span class="text-gray-600">Choisir un fichier</span>
+                <i class="fas fa-download text-gray-600"></i>
+              </div>
+              <p class="mt-1 text-sm text-gray-600">{{ pdfFileNameCall }}</p>
             </div>
           </div>
           <div v-if="error" class="p-2 bg-red-100 text-red-700 rounded-md flex items-center">
@@ -170,10 +177,13 @@ const editions = ref([]);
 const edition = ref(null);
 const isLoading = ref(true);
 const error = ref(null);
-const dropdownOpen = ref(false);
 const showUpdateModal = ref(false);
 const showDeleteModal = ref(false);
 const participantCount = ref(0);
+const pdfFileNameCall = ref('');
+const pdfFileNameSponsor = ref('');
+
+
 
 // Form for updates
 const editionForm = ref({
@@ -183,7 +193,8 @@ const editionForm = ref({
   start_date: '',
   end_date: '',
   place: '',
-  dossier_sponso: null
+  dossier_sponso: null,
+  call_for_paper:null,
 });
 
 // French month names for date formatting
@@ -236,6 +247,32 @@ const fetchEditionDetails = async () => {
     isLoading.value = false;
   }
 };
+const onPdfSelectedSponsor = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    if (file.type === 'application/pdf') {
+      editionForm.value.dossier_sponso = file;
+      pdfFileNameSponsor.value = file.name;
+    } else {
+      error.value = 'Veuillez sélectionner un fichier PDF';
+      event.target.value = ''; // Reset the input
+      pdfFileNameSponsor.value = '';
+    }
+  }
+};
+const onPdfSelectedCall = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    if (file.type === 'application/pdf') {
+      editionForm.value.call_for_paper = file;
+      pdfFileNameCall.value = file.name;
+    } else {
+      error.value = 'Veuillez sélectionner un fichier PDF';
+      event.target.value = ''; // Reset the input
+      pdfFileNameCall.value = '';
+    }
+  }
+};
 
 // Computed properties
 const isCurrentEdition = computed(() => {
@@ -267,17 +304,7 @@ const formattedDateRange = computed(() => {
   return `${start.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()} - ${end.getDate()} ${frenchMonths[end.getMonth()]} ${end.getFullYear()}`;
 });
 
-// Dropdown methods
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value;
-};
 
-const selectEdition = (id) => {
-  dropdownOpen.value = false;
-  router.push({ name: 'AdEdition', params: { editionId: id } });
-  editionId.value = id;
-  fetchEditionDetails();
-};
 
 // Edition operations
 const confirmDelete = () => {
@@ -307,6 +334,9 @@ const updateEdition = async () => {
     if (editionForm.value.dossier_sponso instanceof File) {
       formData.append('dossier_sponso', editionForm.value.dossier_sponso);
     }
+    if (editionForm.value.call_for_paper instanceof File) {
+      formData.append('callForPaper', editionForm.value.call_for_paper);
+    }
     console.log('Mise à jour de l\'édition avec les données:', Object.fromEntries(formData.entries()));
     await EditionService.updateEdition(editionId.value, formData);
     await fetchEditionDetails();
@@ -323,11 +353,11 @@ const updateEdition = async () => {
 
 .conference-card {
   font-family: 'Segoe UI', sans-serif;
-  margin-top: 80px;
-  max-width: 1000px;
+  max-width: 1130px;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+
 }
 
 @keyframes fadeIn {

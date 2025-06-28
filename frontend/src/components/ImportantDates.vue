@@ -1,6 +1,6 @@
 <template>
   <div class="important-dates">
-    <h2 class="title">Important dates</h2>
+    <h2 class="title">{{ $t('importantDates.title') }}</h2>
     <div class="timeline">
       <div class="timeline-item" v-for="(dateItem, index) in formattedDates" :key="dateItem.id || index"
         :class="{ left: index % 2 === 0, right: index % 2 !== 0 }">
@@ -105,10 +105,12 @@ export default {
   justify-content: flex-start;
   position: relative;
   max-width: 700px;
+ 
 }
 
 .timeline-item.right {
   justify-content: flex-end;
+  
 }
 
 .content {
@@ -119,6 +121,10 @@ export default {
   box-shadow: 8px 8px 16px #1b4468, -8px -8px 16px #2d6aa2;
   transition: transform 0.3s ease;
   overflow: hidden;
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 255, 255, 0.6),
+    0 0 0px rgba(255, 255, 255, 0.4);
 }
 
 .content:hover {
@@ -143,7 +149,10 @@ export default {
   width: 50px;
   height: 45px;
   background-color: #bcd5e6;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.7),
+    0 0 30px rgba(255, 255, 255, 0.5),
+    0 0 50px rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   display: flex;
   align-items: center;

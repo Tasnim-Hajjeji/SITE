@@ -69,6 +69,9 @@ const messages = {
                 }
             ]
         },
+        importantDates: {
+            title: 'Important Dates',
+        },
         footer: {
             contact: 'Contact us',
             backToTop: 'Back to top',
@@ -191,6 +194,10 @@ const messages = {
                     description: 'Tech for good, Éducation, HealthTech, CivicTech…'
                 }
             ]
+        },
+        importantDates: {
+            title: 'Dates Importantes',
+           
         },
         footer: {
             contact: 'Contactez-nous',

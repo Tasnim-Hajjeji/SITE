@@ -1,5 +1,4 @@
 ```vue
-イシナリオ
 <template>
   <div class="container">
     <h1 class="title">Committees {{ this.selectedEditionName }}</h1>
@@ -135,7 +134,13 @@
             </label>
             <label v-if="showRoleField" class="block text-sm font-medium text-gray-700">
               Role:
-              <input type="text" v-model="newMember.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+              <select v-model="newMember.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                <option disabled value="">Select Role</option>
+                <option value="Chair">Chair</option>
+                <option value="Member">Member</option>
+                <option value="President">President</option>
+                <option value="Vicechair">Vicechair</option>
+              </select>
             </label>
             <label class="block text-sm font-medium text-gray-700">
               Etablissement:
@@ -197,7 +202,13 @@
             </label>
             <label v-if="showEditRoleField" class="block text-sm font-medium text-gray-700">
               Role:
-              <input type="text" v-model="editMemberData.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+              <select v-model="editMemberData.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                <option disabled value="">Select Role</option>
+                <option value="Chair">Chair</option>
+                <option value="Member">Member</option>
+                <option value="President">President</option>
+                <option value="Vicechair">Vicechair</option>
+              </select>
             </label>
             <label class="block text-sm font-medium text-gray-700">
               Etablissement:
@@ -284,7 +295,6 @@ export default {
         message: "",
         type: "", // 'success' or 'error'
       },
-      // Modals state
       showAddModal: false,
       showEditModal: false,
       showDeleteModal: false,
@@ -348,7 +358,6 @@ export default {
       return `http://localhost:8000/storage/${imagePath}`;
     },
     initializeSelectedEdition() {
-      // Try to get edition ID from route params first
       const routeEditionId = this.$route.params.editionId;
       if (routeEditionId) {
         this.selectedEditionId = parseInt(routeEditionId);
@@ -357,7 +366,6 @@ export default {
           this.selectedEditionName = edition.name;
         }
       } else {
-        // Fall back to localStorage
         const storedEditionId = localStorage.getItem('selectedEditionId');
         if (storedEditionId) {
           this.selectedEditionId = parseInt(storedEditionId);
@@ -366,7 +374,6 @@ export default {
             this.selectedEditionName = edition.name;
           }
         } else if (this.editions.length > 0) {
-          // Default to first edition if none selected
           this.selectedEditionId = this.editions[0].id;
           this.selectedEditionName = this.editions[0].name;
         }
@@ -375,7 +382,7 @@ export default {
     async fetchMembers() {
       this.loading = true;
       try {
-        const response = await CommitteeMemberService.getAllCommitteeMembers();
+        const response = await CommitteeMemberService.getMembersByEditionAndCommittee(this.selectedEditionId);
         this.members = response.data;
       } catch (error) {
         console.error("Error fetching committee members:", error);
@@ -439,7 +446,6 @@ export default {
         } else if (type === "email") {
           textToCopy = member.email;
         }
-
         await navigator.clipboard.writeText(textToCopy);
         this.showToast(
           `${type === "phone" ? "Phone number" : "Email"} copied to clipboard!`
@@ -476,12 +482,8 @@ export default {
         formData.append('role', this.newMember.role);
         formData.append('from_etablissement', this.newMember.from_etablissement);
         formData.append('edition_id', this.newMember.edition_id);
-
-        // Make email and phone optional as per your backend validation
         if (this.newMember.email) formData.append('email', this.newMember.email);
         if (this.newMember.phone) formData.append('phone', this.newMember.phone);
-
-        // Make sure image is appended correctly
         if (this.newMember.image) {
           formData.append('image', this.newMember.image);
         } else {
@@ -489,15 +491,12 @@ export default {
           this.isSubmitting = false;
           return;
         }
-
         const response = await CommitteeMemberService.createCommitteeMember(formData);
         this.members.push(response.data);
         this.showToast("Member added successfully");
         this.closeAddModal();
       } catch (error) {
         console.error("Error adding member:", error);
-
-        // Handle validation errors from backend
         if (error.response && error.response.status === 422) {
           const errors = error.response.data.errors;
           const firstError = Object.values(errors)[0][0];
@@ -530,15 +529,11 @@ export default {
         if (this.editMemberData.email) formData.append('email', this.editMemberData.email);
         if (this.editMemberData.phone) formData.append('phone', this.editMemberData.phone);
         if (this.editMemberData.image) formData.append('image', this.editMemberData.image);
-
         const response = await CommitteeMemberService.updateCommitteeMember(this.editMemberData.id, formData);
-
-        // Update the member in the list
         const index = this.members.findIndex(m => m.id === this.editMemberData.id);
         if (index !== -1) {
           this.members.splice(index, 1, response.data);
         }
-
         this.showToast("Member updated successfully");
         this.closeEditModal();
       } catch (error) {
@@ -560,13 +555,10 @@ export default {
       this.isSubmitting = true;
       try {
         await CommitteeMemberService.deleteCommitteeMember(this.deleteMemberData.id);
-
-        // Remove the member from the list
         const index = this.members.findIndex(m => m.id === this.deleteMemberData.id);
         if (index !== -1) {
           this.members.splice(index, 1);
         }
-
         this.showToast("Member deleted successfully");
         this.closeDeleteModal();
       } catch (error) {
@@ -592,13 +584,10 @@ export default {
       }
     },
     highlightCommitteeMember(memberId) {
-      // If members are already loaded
       if (this.members.length > 0) {
         this.scrollToCommitteeMember(memberId);
         return;
       }
-
-      // If members are loading, wait for them
       const checkInterval = setInterval(() => {
         if (this.members.length > 0) {
           clearInterval(checkInterval);
@@ -606,7 +595,6 @@ export default {
         }
       }, 100);
     },
-
     scrollToCommitteeMember(memberId) {
       this.$nextTick(() => {
         const element = document.getElementById(`committee-${memberId}`);
@@ -1209,3 +1197,4 @@ export default {
   }
 }
 </style>
+```

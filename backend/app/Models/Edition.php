@@ -18,7 +18,8 @@ class Edition extends Model
         'end_date',
         'place',
         'images_url',
-        'dossier_sponso'
+        'dossier_sponso',
+        'call_for_paper',
     ];
 
     protected $casts = [

@@ -119,11 +119,14 @@ export default {
 }
 
 p {
-  font-size: 1rem;
+  font-size: 1.2rem; /* Matches hero section's larger text */
+  line-height: 1.6; /* For better readability, matching hero */
+  color: #444; /* Consistent with hero's paragraph color */
 }
 
 h2 {
-  font-size: 1.7rem;
+  font-size: 2.5rem; /* Matches hero's prominent title */
+  font-weight: 700; /* Bold weight to match hero's bold titles */
   margin-bottom: 1rem;
 }
 
@@ -132,7 +135,7 @@ h2 {
 }
 
 .schedule-header .highlight {
-  color: #1d74c4;
+  color: #005a90; /* Matches hero's blue color */
 }
 
 .tabs {
@@ -143,6 +146,8 @@ h2 {
   background: #f1f1f1;
   border-radius: 2rem;
   padding: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added dark shadow for prominence */
+
 }
 
 .tab {
@@ -152,11 +157,13 @@ h2 {
   background: #f1f1f1;
   transition: 0.3s;
   text-transform: capitalize;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added dark shadow for prominence */
 }
 
 .tab.active {
   background: white;
-  border-bottom: 4px solid #1d74c4;
+  border-bottom: 0px solid #005a90; /* Matches hero's blue */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slightly darker shadow for active tab */
 }
 
 .timeline {
@@ -164,7 +171,9 @@ h2 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
-  padding-top: 1rem;
+  padding-top: 3rem; /* Increased from 1rem for more top space */
+  margin-top: 5rem; /* Added to widen space above timeline */
+  margin-bottom: 10rem; /* Added to widen space below timeline */
 }
 
 .timeline-item {
@@ -174,8 +183,8 @@ h2 {
 }
 
 .circle {
-  width: 90px;
-  height: 90px;
+  width: 100px;
+  height: 100px;
   margin: auto;
   border-radius: 50%;
   background-color: #f0f0f0;
@@ -186,10 +195,8 @@ h2 {
   margin-bottom: 0.5rem;
   border: 4px dashed;
   position: relative;
-  /* pour positionner la ligne relative à ce cercle */
 }
 
-/* Bordures colorées des cercles */
 .purple .circle {
   border-color: #6c5ce7;
 }
@@ -199,15 +206,13 @@ h2 {
 }
 
 .orange .circle {
-  border-color: #e17055;
+  border-color: #e0ab17;
 }
 
-/* Ligne de liaison entre cercles */
 .connector-line {
   position: absolute;
   top: 50%;
   right: -110px;
-  /* espace entre cercles + marge */
   width: 100px;
   height: 4px;
   background-color: #ccc;
@@ -216,7 +221,6 @@ h2 {
   border-radius: 2px;
 }
 
-/* Couleurs ligne selon event */
 .purple .connector-line {
   background-color: #6c5ce7;
 }
@@ -239,11 +243,12 @@ h2 {
   color: gray;
 }
 
-/* Responsive : ligne devient verticale entre les cercles */
 @media (max-width: 768px) {
   .timeline {
     flex-direction: column;
     align-items: center;
+    margin-top: 2rem; /* Adjusted for smaller screens */
+    margin-bottom: 2rem; /* Adjusted for smaller screens */
   }
 
   .timeline-item {
@@ -252,8 +257,22 @@ h2 {
 
   .connector-line {
     display: none;
-    /* <-- ligne cachée sur petit écran */
   }
 
+  p {
+    font-size: 1rem; /* Matches hero's responsive paragraph */
+  }
+
+  h2 {
+    font-size: 2rem; /* Matches hero's responsive title */
+  }
+
+  .tab {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Slightly lighter shadow for smaller screens */
+  }
+
+  .tab.active {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Adjusted for active tab on smaller screens */
+  }
 }
 </style>

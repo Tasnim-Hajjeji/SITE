@@ -21,6 +21,7 @@ return new class extends Migration
             $table->json('images_url')->nullable();
             $table->string('place');
             $table->string('dossier_sponso')->nullable(); 
+            $table->string('call_for_paper')->nullable();
             $table->timestamps();
         });
     }
