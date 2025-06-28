@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="header-row">
-      <h2 class="title">Important Dates</h2>
+      <h2 class="title">Dates importantes</h2>
       <div class="action-buttons">
         <button class="add-btn" @click="openAddModal">
           <i class="fas fa-plus"></i> Ajouter une date Importante
@@ -266,7 +266,6 @@ export default {
 
 .container {
   padding: 2rem;
-  max-width: 1100px;
   margin: auto;
   font-family: 'Segoe UI', sans-serif;
   animation: fadeInUp 0.6s ease;

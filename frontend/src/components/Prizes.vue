@@ -1,7 +1,7 @@
 <template>
   <section class="prizes-section">
     <div class="header-row">
-      <h1 class="title">Registration Prizes</h1>
+      <h1 class="title">Tarifs d’inscription</h1>
       <div class="action-buttons">
         <button class="add-btn" @click="showModal = true" v-if="!hasPrices">
           <i class="fas fa-plus"></i> Add
@@ -11,21 +11,22 @@
 
     <div v-if="isLoading" class="loading-message">Loading prizes...</div>
     <div v-else-if="!hasPrices" class="empty-message">
-      No prizes added yet.
+      Pas encore de prix ajoutés.
     </div>
 
     <table v-else class="prizes-table">
       <thead>
         <tr>
-          <th>Tunisian (DT)</th>
-          <th>Foreign (€)</th>
-          <th>Accommodation (DT)</th>
-          <th>Paper (DT)</th>
-          <th>Adult Companion (DT)</th>
-          <th>Child Companion (DT)</th>
-          <th>Single Supplement (DT)</th>
-          <th>Extra Night (DT)</th>
+          <th>Tunisien (DT)</th>
+          <th>Étranger (€)</th>
+          <th>Hébergement (DT)</th>
+          <th>Article (DT)</th> <!-- ou "Communication", si tu parles d’un papier scientifique -->
+          <th>Accompagnateur adulte (DT)</th>
+          <th>Enfant accompagnateur (DT)</th>
+          <th>Supplément single (DT)</th>
+          <th>Nuit supplémentaire (DT)</th>
           <th>Actions</th>
+
         </tr>
       </thead>
       <tbody>
@@ -123,7 +124,7 @@ const fieldLabels = {
   prix_tun: 'Tunisian (DT)',
   prix_international: 'Foreign (EUR)',
   prix_tun_hebergement: 'Accommodation (DT)',
-  prix_article:'Article (DT)',
+  prix_article: 'Article (DT)',
   prix_acc_adulte: 'Adult Companion (DT)',
   prix_acc_enfant: 'Child Companion (DT)',
   prix_single_supp: 'Single Supplement (DT)',
