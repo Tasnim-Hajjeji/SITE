@@ -19,11 +19,17 @@ return new class extends Migration
             $table->integer('prix_tun')->default(0);
             $table->integer('prix_international')->default(0);
             $table->integer('prix_tun_hebergement')->default(0);
-            $table->integer('prix_article')->default(0);
-            $table->integer ('prix_acc_adulte')->default(0);
-            $table->integer ('prix_acc_enfant')->default(0);
-            $table->integer('prix_nuit_supp')->default(0);
-            $table->integer('prix_single_supp')->default(0);
+            $table->integer('prix_eur_hebergement')->default(0);
+            $table->integer('prix_article_tun')->default(0);
+            $table->integer('prix_article_eur')->default(0);
+            $table->integer ('prix_acc_adulte_tun')->default(0);
+            $table->integer ('prix_acc_adulte_eur')->default(0);
+            $table->integer ('prix_acc_enfant_tun')->default(0);
+            $table->integer ('prix_acc_enfant_eur')->default(0);
+            $table->integer('prix_nuit_supp_tun')->default(0);
+            $table->integer('prix_nuit_supp_eur')->default(0);
+            $table->integer('prix_single_supp_tun')->default(0);
+            $table->integer('prix_single_supp_eur')->default(0);
             $table->timestamps();
         });
     }

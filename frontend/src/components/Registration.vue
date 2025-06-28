@@ -20,8 +20,8 @@
         <p class="error" v-if="errors.hebergement">{{ errors.hebergement }}</p>
 
         <ul class="tariffs" v-if="form.hebergement === 'yes'">
-          <li>Adult companion {{ prices.prix_acc_adulte }} {{ currency }}</li>
-          <li>Child companion {{ prices.prix_acc_enfant }} {{ currency }} </li>
+          <li>Adult companion {{ prices.prix_acc_adulte }} DT</li>
+          <li>Child companion {{ prices.prix_acc_enfant }} DT</li>
         </ul>
       </fieldset>
 
@@ -63,7 +63,7 @@
           No
         </label>
         <p class="error" v-if="errors.singleSupplement">{{ errors.singleSupplement }}</p>
-        <p class="mt-2 text-[#555]">Single supplement {{ prices.prix_single_supp }} {{ currency }} /night</p>
+        <p class="mt-2 text-[#555]">Single supplement {{ prices.prix_single_supp }} DT /night</p>
       </fieldset>
 
       <div class="input-group">
@@ -77,7 +77,7 @@
           :disabled="form.hebergement === 'no' || form.singleSupplement === 'no'"
         />
         <p class="error" v-if="errors.extraNights">{{ errors.extraNights }}</p>
-        <p>Extra night {{ prices.prix_nuit_supp }} {{ currency }} /night/person</p>
+        <p>Extra night {{ prices.prix_nuit_supp }} DT /night/person</p>
       </div>
     </form>
 
@@ -114,7 +114,6 @@ import cookieUtils from '@/utils/cookieUtils'
 const activeStep = 2;
 const router = useRouter();
 const formElement = ref(null);
-const currency = ref('');
 const prices = ref([]);
 
 const form = reactive({
@@ -210,8 +209,6 @@ onMounted(() => {
   }).catch(error => {
     console.error('Error fetching Price:', error)
   })
-  let formType = localStorage.getItem("form_type");
-  currency.value = formType === 'tunisian' ? 'DT' : '€';
 });
 
 watch(
