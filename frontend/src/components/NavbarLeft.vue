@@ -40,7 +40,7 @@
 
       <!-- Nouvel item "Questions du contact" -->
       <router-link to="/admin/contact-question" custom v-slot="{ navigate }">
-        <li :class="{ active: selected === 'ContactQuestion' }" @click="handleNavigation('ContactQuestion', navigate)">
+        <li :class="{ active: selected === 'ContactQuestion' }" @click="handleNavigationContact_Notif('ContactQuestion', navigate)">
           <span class="icon"><i class="fas fa-question-circle"></i></span>
           <span class="text">Questions du contact</span>
         </li>
@@ -85,6 +85,12 @@ const handleNavigation = (item, navigate = null) => {
 
   select(item)
   if (navigate) {
+    navigate()
+  }
+}
+const handleNavigationContact_Notif=(item,navigate=null)=>{
+  select(item)
+  if(navigate){
     navigate()
   }
 }

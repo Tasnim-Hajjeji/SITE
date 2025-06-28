@@ -92,9 +92,10 @@
           </div>
           <!-- PDF upload field -->
           <div class="file-upload">
-            <label for="sponsor-dossier" class="block mb-1 text-xs text-gray-500 font-medium">Dossier Sponsoring (PDF):</label>
+            <label for="sponsor-dossier" class="block mb-1 text-xs text-gray-500 font-medium">Dossier Sponsoring
+              (PDF):</label>
             <div class="relative w-[95%]">
-              <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelected" required
+              <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelectedSponsor" required
                 class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
               <div
                 class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
@@ -102,11 +103,28 @@
                 <i class="fas fa-download text-gray-600"></i>
               </div>
             </div>
-            <p v-if="pdfFileName" class="mt-1 text-sm text-gray-600">{{ pdfFileName }}</p>
+            <p v-if="pdfFileNameSponsor" class="mt-1 text-sm text-gray-600">{{ pdfFileNameSponsor }}</p>
+          </div>
+          <div class="file-upload">
+            <label for="sponsor-dossier" class="block mb-1 text-xs text-gray-500 font-medium">Call For Paper
+              (PDF):</label>
+            <div class="relative w-[95%]">
+              <input id="sponsor-dossier" type="file" accept=".pdf" @change="onPdfSelectedCall" required
+                class="w-full p-2 border border-gray-300 rounded-lg opacity-0 absolute z-10 cursor-pointer" />
+              <div
+                class="w-full p-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between cursor-pointer">
+                <span class="text-gray-600">Choisir un fichier</span>
+                <i class="fas fa-download text-gray-600"></i>
+              </div>
+            </div>
+            <p v-if="pdfFileNameCall" class="mt-1 text-sm text-gray-600">{{ pdfFileNameCall }}</p>
           </div>
           <div class="modal-actions flex justify-end gap-2 mt-6">
-            <button type="submit" class="add-btn bg-gradient-to-r mt-4 from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">Ajouter</button>
-            <button type="button" class="cancel-btn bg-gradient-to-r mt-4 from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out" @click="closeModal">Annuler</button>
+            <button type="submit"
+              class="add-btn bg-gradient-to-r mt-4 from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">Ajouter</button>
+            <button type="button"
+              class="cancel-btn bg-gradient-to-r mt-4 from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
+              @click="closeModal">Annuler</button>
           </div>
         </form>
       </div>
@@ -124,7 +142,8 @@ const showModal = ref(false);
 const isLoading = ref(true);
 const error = ref(null);
 const editions = ref([]);
-const pdfFileName = ref('');
+const pdfFileNameSponsor = ref('');
+const pdfFileNameCall = ref('');
 
 const newEdition = ref({
   name: '',
@@ -178,7 +197,7 @@ const getEditionStatus = (edition) => {
 const formatDateRange = (startDate, endDate) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
-  
+
   // Same month and year
   if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
     return `${start.getDate()} - ${end.getDate()} ${frenchMonths[start.getMonth()]} ${start.getFullYear()}`;
@@ -192,20 +211,34 @@ const formatDateRange = (startDate, endDate) => {
 };
 
 // Handle PDF selection
-const onPdfSelected = (event) => {
+const onPdfSelectedSponsor = (event) => {
   const file = event.target.files[0];
   if (file) {
     if (file.type === 'application/pdf') {
       newEdition.value.dossier_sponso = file;
-      pdfFileName.value = file.name;
+      pdfFileNameSponsor.value = file.name;
     } else {
       error.value = 'Veuillez sélectionner un fichier PDF';
       event.target.value = ''; // Reset the input
-      pdfFileName.value = '';
+      pdfFileNameSponsor.value = '';
     }
   }
 };
 
+const onPdfSelectedCall = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    if (file.type === 'application/pdf') {
+      newEdition.value.call_for_paper = file;
+      pdfFileNameCall.value = file.name;
+      console.log("call for paper",pdfFileNameCall.value);
+    } else {
+      error.value = 'Veuillez sélectionner un fichier PDF';
+      event.target.value = ''; // Reset the input
+      pdfFileNameCall.value = '';
+    }
+  }
+};
 // Add new edition
 const addEdition = async () => {
   try {
@@ -216,11 +249,17 @@ const addEdition = async () => {
     formData.append('start_date', newEdition.value.start_date);
     formData.append('end_date', newEdition.value.end_date);
     formData.append('place', newEdition.value.place);
-    
+
     if (newEdition.value.dossier_sponso) {
       formData.append('dossier_sponso', newEdition.value.dossier_sponso);
     }
-    console.log('Form Data:', formData);
+    if (newEdition.value.call_for_paper) {
+      formData.append('callForPaper', newEdition.value.call_for_paper);
+    }
+    console.log('Form Data:');
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
     const response = await EditionService.createEdition(formData);
     editions.value.unshift(response.data);
     closeModal();
@@ -237,7 +276,9 @@ const selectEdition = (editionId) => {
 
 const closeModal = () => {
   showModal.value = false;
-  pdfFileName.value = '';
+  pdfFileNameSponsor.value = '';
+  pdfFileNameCall.value = '';
+
   newEdition.value = {
     name: '',
     description_fr: '',
@@ -245,7 +286,8 @@ const closeModal = () => {
     start_date: '',
     end_date: '',
     place: '',
-    dossier_sponso: null
+    dossier_sponso: null,
+    call_for_paper: null
   };
 };
 
@@ -441,8 +483,9 @@ const getRandomConferenceImage = () => {
   justify-content: center;
   align-items: center;
   z-index: 999;
-  
+
 }
+
 .modal-content h3 {
   font-size: 1.3rem;
   margin-bottom: 1rem;
@@ -468,6 +511,7 @@ const getRandomConferenceImage = () => {
     opacity: 0;
     transform: scale(0.85);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -599,6 +643,7 @@ const getRandomConferenceImage = () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
