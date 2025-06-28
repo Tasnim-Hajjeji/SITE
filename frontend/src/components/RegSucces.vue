@@ -166,9 +166,7 @@ function form_request(formData){
 }
 
 function handleReturnHome() {
-  localStorage.removeItem('stranger_form')
-  localStorage.removeItem('tunisian_form')
-  localStorage.removeItem('accommodation_form')
+  localStorage.clear()
   router.push('/')
 }
 
