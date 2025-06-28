@@ -2,7 +2,7 @@
   <section class="editions-section">
     <!-- Header -->
     <div class="header">
-      <h2>Éditions</h2>
+      <h2>Editions</h2>
       <button class="new-edition-btn" @click="showModal = true">
         <i class="fas fa-plus text-white"></i> Nouvelle Édition
       </button>
@@ -321,6 +321,7 @@ const getRandomConferenceImage = () => {
 
 .header h2 {
   font-size: 1.7rem;
+  font-weight: bold;
   color: #265985;
 }
 

@@ -52,6 +52,13 @@
           <span class="text">Comités</span>
         </li>
       </router-link>
+      <router-link to="/admin/notification" custom v-slot="{ navigate }">
+        <li :class="{ active: selected === 'Notifications' }" @click="handleNavigation('Notifications', navigate)">
+          <span class="icon"><i class="fas fa-bell"></i></span>
+          <span class="text">Notifications</span>
+        </li>
+      </router-link>
+
     </ul>
   </nav>
 </template>
@@ -157,7 +164,7 @@ li.active {
   font-size: 1.2rem;
   display: flex;
   align-items: center;
-  color:white;
+  color: white;
 }
 
 .icon i {

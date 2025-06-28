@@ -353,11 +353,11 @@ const updateEdition = async () => {
 
 .conference-card {
   font-family: 'Segoe UI', sans-serif;
-  margin-top: 80px;
-  max-width: 1000px;
+  max-width: 1130px;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+
 }
 
 @keyframes fadeIn {
