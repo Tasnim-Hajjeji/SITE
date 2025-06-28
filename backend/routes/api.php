@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommitteeMemberController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EditionController;
 use App\Http\Controllers\ImportantDateController;
@@ -153,3 +154,12 @@ Route::prefix('notifications')->group(function () {
 
 // Global Search Route
 Route::get('/global-search', [GlobalSearchController::class, 'search']);   
+
+//Contact Routes
+Route::prefix('contacts')->group(function(){
+    Route::get('/',[ContactController::class,'index']);
+    Route::get('/{id}',[ContactController::class,'show']);
+    Route::post('/',[ContactController::class,'store']);
+    Route::put('/{id}',[ContactController::class,'update']);
+    Route::delete('/{id}',[ContactController::class,'destroy']);
+});
