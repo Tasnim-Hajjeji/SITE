@@ -4,13 +4,13 @@
       <h1 class="title">Articles</h1>
       <div class="action-buttons">
         <button class="add-btn" @click="showModal = true">
-          <i class="fas fa-plus"></i> Add
+          <i class="fas fa-plus" style="font-weight: bold;"></i> Ajouter un article 
         </button>
       </div>
     </div>
 
-    <div v-if="isLoading" class="loading-message">Loading articles...</div>
-    <div v-else-if="articles.length === 0" class="empty-message">No articles available.</div>
+    <div v-if="isLoading" class="loading-message">Chargement des articles...</div>
+    <div v-else-if="articles.length === 0" class="empty-message">Aucun article disponible.</div>
     <div v-else class="article-list">
       <div class="article-card" v-for="(article) in articles" :key="article.id">
         <div class="article-name" @click="openPDF(getPdfUrl(article.url))">
@@ -26,27 +26,27 @@
     <transition name="fade">
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add Article (PDF)</h3>
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un article (PDF)</h3>
           <form @submit.prevent="addArticle" class="space-y-4">
             <div>
-              <label for="name_en" class="block mb-1 text-xs text-gray-500 font-medium">English Name:</label>
+              <label for="name_en" class="block mb-1 text-xs text-gray-500 font-medium">Nom en anglais :</label>
               <input id="name_en" v-model="newArticle.name_en" type="text"
                 class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div>
-              <label for="name_fr" class="block mb-1 text-xs text-gray-500 font-medium">French Name:</label>
+              <label for="name_fr" class="block mb-1 text-xs text-gray-500 font-medium">Nom en français :</label>
               <input id="name_fr" v-model="newArticle.name_fr" type="text"
                 class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div>
-              <label for="pdf-upload" class="block mb-1 text-xs text-gray-500 font-medium">Select PDF:</label>
+              <label for="pdf-upload" class="block mb-1 text-xs text-gray-500 font-medium">Sélectionner un PDF :</label>
               <input id="pdf-upload" type="file" accept="application/pdf" @change="handlePDFUpload"
                 class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             </div>
             <div class="modal-actions flex justify-end gap-2 mt-6">
-              <button type="button" class="cancel-btn" @click="showModal = false">Cancel</button>
+              <button type="button" class="cancel-btn" @click="showModal = false">Annuler</button>
               <button type="submit" class="add-btn" :disabled="isSubmitting">
-                {{ isSubmitting ? 'Adding...' : 'Add' }}
+                {{ isSubmitting ? 'Ajout en cours...' : 'Ajouter' }}
               </button>
             </div>
           </form>
@@ -58,15 +58,14 @@
     <transition name="fade">
       <div v-if="showDeleteModal" class="modal-overlay">
         <div class="modal-content">
-          <h3 class="text-xl font-bold mb-4 text-center">Confirm Deletion</h3>
-          <p class="text-gray-600 mb-4">Are you sure you want to delete the article "{{ selectedArticleName }}"? This
-            action is irreversible.</p>
+          <h3 class="text-xl font-bold mb-4 text-center">Confirmer la suppression</h3>
+          <p class="text-gray-600 mb-4">Êtes-vous sûr de vouloir supprimer l'article "{{ selectedArticleName }}" ? Cette action est irréversible.</p>
           <div class="modal-actions flex justify-end gap-2 mt-6">
             <button type="button" class="cancel-btn mt-4" @click="showDeleteModal = false; selectedArticleId = null;">
-              Cancel
+              Annuler
             </button>
             <button type="button" class="delete-btn mt-4" @click="deleteArticle" :disabled="isDeleting">
-              {{ isDeleting ? 'Deleting...' : 'Delete' }}
+              {{ isDeleting ? 'Suppression en cours...' : 'Supprimer' }}
             </button>
           </div>
         </div>
@@ -74,6 +73,7 @@
     </transition>
   </section>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';

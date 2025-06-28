@@ -4,7 +4,7 @@
     <div v-if="!selectedEditionId">
         <EditionsList />
     </div>
-    <div v-else>
+    <div v-else><br>
         <div class="edition-header">
             <div class="title-with-back">
                 <button class="back-arrow" @click="goBackToEditions" title="Return to editions">

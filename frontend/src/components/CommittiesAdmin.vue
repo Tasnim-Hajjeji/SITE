@@ -382,7 +382,7 @@ export default {
     async fetchMembers() {
       this.loading = true;
       try {
-        const response = await CommitteeMemberService.getAllCommitteeMembers();
+        const response = await CommitteeMemberService.getMembersByEditionAndCommittee(this.selectedEditionId);
         this.members = response.data;
       } catch (error) {
         console.error("Error fetching committee members:", error);

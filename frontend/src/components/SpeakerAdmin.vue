@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h1 class="title">Orateurs {{ selectedEditionName }}</h1>
+    <h1 class="title">Intervenants {{ selectedEditionName }}</h1>
 
     <!-- Actions -->
     <div class="actions">
       <button class="btn add" @click="openAddModal">
-        <span class="plus">+</span> Ajouter un Orateur
+        <span class="plus">+</span> Ajouter un Intervenant
       </button>
 
       <!-- Dropdown -->

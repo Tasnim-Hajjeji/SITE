@@ -33,6 +33,7 @@ class EditionController extends Controller
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'dossier_sponso' => 'required|file|mimes:pdf|max:10240',
+            'callForPaper' => 'required|file|mimes:pdf|max:10240',
         ]);
 
         if ($validator->fails()) {
@@ -41,6 +42,7 @@ class EditionController extends Controller
 
         // Traitement du dossier sponsor
         $dossierPath = $request->file('dossier_sponso')->store('dossiers_sponso', 'public');
+        $call_for_paper = $request->file('callForPaper')->store('call_for_paper', 'public');
 
         // Traitement des images
         $imagesUrls = [];
@@ -60,6 +62,7 @@ class EditionController extends Controller
             'place' => $request->place,
             'dossier_sponso' => $dossierPath,
             'images_url' => $imagesUrls,
+            'call_for_paper' => $call_for_paper,
         ]);
 
         return response()->json($edition, 201);
@@ -91,6 +94,8 @@ class EditionController extends Controller
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'dossier_sponso' => 'sometimes|file|mimes:pdf|max:10240',
+            'callForPaper' => 'sometimes|file|mimes:pdf|max:10240',
+
         ]);
 
         if ($validator->fails()) {
@@ -114,7 +119,13 @@ class EditionController extends Controller
             }
             $data['dossier_sponso'] = $request->file('dossier_sponso')->store('dossiers_sponso', 'public');
         }
-
+        if ($request->hasFile('callForPaper')) {
+            // Suppression de l'ancien fichier
+            if ($edition->call_for_paper) {
+                Storage::disk('public')->delete($edition->call_for_paper);
+            }
+            $data['call_for_paper'] = $request->file('callForPaper')->store('call_for_paper', 'public');
+        }
         // Gestion des images
         if ($request->hasFile('images')) {
             // Suppression des anciennes images
@@ -184,7 +195,7 @@ class EditionController extends Controller
 
         foreach ($request->file('images') as $image) {
             $path = $image->store('editions', 'public');
-            $newImages[] =$path;
+            $newImages[] = $path;
         }
 
         $edition->update([

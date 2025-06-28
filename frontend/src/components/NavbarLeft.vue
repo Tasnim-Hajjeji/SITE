@@ -19,14 +19,14 @@
       <router-link to="/admin/partnair" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Partenaires' }" @click="handleNavigation('Partenaires', navigate)">
           <span class="icon"><i class="fas fa-users"></i></span>
-          <span class="text">Partners</span>
+          <span class="text">partenaires</span>
         </li>
       </router-link>
 
       <router-link to="/admin/speaker" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Intervenants' }" @click="handleNavigation('Intervenants', navigate)">
           <span class="icon"><i class="fas fa-chalkboard-teacher"></i></span>
-          <span class="text">Speakers</span>
+          <span class="text">Intervenants</span>
         </li>
       </router-link>
 
@@ -38,12 +38,27 @@
         </li>
       </router-link>
 
+      <!-- Nouvel item "Questions du contact" -->
+      <router-link to="/admin/contact-question" custom v-slot="{ navigate }">
+        <li :class="{ active: selected === 'ContactQuestion' }" @click="handleNavigationContact_Notif('ContactQuestion', navigate)">
+          <span class="icon"><i class="fas fa-question-circle"></i></span>
+          <span class="text">Questions du contact</span>
+        </li>
+      </router-link>
+
       <router-link to="/admin/committies" custom v-slot="{ navigate }">
         <li :class="{ active: selected === 'Committies' }" @click="handleNavigation('Committies', navigate)">
           <span class="icon"><i class="fas fa-comments"></i></span>
-          <span class="text">Committies</span>
+          <span class="text">Comités</span>
         </li>
       </router-link>
+      <router-link to="/admin/notification" custom v-slot="{ navigate }">
+        <li :class="{ active: selected === 'Notifications' }" @click="handleNavigation('Notifications', navigate)">
+          <span class="icon"><i class="fas fa-bell"></i></span>
+          <span class="text">Notifications</span>
+        </li>
+      </router-link>
+
     </ul>
   </nav>
 </template>
@@ -77,6 +92,12 @@ const handleNavigation = (item, navigate = null) => {
 
   select(item)
   if (navigate) {
+    navigate()
+  }
+}
+const handleNavigationContact_Notif=(item,navigate=null)=>{
+  select(item)
+  if(navigate){
     navigate()
   }
 }
@@ -143,11 +164,11 @@ li.active {
   font-size: 1.2rem;
   display: flex;
   align-items: center;
-  color: #265985;
+  color: white;
 }
 
 .icon i {
-  color: #265985;
+  color: white;
 }
 
 .text {
