@@ -22,6 +22,7 @@ import PageSponsorvue from '@/views/PageSponsorvue.vue';
 import SponsorAdminvue from '@/views/SponsorAdminvue.vue';
 import ContactUs from '@/views/ContactUs.vue';
 import contQuestionvue from '@/views/contQuestionvue.vue';
+import notificationAdminvue from '@/views/notificationAdminvue.vue';
 
 
 const routes = [
@@ -177,6 +178,12 @@ const routes = [
     path: '/admin/contact-question',
     name: 'ContactQuestion',
     component: contQuestionvue, 
+    meta: { layout: 'admin', requiresAuth: true }
+  },
+  {
+    path: '/admin/notification',
+    name: 'NotificationAdmin',
+    component: notificationAdminvue,
     meta: { layout: 'admin', requiresAuth: true }
   }
 
