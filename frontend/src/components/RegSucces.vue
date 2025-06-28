@@ -125,6 +125,7 @@ onMounted(() => {
   fetchCountryName(formData.country)
 
   const blobUrl = localStorage.getItem("recu_blob_url")
+  if(blobUrl){
   fetch(blobUrl).then(res => res.blob()).then(blob => {
     const file = new File([blob],"receipt_file",{type: blob.type})
     const form_req = form_request(formData)
@@ -133,7 +134,15 @@ onMounted(() => {
     }).catch((error) => {
       console.error('Error creating participant:', error);
     });
-  })
+  })}
+  else{
+    const form_req = form_request(formData)
+    ParticipantService.createParticipant(form_req).then((response) => {
+      console.log("SuccessFul !!" + response.data)
+    }).catch((error) => {
+      console.error('Error creating participant:', error);
+    });
+  }
 })
 
 function form_request(formData){
@@ -157,9 +166,7 @@ function form_request(formData){
 }
 
 function handleReturnHome() {
-  localStorage.removeItem('stranger_form')
-  localStorage.removeItem('tunisian_form')
-  localStorage.removeItem('accommodation_form')
+  localStorage.clear()
   router.push('/')
 }
 

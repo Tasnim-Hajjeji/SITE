@@ -1,3 +1,4 @@
+```vue
 <template>
   <div class="container">
     <h1 class="title">Intervenants {{ selectedEditionName }}</h1>
@@ -72,7 +73,18 @@
           </div>
           <div>
             <label for="code_pays_input" class="block mb-1 text-xs text-gray-500 font-medium">Code du pays</label>
-            <input id="code_pays_input" v-model="newSpeaker.code_pays" placeholder="Code du pays (ex. TN)" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+            <select id="code_pays_input" v-model="newSpeaker.code_pays" required class="w-[95%] p-2 border border-gray-300 rounded-lg">
+              <option value="TN">TN (Tunisia)</option>
+              <option value="FR">FR (France)</option>
+              <option value="US">US (United States)</option>
+              <option value="GB">GB (United Kingdom)</option>
+              <option value="DE">DE (Germany)</option>
+              <option value="IT">IT (Italy)</option>
+              <option value="ES">ES (Spain)</option>
+              <option value="CA">CA (Canada)</option>
+              <option value="AU">AU (Australia)</option>
+              <option value="JP">JP (Japan)</option>
+            </select>
           </div>
           <div>
             <label for="image_input" class="block mb-1 text-xs text-gray-500 font-medium">Image</label>
@@ -124,7 +136,18 @@
           </div>
           <div>
             <label for="edit_code_pays_input" class="block mb-1 text-xs text-gray-500 font-medium">Code du pays</label>
-            <input id="edit_code_pays_input" v-model="editSpeaker.code_pays" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+            <select id="edit_code_pays_input" v-model="editSpeaker.code_pays" required class="w-[95%] p-2 border border-gray-300 rounded-lg">
+              <option value="TN">TN (Tunisia)</option>
+              <option value="FR">FR (France)</option>
+              <option value="US">US (United States)</option>
+              <option value="GB">GB (United Kingdom)</option>
+              <option value="DE">DE (Germany)</option>
+              <option value="IT">IT (Italy)</option>
+              <option value="ES">ES (Spain)</option>
+              <option value="CA">CA (Canada)</option>
+              <option value="AU">AU (Australia)</option>
+              <option value="JP">JP (Japan)</option>
+            </select>
           </div>
           <div>
             <label for="edit_image_input" class="block mb-1 text-xs text-gray-500 font-medium">Image</label>
@@ -532,7 +555,8 @@ export default {
 }
 
 .modal-content input,
-.modal-content textarea {
+.modal-content textarea,
+.modal-content select {
   width: 95%;
   margin-bottom: 10px;
   padding: 8px 14px;
@@ -542,7 +566,8 @@ export default {
 }
 
 .modal-content input:focus,
-.modal-content textarea:focus {
+.modal-content textarea:focus,
+.modal-content select:focus {
   border-color: #265985;
   outline: none;
 }
@@ -777,3 +802,4 @@ export default {
   }
 }
 </style>
+```
