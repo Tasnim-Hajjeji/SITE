@@ -88,9 +88,9 @@
     </div>
 
     <div class="nav-buttons">
-      <router-link to="/tunisian-form">
+      <a href="#" @click.prevent="backToPrevious()">
         <i class="fas fa-arrow-left"></i>
-      </router-link>
+      </a>
 
       <div class="dots">
         <span :class="{ active: activeStep === 1 }"></span>
@@ -178,8 +178,13 @@ function proceedIfValid() {
   }
 }
 
+function backToPrevious() {
+  localStorage.removeItem("accommodation_form");
+  router.go(-1);
+}
+
 onMounted(() => {
-  const saved = localStorage.getItem("site2025_accommodation_form");
+  const saved = localStorage.getItem("accommodation_form");
   if (saved) {
     Object.assign(form, JSON.parse(saved));
   }
@@ -188,7 +193,7 @@ onMounted(() => {
 watch(
   form,
   (newVal) => {
-    localStorage.setItem("site2025_accommodation_form", JSON.stringify(newVal));
+    localStorage.setItem("accommodation_form", JSON.stringify(newVal));
   },
   { deep: true }
 );

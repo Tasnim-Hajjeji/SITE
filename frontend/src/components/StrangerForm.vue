@@ -83,9 +83,9 @@
     </div>
 
     <div class="nav-buttons">
-      <router-link to="/profile-selection">
+      <a href="#" @click.prevent="backToPrevious()">
         <i class="fas fa-arrow-left"></i>
-      </router-link>
+      </a>
 
       <div class="dots">
         <span :class="{ active: activeStep === 1 }"></span>
@@ -202,8 +202,13 @@ function proceedIfValid() {
   }
 }
 
+function backToPrevious() {
+  localStorage.removeItem("stranger_form");
+  router.push('/profile-selection');
+}
+
 onMounted(() => {
-  const saved = localStorage.getItem('site2025_stranger_form')
+  const saved = localStorage.getItem('stranger_form')
   if (saved) {
     Object.assign(form, JSON.parse(saved))
   }
@@ -212,7 +217,7 @@ onMounted(() => {
 watch(
   form,
   (newVal) => {
-    localStorage.setItem('site2025_stranger_form', JSON.stringify(newVal))
+    localStorage.setItem('stranger_form', JSON.stringify(newVal))
   },
   { deep: true }
 )
@@ -257,7 +262,7 @@ watch(
 }
 
 .price {
-  margin-left: 0.5rem;
+  margin-left: 0.2rem;
   font-size: 1.5rem;
 }
 

@@ -96,7 +96,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import prizeService from '@/services/FormPrices';
+import priceService from '@/services/FormPrices';
 
 const prizes = ref([]);
 const showModal = ref(false);
@@ -144,7 +144,7 @@ onMounted(() => {
 async function fetchPrizes(editionId) {
   try {
     isLoading.value = true;
-    const response = await prizeService.getPrizesByEdition(editionId);
+    const response = await priceService.getPrizesByEdition(editionId);
     prizes.value = response;
   } catch (error) {
     console.error('Error fetching prizes:', error);
@@ -159,7 +159,7 @@ async function addPrize() {
     isSubmitting.value = true;
     form.value.edition_id = selectedEditionId.value;
 
-    const response = await prizeService.addPrize(form.value);
+    const response = await priceService.addPrize(form.value);
     prizes.value.push(response);
     resetForm();
   } catch (error) {
@@ -180,7 +180,7 @@ async function deletePrize() {
 
   try {
     isDeleting.value = true;
-    await prizeService.deletePrize(selectedPrizeId.value);
+    await priceService.deletePrize(selectedPrizeId.value);
     prizes.value = prizes.value.filter(prize => prize.id !== selectedPrizeId.value);
     showDeleteModal.value = false;
     selectedPrizeId.value = null;
@@ -202,7 +202,7 @@ function openUpdateModal(prize) {
 async function updatePrize() {
   try {
     isSubmitting.value = true;
-    const response = await prizeService.updatePrize(selectedPrizeId.value, form.value);
+    const response = await priceService.updatePrize(selectedPrizeId.value, form.value);
 
     const index = prizes.value.findIndex(p => p.id === selectedPrizeId.value);
     if (index !== -1) {

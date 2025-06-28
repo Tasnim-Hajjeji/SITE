@@ -7,7 +7,7 @@
     </h2>
 
     <div class="form-card">
-      <h3 class="card-title">Tunisian <span class="price">650 TND</span></h3>
+      <h3 class="card-title">Tunisian <span class="price">{{ tunisian_price }} TND</span></h3>
 
       <form class="registration-form" ref="formElement" novalidate>
         <div class="form-group">
@@ -70,9 +70,9 @@
     </div>
 
     <div class="nav-buttons">
-      <router-link to="/profile-selection">
+      <a href="#" @click.prevent="backToPrevious()">
         <i class="fas fa-arrow-left"></i>
-      </router-link>
+      </a>
 
       <div class="dots">
         <span :class="{ active: activeStep === 1 }"></span>
@@ -90,10 +90,13 @@
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import priceService from '@/services/FormPrices'
+import cookieUtils from '@/utils/cookieUtils'
 
 const activeStep = 1
 const router = useRouter()
 const formElement = ref(null)
+const tunisian_price = ref(0)
 
 const form = reactive({
   firstName: '',
@@ -180,14 +183,26 @@ function proceedIfValid() {
   }
 }
 
+function backToPrevious() {
+  localStorage.removeItem("tunisian_form");
+  router.push('/profile-selection');
+}
+
 // Save to localStorage
 onMounted(() => {
-  const saved = localStorage.getItem('site2025_form')
+  const saved = localStorage.getItem('tunisian_form')
   if (saved) Object.assign(form, JSON.parse(saved))
+  let editionId = cookieUtils.getCookie('editionId')
+  priceService.getTunisianPrice().then(response => {
+    let data = response.data
+    tunisian_price.value = data.prix_tun
+  }).catch(error => {
+    console.error('Error fetching Tunisian price:', error)
+  })
 })
 
 watch(form, (newVal) => {
-  localStorage.setItem('site2025_form', JSON.stringify(newVal))
+  localStorage.setItem('tunisian_form', JSON.stringify(newVal))
 }, { deep: true })
 </script>
 
@@ -231,7 +246,7 @@ watch(form, (newVal) => {
 }
 
 .price {
-  margin-left: 0.5rem;
+  margin-left: 0.2rem;
   font-size: 1.5rem;
 }
 

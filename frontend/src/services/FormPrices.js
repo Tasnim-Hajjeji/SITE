@@ -1,7 +1,7 @@
 import axios from '@/plugins/axios';
 
 
-const prizeService = {
+const priceService = {
     // Get all prizes
     async getPrizes() {
         try {
@@ -58,4 +58,4 @@ const prizeService = {
     }
 };
 
-export default prizeService;
+export default priceService;
