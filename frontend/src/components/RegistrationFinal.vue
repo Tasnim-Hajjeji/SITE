@@ -22,9 +22,9 @@
           </select>
         </div>
 
-        <div class="input-group">
+        <div :class="['input-group', {disabled: paymentMethod === 'Cash'}]">
           <label class="fixed-label">Proof of Payment *</label>
-          <input type="file" @change="handleFileUpload($event)" />
+          <input type="file" @change="handleFileUpload($event)" :disabled="paymentMethod === 'Cash'" />
         </div>
 
           <button type="submit" class="submit-btn" @click.prevent="postFile()">Submit</button>
@@ -131,8 +131,8 @@ function postFile(){
     const file = recu_paie.value
     const blobUrl = URL.createObjectURL(file)
     localStorage.setItem("recu_blob_url", blobUrl)
-    router.push("/reg-success");
   }
+  router.push("/reg-success");
 }
 
 function calculateTotal() {
@@ -226,6 +226,11 @@ function calculateTotal() {
 .input-group {
   margin-bottom: 1.25rem;
   text-align: left;
+}
+
+.input-group.disabled{
+  pointer-events: none;
+  color: #666;
 }
 
 .input-group label {
