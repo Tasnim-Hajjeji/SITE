@@ -1,3 +1,4 @@
+```vue
 <template>
   <div class="container">
     <h1 class="title">Les Sponsors de {{ this.selectedEditionName }}</h1>
@@ -56,9 +57,8 @@
           <button class="confirm" @click="updateStatus(sponsor.id, 'confirmed')">Confirmer</button>
         </div>
 
-        <div class="status-badge" :class="{ confirmed: sponsor.etat === 'confirmed', pending: sponsor.etat === 'pending', rejected: sponsor.etat === 'rejected' }">
+        <div v-if="sponsor.etat !== 'pending'" class="status-badge" :class="{ confirmed: sponsor.etat === 'confirmed', rejected: sponsor.etat === 'rejected' }">
           <span v-if="sponsor.etat === 'confirmed'" class="badge-content"><i class="fas fa-check-circle"></i> Sponsor</span>
-          <span v-else-if="sponsor.etat === 'pending'" class="badge-content"><i class="fas fa-question-circle"></i> En attente</span>
           <span v-else-if="sponsor.etat === 'rejected'" class="badge-content"><i class="fas fa-times-circle"></i> Rejeté</span>
         </div>
       </div>
@@ -811,3 +811,4 @@ export default {
   }
 }
 </style>
+```
