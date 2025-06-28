@@ -375,7 +375,7 @@ export default {
     async fetchMembers() {
       this.loading = true;
       try {
-        const response = await CommitteeMemberService.getMembersByEditionAndCommittee(this.selectedEditionId);
+        const response = await CommitteeMemberService.getAllCommitteeMembersByEdition(this.selectedEditionId);
         this.members = response.data;
       } catch (error) {
         console.error("Error fetching committee members:", error);
@@ -494,6 +494,7 @@ export default {
         this.members.push(response.data);
         this.showToast("Member added successfully");
         this.closeAddModal();
+        this.fetchMembers();
       } catch (error) {
         console.error("Error adding member:", error);
 
