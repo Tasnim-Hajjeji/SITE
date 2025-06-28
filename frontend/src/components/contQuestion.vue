@@ -37,9 +37,7 @@
             </div>
           </div>
           <div class="tools">
-            <button class="icon-btn" @click="modifierQuestion(index)">
-              <i class="fas fa-edit"></i>
-            </button>
+           
             <button class="icon-btn" @click="supprimerQuestion(index)">
               <i class="fas fa-trash"></i>
             </button>
@@ -108,11 +106,7 @@
         }
         this.reinitialiserFormulaire();
       },
-      modifierQuestion(index) {
-        this.form = { ...this.questions[index] };
-        this.editIndex = index;
-        this.showModal = true;
-      },
+     
       supprimerQuestion(index) {
         this.questions.splice(index, 1);
       },
