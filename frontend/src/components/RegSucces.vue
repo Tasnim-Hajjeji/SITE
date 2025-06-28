@@ -84,6 +84,8 @@
 </template>
 
 <script setup>
+import ParticipantService from '@/services/ParticipantService'
+import cookieUtils from '@/utils/cookieUtils'
 import { reactive, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import jsPDF from 'jspdf'
@@ -121,7 +123,38 @@ onMounted(() => {
   formData.totalPrice = totalPrice
   formData.paymentMethod = localStorage.getItem("paymentMethod") || ''
   fetchCountryName(formData.country)
+
+  const blobUrl = localStorage.getItem("recu_blob_url")
+  fetch(blobUrl).then(res => res.blob()).then(blob => {
+    const file = new File([blob],"receipt_file",{type: blob.type})
+    const form_req = form_request(formData)
+    ParticipantService.createParticipant(form_req, file).then((response) => {
+      console.log("SuccessFul !!" + response.data)
+    }).catch((error) => {
+      console.error('Error creating participant:', error);
+    });
+  })
 })
+
+function form_request(formData){
+  const form = new FormData();
+  form.append("nom",formData.lastName); form.append("prenom", formData.firstName);
+  form.append("email", formData.email); form.append("fonction", formData.profession);
+  form.append("tel", formData.phone); form.append("pays", formData.country);
+  form.append("est_tunisien", formData.country === "tn" ? true : false);
+  form.append("participation", formData.participation);
+  form.append("accomodation", formData.hebergement === "yes" ? true : false)
+  form.append("etablissement", formData.institution);
+  form.append("num_enfant", formData.childCompanions);
+  form.append("num_adulte", formData.adultCompanions);
+  form.append("supp_single", formData.singleSupplement === "no" ? false : true)
+  form.append("supp_nuit", formData.extraNights);
+  form.append("prix_total", formData.totalPrice);
+  let edition = cookieUtils.getCookie("editionId");
+  form.append("edition_id", (typeof edition) === "string" ? parseInt(edition,10) : edition );
+  form.append("methode_paie", formData.paymentMethod);
+  return form;
+}
 
 function handleReturnHome() {
   localStorage.removeItem('stranger_form')

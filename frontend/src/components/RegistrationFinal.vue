@@ -24,12 +24,10 @@
 
         <div class="input-group">
           <label class="fixed-label">Proof of Payment *</label>
-          <input type="file" />
+          <input type="file" @change="handleFileUpload($event)" />
         </div>
 
-        <router-link to="/reg-success">
-          <button type="submit" class="submit-btn">Submit</button>
-        </router-link>
+          <button type="submit" class="submit-btn" @click.prevent="postFile()">Submit</button>
       </div>
     </form>
 
@@ -57,6 +55,7 @@
 
 <script setup>
 import { reactive, onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import priceService from '@/services/FormPrices'
 import cookieUtils from '@/utils/cookieUtils'
 
@@ -64,6 +63,8 @@ const activeStep = 3
 const paymentMethod = ref('')
 const prices = ref({})
 const totalPrice = ref(0)
+const recu_paie = ref(null)
+const router = useRouter()
 
 const formData = reactive({
   hebergement: '',
@@ -120,6 +121,19 @@ watch(
   },
   { deep: true }
 );
+
+function handleFileUpload(event){
+  recu_paie.value = event.target.files[0]
+}
+
+function postFile(){
+  if(recu_paie.value){
+    const file = recu_paie.value
+    const blobUrl = URL.createObjectURL(file)
+    localStorage.setItem("recu_blob_url", blobUrl)
+    router.push("/reg-success");
+  }
+}
 
 function calculateTotal() {
   let price = prices.value;
