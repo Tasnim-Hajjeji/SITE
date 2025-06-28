@@ -22,7 +22,7 @@ const messages = {
             buttons: {
                 importantDates: 'Important dates',
                 articleSubmission: 'Article submission',
-                articleTemplate: 'Article template',
+                callForPaper: 'Call for Paper',
                 registration: 'Registration'
             },
             countdown: {
@@ -93,7 +93,7 @@ const messages = {
             carousel_subtitle_2: ' Relive the highlights through photos and memories.',
             button: 'See More'
         },
-        prevTimeLine :{
+        prevTimeLine: {
             title: 'The Program'
         },
         partners: {
@@ -145,7 +145,7 @@ const messages = {
             buttons: {
                 importantDates: 'Dates importantes',
                 articleSubmission: 'Soumission d\'article',
-                articleTemplate: 'Modèle d\'article',
+                callForPaper: 'Appel à Papiers',
                 registration: 'Inscription'
             },
             countdown: {
@@ -216,7 +216,7 @@ const messages = {
             carousel_subtitle_2: 'Revivez les moments forts à travers des photos et des souvenirs.',
             button: 'Voir plus'
         },
-        prevTimeLine :{
+        prevTimeLine: {
             title: 'Le Programme'
         },
         partners: {
