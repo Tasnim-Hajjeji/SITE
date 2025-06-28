@@ -26,18 +26,22 @@ export default {
    * @returns {Promise} Axios response
    */
   createParticipant(participantData, recuPaie = null) {
-    const formData = new FormData();
+    var formData;
     
-    // Append all participant data to formData
+    if (participantData instanceof FormData) {
+    formData = participantData;
+  } else {
+    formData = new FormData();
     Object.keys(participantData).forEach(key => {
       formData.append(key, participantData[key]);
     });
+  }
     
     // Append the file if it exists
     if (recuPaie) {
       formData.append('recu_paie', recuPaie);
     }
-
+    console.log(formData)
     return axios.post(`/participants`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'

@@ -14,7 +14,7 @@ use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\KeynoteController;
 use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\NotificationController;
-
+use App\Models\CommitteeMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -94,6 +94,7 @@ Route::prefix('committee-members')->group(function () {
     Route::post('/', [CommitteeMemberController::class, 'store']);
     Route::post('/{id}', [CommitteeMemberController::class, 'update']);
     Route::delete('/{id}', [CommitteeMemberController::class, 'destroy']);
+    Route::get('/edition/{id}',[CommitteeMemberController::class,'getMembersByEdition']);
 });
 
 // Document Routes

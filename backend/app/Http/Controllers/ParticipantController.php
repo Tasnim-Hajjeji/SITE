@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Mail\ParticipantRejectedMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class ParticipantController extends Controller
 {
@@ -23,44 +24,54 @@ class ParticipantController extends Controller
      * Store a newly created participant in storage.
      */
     public function store(Request $request)
-    {
-        try {
+{
+    try {
+        // Log incoming request for debug
+        Log::info('Request all:', $request->all());
+        Log::info('Files:', $request->file());
+        Log::info('Has File recu_paie?', ['has_file' => $request->hasFile('recu_paie')]);
 
-            $validated = $request->validate([
-                'nom' => 'required|string|max:255',
-                'prenom' => 'required|string|max:255',
-                'email' => 'required|email|unique:participant,email',
-                'fonction' => 'required|string|max:255',
-                'tel' => 'required|string|max:255',
-                'pays' => 'required|string|max:255',
-                'est_tunisien' => 'required|in:true,false,1,0',
-                'participation' => 'required|string|max:255',
-                'accomodation' => 'nullable|in:true,false,1,0',
-                'etablissement' => 'required|string|max:255',
-                'num_enfant' => 'required|integer|min:0',
-                'num_adulte' => 'required|integer|min:0',
-                'supp_single' => 'required|in:true,false,1,0',
-                'supp_nuit' => 'required|integer|min:0',
-                'prix_total' => 'required|integer|min:0',
-                'edition_id' => 'required|exists:edition,id',
-                'methode_paie' => 'required|string|max:255',
-                'recu_paie' => 'required|file',
-            ]);
-            unset($validated['recu_paie']); // Remove recu_paie from validation array
-            if ($request->hasFile('recu_paie')) {
-                $path = $request->file('recu_paie')->store('recu_paie', 'public');
-                $validated['recu_paie'] = $path;
-            }
-            $validated['est_tunisien'] = filter_var($validated['est_tunisien'], FILTER_VALIDATE_BOOLEAN);
-            $validated['supp_single'] = filter_var($validated['supp_single'], FILTER_VALIDATE_BOOLEAN);
-            $validated['accomodation'] = filter_var($validated['accomodation'], FILTER_VALIDATE_BOOLEAN);
-            $participant = Participant::create($validated);
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|email|unique:participant,email',
+            'fonction' => 'required|string|max:255',
+            'tel' => 'required|string|max:255',
+            'pays' => 'required|string|max:255',
+            'est_tunisien' => 'required|in:true,false,1,0',
+            'participation' => 'required|string|max:255',
+            'accomodation' => 'nullable|in:true,false,1,0',
+            'etablissement' => 'required|string|max:255',
+            'num_enfant' => 'required|integer|min:0',
+            'num_adulte' => 'required|integer|min:0',
+            'supp_single' => 'required|in:true,false,1,0',
+            'supp_nuit' => 'required|integer|min:0',
+            'prix_total' => 'required|integer|min:0',
+            'edition_id' => 'required|exists:edition,id',
+            'methode_paie' => 'required|string|max:255',
+            'recu_paie' => 'required|file'
+        ]);
 
-            return response()->json($participant, 201);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error creating participant: ' . $e->getMessage()], 500);
+        if ($request->hasFile('recu_paie')) {
+            $path = $request->file('recu_paie')->store('recu_paie', 'public');
+            $validated['recu_paie'] = $path;
+        } else {
+            return response()->json(['error' => 'No file was uploaded.'], 400);
         }
+        $validated['est_tunisien'] = filter_var($validated['est_tunisien'], FILTER_VALIDATE_BOOLEAN);
+        $validated['supp_single'] = filter_var($validated['supp_single'], FILTER_VALIDATE_BOOLEAN);
+        $validated['accomodation'] = filter_var($validated['accomodation'], FILTER_VALIDATE_BOOLEAN);
+        $participant = Participant::create($validated);
+
+        return response()->json($participant, 201);
+
+    } catch (\Illuminate\Validation\ValidationException $ve) {
+        return response()->json(['errors' => $ve->errors()], 422);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error creating participant: ' . $e->getMessage()], 500);
     }
+}
+
 
     /**
      * Display the specified participant.
