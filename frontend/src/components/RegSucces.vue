@@ -108,8 +108,8 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const personalInfo = JSON.parse(localStorage.getItem('site2025_form') || '{}')
-  const accommodationInfo = JSON.parse(localStorage.getItem('site2025_accommodation_form') || '{}')
+  const personalInfo = JSON.parse(localStorage.getItem('tunisian_form') || localStorage.getItem('stranger_form') || '{}')
+  const accommodationInfo = JSON.parse(localStorage.getItem('accommodation_form') || '{}')
   Object.assign(formData, personalInfo, accommodationInfo)
 })
 

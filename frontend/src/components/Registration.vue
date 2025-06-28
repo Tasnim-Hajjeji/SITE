@@ -20,8 +20,8 @@
         <p class="error" v-if="errors.hebergement">{{ errors.hebergement }}</p>
 
         <ul class="tariffs" v-if="form.hebergement === 'yes'">
-          <li>Adult companion 220 DT</li>
-          <li>Child companion 110 DT </li>
+          <li>Adult companion {{ prices.prix_acc_adulte }} {{ currency }}</li>
+          <li>Child companion {{ prices.prix_acc_enfant }} {{ currency }} </li>
         </ul>
       </fieldset>
 
@@ -63,7 +63,7 @@
           No
         </label>
         <p class="error" v-if="errors.singleSupplement">{{ errors.singleSupplement }}</p>
-        <p class="mt-2 text-[#555]">Single supplement 70 DT /night</p>
+        <p class="mt-2 text-[#555]">Single supplement {{ prices.prix_single_supp }} {{ currency }} /night</p>
       </fieldset>
 
       <div class="input-group">
@@ -77,7 +77,7 @@
           :disabled="form.hebergement === 'no' || form.singleSupplement === 'no'"
         />
         <p class="error" v-if="errors.extraNights">{{ errors.extraNights }}</p>
-        <p>Extra night 220 DT /night/person</p>
+        <p>Extra night {{ prices.prix_nuit_supp }} {{ currency }} /night/person</p>
       </div>
     </form>
 
@@ -108,10 +108,14 @@
 <script setup>
 import { reactive, ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
+import priceService from '@/services/FormPrices'
+import cookieUtils from '@/utils/cookieUtils'
 
 const activeStep = 2;
 const router = useRouter();
 const formElement = ref(null);
+const currency = ref('');
+const prices = ref([]);
 
 const form = reactive({
   hebergement: "",
@@ -180,7 +184,14 @@ function proceedIfValid() {
 
 function backToPrevious() {
   localStorage.removeItem("accommodation_form");
-  router.go(-1);
+  let formType = localStorage.getItem("form_type");
+  if (formType === 'tunisian') {
+    router.push('/tunisian-form');
+  } else if (formType === 'stranger') {
+    router.push('/stranger-form');
+  } else {
+    router.push('/profile-selection');
+  }
 }
 
 onMounted(() => {
@@ -188,6 +199,19 @@ onMounted(() => {
   if (saved) {
     Object.assign(form, JSON.parse(saved));
   }
+  let editionId = cookieUtils.getCookie('editionId')
+  priceService.getPrizesByEdition(editionId).then(dataArr => {
+    if (Array.isArray(dataArr) && dataArr.length > 0) {
+      prices.value = dataArr[0]
+    } else {
+      prices.value = []
+      console.error('Price data not found in response:', dataArr)
+    }
+  }).catch(error => {
+    console.error('Error fetching Price:', error)
+  })
+  let formType = localStorage.getItem("form_type");
+  currency.value = formType === 'tunisian' ? 'DT' : '€';
 });
 
 watch(
