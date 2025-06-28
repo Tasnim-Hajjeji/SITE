@@ -10,14 +10,14 @@
       </p>
   
       <div class="carousel-wrapper">
-        <div class="carousel-preview left-preview" :style="{ backgroundImage: `url(${getPrevSlide().image})` }"></div>
+        <div class="carousel-preview left-preview" :style="{ backgroundImage: `url(${getPrevSlide().image})` }" @click="prevSlide"></div>
   
         <div class="carousel-main" :style="{ backgroundImage: `url(${slides[currentIndex].image})` }">
           <div class="carousel-overlay"></div>
           <div class="carousel-caption" v-if="editions.length > 0">
-            <h3>{{ editions[0].name }}</h3>
-            <p>{{ description_lang(editions[0]) }}</p>
-            <router-link :to="`/previous-editions/edition?id=${editions[0].id}`" class="carousel-button">
+            <h3>{{ currentEdition.name }}</h3>
+            <p>{{ description_lang(currentEdition) }}</p>
+            <router-link :to="`/previous-editions/edition?id=${currentEdition.id}`" class="carousel-button">
               {{ $t('previousEditions.button') }}
               <span>➜</span></router-link>
           </div>
@@ -26,7 +26,7 @@
           </div>
         </div>
   
-        <div class="carousel-preview right-preview" :style="{ backgroundImage: `url(${getNextSlide().image})` }"></div>
+        <div class="carousel-preview right-preview" :style="{ backgroundImage: `url(${getNextSlide().image})` }" @click="nextSlide"></div>
       </div>
   
       <div class="carousel-controls">
@@ -38,11 +38,13 @@
   </template>
   
   <script setup>
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, computed } from 'vue'
   import EditionService from '@/services/EditionService.js'
   const editions = ref([])
   import { useI18n } from 'vue-i18n'
   const { locale } = useI18n()
+  
+  // Static slides for background images
   const slides = [
     {
       image: new URL('@/assets/i1.webp', import.meta.url).href
@@ -54,9 +56,12 @@
       image: new URL('@/assets/i3.jpg', import.meta.url).href
     }
   ];
+  
   onMounted(() => {
       EditionService.getPreviousEditions().then(response => {
         editions.value = response.data
+        console.log("response",response.data)
+        console.log("editions",editions.value)
       }).catch(error => {
         console.error('Error fetching editions:', error)
       })
@@ -64,8 +69,13 @@
   
   const currentIndex = ref(0)
   
+  // Get current edition to display (name, description, etc.)
+  const currentEdition = computed(() => {
+    return editions.value.length > 0 ? editions.value[currentIndex.value % editions.value.length] : {}
+  })
+  
   function nextSlide() {
-    currentIndex.value = (currentIndex.value + 1) % slides.length
+    currentIndex.value = (currentIndex.value + 1) % Math.max(slides.length, editions.value.length)
   }
 
   function description_lang(edition) {
@@ -73,7 +83,7 @@
   }
   
   function prevSlide() {
-    currentIndex.value = (currentIndex.value - 1 + slides.length) % slides.length
+    currentIndex.value = (currentIndex.value - 1 + Math.max(slides.length, editions.value.length)) % Math.max(slides.length, editions.value.length)
   }
   
   function getPrevSlide() {
@@ -85,16 +95,14 @@
     const index = (currentIndex.value + 1) % slides.length
     return slides[index]
   }
-
-  // Removed duplicate export default block; <script setup> handles component export.
   </script>
   
   <style scoped>
+  /* Your existing styles remain unchanged */
   .carousel-container {
     text-align: center;
     padding: 0.5rem;
     font-family: 'Segoe UI', sans-serif;
-
   }
   
   .carousel-title {
@@ -133,7 +141,7 @@
     overflow: hidden;
   }
   
-  /* 👇 L’overlay qui fait le flou */
+  /* 👇 L'overlay qui fait le flou */
   .carousel-overlay {
     position: absolute;
     inset: 0;
@@ -264,4 +272,3 @@
     }
   }
   </style>
-  
