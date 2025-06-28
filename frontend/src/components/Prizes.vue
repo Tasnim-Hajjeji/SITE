@@ -4,12 +4,12 @@
       <h1 class="title">Tarifs d’inscription</h1>
       <div class="action-buttons">
         <button class="add-btn" @click="showModal = true" v-if="!hasPrices">
-          <i class="fas fa-plus"></i> Add
+          <i class="fas fa-plus"></i> Ajouter des prix
         </button>
       </div>
     </div>
 
-    <div v-if="isLoading" class="loading-message">Loading prizes...</div>
+    <div v-if="isLoading" class="loading-message">Chargement des tarifs...</div>
     <div v-else-if="!hasPrices" class="empty-message">
       Pas encore de prix ajoutés.
     </div>
@@ -79,7 +79,7 @@
     <transition name="fade">
       <div v-if="showDeleteModal" class="modal-overlay">
         <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirm Deletion</h3>
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmation du suppression</h3>
           <p class="text-gray-600 mb-4">Are you sure you want to delete this prize? This action is irreversible.</p>
           <div class="modal-actions flex justify-end gap-2 mt-6">
             <button type="button" class="cancel-btn" @click="showDeleteModal = false; selectedPrizeId = null;">
