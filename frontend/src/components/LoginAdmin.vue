@@ -75,10 +75,15 @@ const handleSubmit = async () => {
 
   try {
     // First get CSRF cookie
-    // await axios.get('/sanctum/csrf-cookie');
+    await axios.get('/sanctum/csrf-cookie',{
+      baseURL: 'http://localhost:8000',
+      withCredentials: true
+    });
 
     // Then attempt login
-    const response = await axios.post('/admin/login', form.value);
+    const response = await axios.post('/admin/login', form.value,{
+      withCredentials: true
+    });
 
     // Store token and redirect
     localStorage.setItem('admin_token', response.data.token);

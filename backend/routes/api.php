@@ -23,7 +23,7 @@ Route::get('/user', function (Request $request) {
 // Admin Authentication Routes
 Route::prefix('admin')->group(function () {
     Route::post('/login', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
-    Route::post('/logout', [\App\Http\Controllers\Admin\AuthController::class, 'logout']);
+    Route::middleware('auth:sanctum')->post('/logout', [\App\Http\Controllers\Admin\AuthController::class, 'logout']);
 });
 
 // Edition Routes

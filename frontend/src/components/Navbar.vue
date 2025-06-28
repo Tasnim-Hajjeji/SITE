@@ -152,6 +152,7 @@ const onBlur = () => {
 
 const confirmLogout = async () => {
   try {
+    console.log(localStorage.getItem('admin_token'))
     // Call your logout API endpoint
     await axios.post(
       '/admin/logout',
@@ -160,6 +161,7 @@ const confirmLogout = async () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('admin_token')}`,
         },
+        withCredentials: true
       }
     );
 
