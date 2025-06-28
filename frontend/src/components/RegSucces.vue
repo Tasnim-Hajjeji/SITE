@@ -24,8 +24,8 @@
         <div class="form-field flag">
           <label>Country</label>
           <div class="flag-field">
-            <img src="https://flagcdn.com/tn.svg" alt="Tunisia flag" />
-            <span>Tunisia</span>
+            <img :src="`https://flagcdn.com/${formData.country}.svg`" alt="Tunisia flag" />
+            <span>{{ formData.full_country }}</span>
           </div>
         </div>
         <div class="form-field">
@@ -62,11 +62,11 @@
         </div>
         <div class="form-field">
           <label>Payment method</label>
-          <input type="text" value="purchase order" readonly />
+          <input type="text" :value="formData.paymentMethod" readonly />
         </div>
         <div class="form-field">
           <label>Total amount</label>
-          <input type="text" :value="calculateTotal()" readonly />
+          <input type="text" :value="formData.totalPrice" readonly />
         </div>
       </div>
     </div>
@@ -87,6 +87,7 @@
 import { reactive, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import jsPDF from 'jspdf'
+import axios from 'axios'
 import html2canvas from 'html2canvas'
 
 const router = useRouter()
@@ -104,69 +105,68 @@ const formData = reactive({
   childCompanions: 0,
   adultCompanions: 0,
   singleSupplement: '',
-  extraNights: 0
+  extraNights: 0,
+  totalPrice: 0,
+  paymentMethod: '',
+  country: 'tn',
+  full_country: ''
 })
 
 onMounted(() => {
-  const personalInfo = JSON.parse(localStorage.getItem('tunisian_form') || localStorage.getItem('stranger_form') || '{}')
+  let formType = localStorage.getItem("form_type")
+  const personalInfo = formType === 'tunisian' ? JSON.parse(localStorage.getItem('tunisian_form')) : JSON.parse(localStorage.getItem('stranger_form'))
   const accommodationInfo = JSON.parse(localStorage.getItem('accommodation_form') || '{}')
+  const totalPrice = parseInt(localStorage.getItem('totalPrice') || '0', 10)
   Object.assign(formData, personalInfo, accommodationInfo)
+  formData.totalPrice = totalPrice
+  formData.paymentMethod = localStorage.getItem("paymentMethod") || ''
+  fetchCountryName(formData.country)
 })
 
-function calculateTotal() {
-  let total = 650 // Base price
-
-  if (formData.hebergement === 'yes') {
-    const adults = formData.adultCompanions
-    const children = formData.childCompanions
-
-    total += adults * 220
-
-    if (adults === 2) {
-      total += children * 110
-    } else {
-      total += children * 155
-    }
-
-    const persons = adults + children
-    total += formData.extraNights * 220 * persons
-
-    if (formData.singleSupplement === 'yes') {
-      total += 70 * persons
-    }
-  }
-
-  return total + ' TND'
-}
-
 function handleReturnHome() {
-  localStorage.removeItem('site2025_form')
-  localStorage.removeItem('site2025_accommodation_form')
+  localStorage.removeItem('stranger_form')
+  localStorage.removeItem('tunisian_form')
+  localStorage.removeItem('accommodation_form')
   router.push('/')
 }
 
+async function fetchCountryName(countryCode) {
+  try {
+    const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
+    formData.full_country = response.data[0].name.common; // Accessing the full name
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function downloadPDF() {
-  const element = pdfContent.value
+  const element = pdfContent.value;
+
+  // Check if element has size
+  if (!element || element.offsetWidth === 0 || element.offsetHeight === 0) {
+    alert('Registration form is not visible or has no size!');
+    return;
+  }
 
   const canvas = await html2canvas(element, {
     scale: 2,
     useCORS: true
-  })
-  const imgData = canvas.toDataURL('image/png')
+  });
+  const imgData = canvas.toDataURL('image/png');
 
-  const pdf = new jsPDF('p', 'mm', 'a4')
-  const pageWidth = pdf.internal.pageSize.getWidth()
-  const imgProps = pdf.getImageProperties(imgData)
-  const pdfWidth = pageWidth - 20
-  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const imgProps = pdf.getImageProperties(imgData);
+  const pdfWidth = pageWidth - 20;
+  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-  const x = (pageWidth - pdfWidth) / 2
+  const x = (pageWidth - pdfWidth) / 2;
 
-  pdf.setFontSize(20)
-  pdf.setTextColor('#051d37')
-  pdf.text('SITE 2025 - Registration Form', pageWidth / 2, 15, { align: 'center' })
-  pdf.addImage(imgData, 'PNG', x, 25, pdfWidth, pdfHeight)
-  pdf.save(`SITE2025_${formData.firstName}_${formData.lastName}.pdf`)
+  pdf.setFontSize(20);
+  pdf.setTextColor('#051d37');
+  pdf.text('SITE 2025 - Registration Form', pageWidth / 2, 15, { align: 'center' });
+  pdf.addImage(imgData, 'PNG', x, 25, pdfWidth, pdfHeight);
+  pdf.save(`SITE2025_${formData.firstName}_${formData.lastName}.pdf`);
 }
 </script>
 
@@ -237,6 +237,7 @@ async function downloadPDF() {
 }
 
 .flag-field {
+  width: 90%;
   display: flex;
   align-items: center;
   padding: 0.6rem;
@@ -268,6 +269,7 @@ async function downloadPDF() {
   color: white;
   border: none;
 }
+
 .download:hover {
   background-color: #0d2b54;
   transform: scale(1.05);
@@ -278,6 +280,7 @@ async function downloadPDF() {
   color: #4e4545;
   border: 2px solid #4e4545;
 }
+
 .edit:hover {
   background-color: #4e4545;
   color: white;
@@ -289,6 +292,7 @@ async function downloadPDF() {
   color: #265985;
   border: 2px solid #265985;
 }
+
 .home:hover {
   background-color: #265985;
   color: white;

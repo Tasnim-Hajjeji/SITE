@@ -56,40 +56,97 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, ref } from 'vue'
+import { reactive, onMounted, ref, watch } from 'vue'
+import priceService from '@/services/FormPrices'
+import cookieUtils from '@/utils/cookieUtils'
 
 const activeStep = 3
 const paymentMethod = ref('')
+const prices = ref({})
+const totalPrice = ref(0)
 
 const formData = reactive({
   hebergement: '',
   adultCompanions: 0,
   childCompanions: 0,
   singleSupplement: '',
-  extraNights: 0,
+  extraNights: 0
 })
 
 onMounted(() => {
-  const saved = JSON.parse(localStorage.getItem('site2025_accommodation_form') || '{}')
+  const formType = localStorage.getItem("form_type");
+  let editionId = cookieUtils.getCookie('editionId')
+  priceService.getPrizesByEdition(editionId).then(dataArr => {
+    if (Array.isArray(dataArr) && dataArr.length > 0) {
+      if (formType === 'tunisian') {
+        prices.value = {
+          prix_initial: dataArr[0].prix_tun || 0,
+          prix_hebergement: dataArr[0].prix_tun_hebergement || 0,
+          prix_acc_adulte: dataArr[0].prix_acc_adulte_tun || 0,
+          prix_acc_enfant: dataArr[0].prix_acc_enfant_tun || 0,
+          prix_single_supp: dataArr[0].prix_single_supp_tun || 0,
+          prix_nuit_supp: dataArr[0].prix_nuit_supp_tun || 0,
+          prix_article: dataArr[0].prix_article_tun || 0
+        }
+      } else if (formType === 'stranger') {
+        prices.value = {
+          prix_initial: dataArr[0].prix_international || 0,
+          prix_hebergement: dataArr[0].prix_eur_hebergement || 0,
+          prix_acc_adulte: dataArr[0].prix_acc_adulte_eur || 0,
+          prix_acc_enfant: dataArr[0].prix_acc_enfant_eur || 0,
+          prix_single_supp: dataArr[0].prix_single_supp_eur || 0,
+          prix_nuit_supp: dataArr[0].prix_nuit_supp_eur || 0,
+          prix_article: dataArr[0].prix_article_eur || 0
+        }
+      } else {
+        console.error('Unknown form type:', formType);
+        prices.value = {};
+      }
+    } else {
+      prices.value = {}
+      console.error('Price data not found in response:', dataArr)
+    }
+  }).catch(error => {
+    console.error('Error fetching Price:', error)
+  });
+  const saved = JSON.parse(localStorage.getItem('accommodation_form') || '{}')
   Object.assign(formData, saved)
 })
 
+watch(
+  paymentMethod,
+  (newVal) => {
+    localStorage.setItem("paymentMethod", newVal);
+  },
+  { deep: true }
+);
+
 function calculateTotal() {
-  let total = 650
+  let price = prices.value;
+  var total = price.prix_initial // Base price
+
+  let form = localStorage.getItem("form_type") === 'tunisian' ? JSON.parse(localStorage.getItem('tunisian_form')) : JSON.parse(localStorage.getItem('stranger_form'))
+  let participation = form.participation
+  total += participation === "With paper" ? price.prix_article : 0;
+
   if (formData.hebergement === 'yes') {
     const adults = formData.adultCompanions
     const children = formData.childCompanions
     const persons = adults + children
 
-    total += adults * 220
-    total += children * (adults === 2 ? 110 : 155)
-    total += formData.extraNights * 220 * persons
+    total += price.prix_hebergement;
+    total += adults * price.prix_acc_adulte;
+    total += children * price.prix_acc_enfant;
+    total += formData.extraNights * price.prix_nuit_supp * persons;
 
     if (formData.singleSupplement === 'yes') {
-      total += 70 * persons
+      total += price.prix_single_supp * persons;
     }
   }
-  return total + ' TND'
+  let currency = localStorage.getItem("form_type") === 'tunisian' ? 'TND' : '€';
+  totalPrice.value = total;
+  localStorage.setItem('totalPrice', total);
+  return total + ' ' + currency;
 }
 </script>
 
