@@ -21,6 +21,7 @@ import RegSuccesvue from '@/views/RegSuccesvue.vue';
 import PageSponsorvue from '@/views/PageSponsorvue.vue';
 import SponsorAdminvue from '@/views/SponsorAdminvue.vue';
 import ContactUs from '@/views/ContactUs.vue';
+import contQuestionvue from '@/views/contQuestionvue.vue';
 
 
 const routes = [
@@ -171,6 +172,12 @@ const routes = [
     name: 'ContactUs',
     component: ContactUs,
     meta: { layout: 'default' }
+  },
+  {
+    path: '/admin/contact-question',
+    name: 'ContactQuestion',
+    component: contQuestionvue, 
+    meta: { layout: 'admin', requiresAuth: true }
   }
 
 
