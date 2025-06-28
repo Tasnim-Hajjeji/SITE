@@ -136,10 +136,9 @@
               Role:
               <select v-model="newMember.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                 <option disabled value="">Select Role</option>
-                <option value="Chair">Chair</option>
-                <option value="Member">Member</option>
-                <option value="President">President</option>
-                <option value="Vicechair">Vicechair</option>
+                <option value="chair">chair</option>
+                <option value="vicechair">vicechair</option>
+                <option value="member">member</option>
               </select>
             </label>
             <label class="block text-sm font-medium text-gray-700">
@@ -204,10 +203,9 @@
               Role:
               <select v-model="editMemberData.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                 <option disabled value="">Select Role</option>
-                <option value="Chair">Chair</option>
-                <option value="Member">Member</option>
-                <option value="President">President</option>
-                <option value="Vicechair">Vicechair</option>
+                <option value="chair">chair</option>
+                <option value="vicechair">vicechair</option>
+                <option value="member">member</option>
               </select>
             </label>
             <label class="block text-sm font-medium text-gray-700">
@@ -304,7 +302,7 @@ export default {
       newMember: {
         full_name: "",
         committee: "",
-        role: "Member",
+        role: "member",
         from_etablissement: "",
         edition_id: "",
         email: "",
@@ -412,13 +410,13 @@ export default {
     handleCommitteeTypeChange() {
       this.showRoleField = this.newMember.committee !== 'Honor';
       if (!this.showRoleField) {
-        this.newMember.role = 'Member';
+        this.newMember.role = 'member';
       }
     },
     handleEditCommitteeTypeChange() {
       this.showEditRoleField = this.editMemberData.committee !== 'Honor';
       if (!this.showEditRoleField) {
-        this.editMemberData.role = 'Member';
+        this.editMemberData.role = 'member';
       }
     },
     showTooltip(event, text) {
@@ -459,7 +457,7 @@ export default {
       this.newMember = {
         full_name: "",
         committee: "",
-        role: "Member",
+        role: "member",
         from_etablissement: "",
         edition_id: this.selectedEditionId || (this.editions.length > 0 ? this.editions[0].id : ""),
         email: "",
@@ -510,7 +508,7 @@ export default {
       }
     },
     openEditModal(member) {
-      this.editMemberData = { ...member };
+      this.editMemberData = { ...member, role: member.role.toLowerCase() };
       this.showEditRoleField = this.editMemberData.committee !== 'Honor';
       this.showEditModal = true;
     },
@@ -1198,4 +1196,3 @@ export default {
   }
 }
 </style>
-```
