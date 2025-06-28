@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CommitteeMember;
+use App\Models\Edition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -125,6 +126,14 @@ class CommitteeMemberController extends Controller
             ->orderBy('role', 'asc')
             ->get();
 
+        return response()->json($members);
+    }
+    public function getMembersByEdition($editionId)
+    {
+        $members = CommitteeMember::where('edition_id', $editionId)
+            ->orderBy('role', 'asc')
+            ->with('edition')
+            ->get();
         return response()->json($members);
     }
 }

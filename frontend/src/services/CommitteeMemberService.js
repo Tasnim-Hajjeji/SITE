@@ -9,6 +9,10 @@ export default {
     return axios.get('/committee-members');
   },
 
+  getAllCommitteeMembersByEdition(id){
+    return axios.get(`/committee-members/edition/${id}`);
+  },
+
   /**
    * Create a new committee member
    * @param {FormData} memberData - Member data including image file
