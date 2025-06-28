@@ -51,7 +51,6 @@
 <script setup>
 import { ref, defineExpose } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from '@/plugins/axios'
 
 const router = useRouter()
 const selected = ref('Dashbord')
@@ -61,6 +60,7 @@ const select = (item) => {
   selected.value = item
   if (window.innerWidth < 768) isOpen.value = false
 }
+
 const showEditionAlert = () => {
   alert('Please select an edition first before navigating to other sections.')
 }
@@ -68,7 +68,6 @@ const showEditionAlert = () => {
 const handleNavigation = (item, navigate = null) => {
   const selectedEditionId = localStorage.getItem('selectedEditionId')
 
-  // If no edition is selected, always go to editions list
   if (!selectedEditionId) {
     showEditionAlert()
     select('Dashbord')
@@ -76,7 +75,6 @@ const handleNavigation = (item, navigate = null) => {
     return
   }
 
-  // If edition is selected, proceed with normal navigation
   select(item)
   if (navigate) {
     navigate()
@@ -85,28 +83,6 @@ const handleNavigation = (item, navigate = null) => {
 
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value
-}
-const handleLogout = async () => {
-  try {
-    // Call your logout API endpoint
-    await axios.post('/admin/logout', {}, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-      }
-    })
-
-    // Clear local storage and redirect
-    localStorage.removeItem('admin_token')
-    localStorage.removeItem('selectedEditionId')
-    router.push('/') // Redirect to home page
-
-  } catch (error) {
-    console.error('Logout failed:', error)
-    // Still clear local storage even if API call fails
-    localStorage.removeItem('admin_token')
-    localStorage.removeItem('selectedEditionId')
-    router.push('/')
-  }
 }
 
 defineExpose({ toggleSidebar, isOpen })
@@ -129,7 +105,6 @@ defineExpose({ toggleSidebar, isOpen })
   z-index: 999;
 }
 
-/* Sidebar ouverte */
 .sidebar.open {
   transform: translateX(0);
 }
@@ -166,16 +141,13 @@ li.active {
 
 .icon {
   font-size: 1.2rem;
-  /* Légèrement agrandi pour un look plus luxueux */
   display: flex;
   align-items: center;
   color: #265985;
-  /* Couleur unifiée */
 }
 
 .icon i {
   color: #265985;
-  /* Assure que l'icône Font Awesome hérite de la couleur */
 }
 
 .text {
@@ -204,7 +176,6 @@ li.active {
 
   li.active .icon i {
     color: #265985;
-    /* Couleur de l'icône dans l'état actif */
   }
 }
 </style>
