@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     SpeakerPFP(image_url) {
-      return 'http://localhost:8000' + image_url;
+      return `http://localhost:8000/storage/${image_url}`;
     },
     programName(program) {
       return (this.language === 'fr') ? program.name_fr : program.name_en;
