@@ -44,10 +44,6 @@
           <span class="text">Committies</span>
         </li>
       </router-link>
-      <li @click="handleLogout" class="logout-button">
-        <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-        <span class="text">Logout</span>
-      </li>
     </ul>
   </nav>
 </template>
