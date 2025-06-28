@@ -12,6 +12,7 @@ use App\Http\Controllers\FormPricesController;
 use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\KeynoteController;
 use App\Http\Controllers\GlobalSearchController;
+use App\Http\Controllers\NotificationController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -140,6 +141,14 @@ Route::prefix('keynotes')->group(function () {
     Route::post('/{id}', [KeynoteController::class, 'update']);
     Route::delete('/{id}', [KeynoteController::class, 'destroy']);
     Route::get('/edition/{editionId}', [KeynoteController::class, 'getByEdition']);
+});
+// Notification Routes
+Route::prefix('notifications')->group(function () {
+    Route::get('/', [NotificationController::class, 'index']);
+    Route::get('/{id}', [NotificationController::class, 'show']);
+    Route::post('/', [NotificationController::class, 'store']);
+    Route::put('/{id}', [NotificationController::class, 'update']);
+    Route::delete('/{id}', [NotificationController::class, 'destroy']);
 });
 
 // Global Search Route

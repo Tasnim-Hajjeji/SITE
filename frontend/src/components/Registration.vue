@@ -8,6 +8,7 @@
     <form class="registration-form" ref="formElement" @submit.prevent="proceedIfValid" novalidate>
       <fieldset class="section">
         <legend>Accommodation *</legend>
+        <div class="div_sep"></div>
         <label>
           <input type="radio" name="hebergement" value="yes" v-model="form.hebergement" />
           Yes
@@ -19,9 +20,8 @@
         <p class="error" v-if="errors.hebergement">{{ errors.hebergement }}</p>
 
         <ul class="tariffs" v-if="form.hebergement === 'yes'">
-          <li>Adult companion 220 DT /night/person</li>
-          <li>Child companion + 2 Adults 110 DT /night/child</li>
-          <li>Child companion + 1 Adult 155 DT /night/child</li>
+          <li>Adult companion 220 DT</li>
+          <li>Child companion 110 DT </li>
         </ul>
       </fieldset>
 
@@ -53,6 +53,7 @@
 
       <fieldset class="section">
         <legend>Single Supplement *</legend>
+        <div class="div_sep"></div>
         <label>
           <input type="radio" name="single" value="yes" v-model="form.singleSupplement" :disabled="form.hebergement === 'no'" />
           Yes
@@ -62,7 +63,7 @@
           No
         </label>
         <p class="error" v-if="errors.singleSupplement">{{ errors.singleSupplement }}</p>
-        <p>Single supplement 70 DT /night</p>
+        <p class="mt-2 text-[#555]">Single supplement 70 DT /night</p>
       </fieldset>
 
       <div class="input-group">
@@ -196,7 +197,7 @@ watch(() => form.hebergement, (val) => {
   if (val === 'no') {
     form.childCompanions = 0;
     form.adultCompanions = 0;
-    form.singleSupplement = '';
+    form.singleSupplement = 'no';
     form.extraNights = 0;
   }
 });
@@ -215,6 +216,11 @@ watch(() => form.singleSupplement, (val) => {
   padding: 1.5rem;
   font-family: "Segoe UI", sans-serif;
   text-align: center;
+}
+
+.div_sep{
+  visibility: hidden;
+  margin-top: -1.2rem;
 }
 
 .title {
@@ -266,7 +272,7 @@ watch(() => form.singleSupplement, (val) => {
 }
 
 .tariffs {
-  margin-top: 0.8rem;
+  margin-top: 0.6rem;
   padding-left: 1.5rem;
   font-size: 0.9rem;
   color: #555;
