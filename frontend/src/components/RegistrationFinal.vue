@@ -14,7 +14,7 @@
 
         <div class="input-group">
           <label class="fixed-label">Payment Method *</label>
-          <select v-model="paymentMethod">
+          <select v-model="paymentMethod" required>
             <option disabled selected>Select a method</option>
             <option>Bank Transfer</option>
             <option>Cash</option>
@@ -24,10 +24,10 @@
 
         <div :class="['input-group', {disabled: paymentMethod === 'Cash'}]">
           <label class="fixed-label">Proof of Payment *</label>
-          <input type="file" accept="image/png, image/jpeg, image/jpg, .png, .jpeg, .jpg" @change="handleFileUpload($event)" :disabled="paymentMethod === 'Cash'" />
+          <input type="file" accept="image/png, image/jpeg, image/jpg, .png, .jpeg, .jpg" @change="handleFileUpload($event)" :disabled="paymentMethod === 'Cash'" required />
         </div>
 
-          <button type="submit" class="submit-btn" @click.prevent="postFile()">Submit</button>
+        <button type="submit" class="submit-btn" @click.prevent="postFile()">Submit</button>
       </div>
     </form>
 
@@ -127,6 +127,14 @@ function handleFileUpload(event){
 }
 
 function postFile(){
+  if (!paymentMethod.value) {
+    alert('Please select a payment method.');
+    return;
+  }
+  if (paymentMethod.value !== 'Cash' && !recu_paie.value) {
+    alert('Please upload proof of payment.');
+    return;
+  }
   if(recu_paie.value){
     const file = recu_paie.value
     const blobUrl = URL.createObjectURL(file)
