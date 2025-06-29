@@ -87,7 +87,7 @@ export default {
 }
 
 .main-title {
-  color: #0c4a6e;
+  color: #265985;
   font-size: 1.7rem;
   font-weight: 700;
 }

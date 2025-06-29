@@ -117,7 +117,7 @@ export default {
 .gallery-title {
   font-size: 28px;
   font-weight: 700;
-  color: #2a4b94;
+  color: #265985;
   margin-bottom: 10px;
 }
 
