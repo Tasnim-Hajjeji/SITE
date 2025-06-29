@@ -16,6 +16,11 @@ class NotificationController extends Controller
         return response()->json($notifications);
     }
 
+    public function getActivatedNotifs() {
+        $notifications = Notification::where('is_active', true)->get();
+        return response()->json($notifications);
+    }
+
     /**
      * Store a newly created notification in storage.
      */
@@ -23,8 +28,7 @@ class NotificationController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'message' => 'required|string',
-            'is_active' => 'boolean',
+            'message' => 'required|string'
         ]);
 
         $notification = Notification::create($request->all());
@@ -43,10 +47,22 @@ class NotificationController extends Controller
     /**
      * Update the specified notification in storage.
      */
-    public function update(Request $request, $id)
+    public function activate($id)
     {
         $notification = Notification::findOrFail($id);
-        $notification->update($request->all());
+        $notification->update([
+            'is_active' => true,
+            'activated_at' => now('Africa/Tunis'),
+        ]);
+        return response()->json($notification);
+    }
+
+    public function deactivate($id)
+    {
+        $notification = Notification::findOrFail($id);
+        $notification->update([
+            'is_active' => false
+        ]);
         return response()->json($notification);
     }
 

@@ -2,18 +2,24 @@ import axios from '@/plugins/axios.js';
 
 export default {
     getAllNotifications() {
-        return axios.get('/api/notifications');
+        return axios.get('/notifications');
     },
     getNotificationById(id) {
-        return axios.get(`/api/notifications/${id}`);
+        return axios.get(`/notifications/${id}`);
+    },
+    getActivatedNotifs(){
+        return axios.get('/notifications/activated')
     },
     createNotification(data) {
-        return axios.post('/api/notifications', data);
+        return axios.post('/notifications', data);
     },
-    updateNotification(id, data) {
-        return axios.put(`/api/notifications/${id}`, data);
+    activateNotification(id) {
+        return axios.put(`/notifications/${id}/activate`);
+    },
+    deactivateNotification(id) {
+        return axios.put(`/notifications/${id}/deactivate`);
     },
     deleteNotification(id) {
-        return axios.delete(`/api/notifications/${id}`);
+        return axios.delete(`/notifications/${id}`);
     }
 };

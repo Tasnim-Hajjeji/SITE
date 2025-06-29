@@ -6,35 +6,27 @@
       <button class="btn add" @click="showModal = true">
         <span class="plus">+</span> Ajouter une Notification
       </button>
-      <div class="dropdown" @click="toggleDropdown">
-        <button class="btn edit">Édition ▼</button>
-        <ul v-if="dropdownOpen" class="dropdown-menu">
-          <li v-for="edition in editions" :key="edition.id" @click="selectEdition(edition)">
-            {{ edition.name }}
-          </li>
-        </ul>
-      </div>
     </div>
 
     <div class="grid">
       <div class="card" v-for="notif in notifications" :key="notif.id">
-        <h3 class="name">{{ notif.titre }}</h3>
+        <h3 class="name">{{ notif.title }}</h3>
         <p class="desc">{{ notif.message }}</p>
         <div class="details">
-          <p>Created on: {{ formatDate(notif.dateCreation) }}</p>
-          <p>Activated on: {{ notif.dateActivation ? formatDate(notif.dateActivation) : 'Not activated' }}</p>
+          <p>Created on: {{ formatDate(notif.created_at) }}</p>
+          <p>Activated on: {{ notif.activated_at ? formatDate(notif.activated_at) : 'Not activated' }}</p>
         </div>
         <div class="card-footer">
           <div class="buttons">
-            <button class="status-btn activate" @click="showActivateConfirm(notif)" :disabled="notif.isActive">
+            <button class="status-btn activate" @click="showActivateConfirm(notif)" :disabled="notif.is_active">
               Activer
             </button>
-            <button class="status-btn deactivate" @click="showDeactivateConfirm(notif)" :disabled="!notif.isActive">
+            <button class="status-btn deactivate" @click="showDeactivateConfirm(notif)" :disabled="!notif.is_active">
               Désactiver
             </button>
           </div>
-          <div class="status-badge" :class="{ 'active': notif.isActive, 'inactive': !notif.isActive }">
-            {{ notif.isActive ? 'Activé' : 'Désactivé' }}
+          <div class="status-badge" :class="{ 'active': notif.is_active, 'inactive': !notif.is_active }">
+            {{ notif.is_active ? 'Activé' : 'Désactivé' }}
           </div>
         </div>
         <button class="icon-btn delete-btn" @click="showDeleteConfirm(notif.id)"><i class="fas fa-trash"></i></button>
@@ -48,19 +40,11 @@
         <form @submit.prevent="submitNotification">
           <div>
             <label class="block mb-1 text-xs text-gray-500 font-medium">Titre</label>
-            <input v-model="newNotif.titre" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
+            <input v-model="newNotif.title" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
           </div>
           <div>
             <label class="block mb-1 text-xs text-gray-500 font-medium">Message</label>
             <textarea v-model="newNotif.message" required class="w-[95%] p-2 border border-gray-300 rounded-lg"></textarea>
-          </div>
-          <div>
-            <label class="block mb-1 text-xs text-gray-500 font-medium">Date de Création</label>
-            <input v-model="newNotif.dateCreation" type="datetime-local" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
-          </div>
-          <div>
-            <label class="block mb-1 text-xs text-gray-500 font-medium">Date d'Activation</label>
-            <input v-model="newNotif.dateActivation" type="datetime-local" class="w-[95%] p-2 border border-gray-300 rounded-lg" />
           </div>
           <div class="modal-actions flex justify-end gap-2 mt-6">
             <button type="button" class="cancel-btn" @click="showModal = false">Annuler</button>
@@ -109,6 +93,7 @@
 </template>
 
 <script>
+import NotificationService from '@/services/NotificationService'
 export default {
   name: "NotificationComponent",
   data() {
@@ -118,63 +103,36 @@ export default {
       showDeleteConfirmModal: false,
       showActivateConfirmModal: false,
       showDeactivateConfirmModal: false,
-      editions: [
-        { id: 1, name: "Édition 1" },
-        { id: 2, name: "Édition 2" },
-      ],
       selectedEdition: null,
-      notifications: [
-        {
-          id: 1,
-          titre: "Nouvelle Mise à Jour",
-          message: "Une mise à jour importante est disponible.",
-          dateCreation: "2025-06-28T10:00:00",
-          dateActivation: "2025-06-29T14:00:00",
-          isActive: true,
-        },
-        {
-          id: 2,
-          titre: "Événement Spécial",
-          message: "Rejoignez notre événement spécial demain.",
-          dateCreation: "2025-06-27T15:30:00",
-          dateActivation: null,
-          isActive: false,
-        },
-        {
-          id: 3,
-          titre: "Alerte Technique",
-          message: "Problème technique résolu avec succès.",
-          dateCreation: "2025-06-26T09:15:00",
-          dateActivation: "2025-06-26T12:00:00",
-          isActive: true,
-        },
-      ],
+      notifications: [],
       newNotif: {
-        titre: "",
-        message: "",
-        dateCreation: "",
-        dateActivation: "",
-        isActive: false,
+        title: "",
+        message: ""
       },
       selectedNotifId: null,
       selectedNotif: null,
     };
   },
+  mounted(){
+    NotificationService.getAllNotifications().then(response => {
+      this.notifications = response.data
+    }).catch(error => {console.log(error)})
+  },
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
-    selectEdition(edition) {
-      this.selectedEdition = edition;
-      this.dropdownOpen = false;
-    },
     submitNotification() {
-      this.notifications.push({
+      NotificationService.createNotification(this.newNotif).then(response => {
+        this.notifications.push({
         ...this.newNotif,
         id: Date.now(),
-        isActive: false,
+        is_active: false,
       });
-      this.newNotif = { titre: "", message: "", dateCreation: "", dateActivation: "", isActive: false };
+      this.newNotif = { title: "", message: ""};
+        console.log("Submitted !! " + response.data)
+      })
+      .catch(error => {console.log(error)})
       this.showModal = false;
     },
     showDeleteConfirm(id) {
@@ -186,7 +144,11 @@ export default {
       this.showDeleteConfirmModal = false;
     },
     deleteNotif(id) {
-      this.notifications = this.notifications.filter(n => n.id !== id);
+      NotificationService.deleteNotification(id).then(response => {
+        this.notifications = this.notifications.filter(n => n.id !== id);
+        console.log("Deleted !! " + response.data)
+      })
+      .catch(error => {console.log(error)})
     },
     showActivateConfirm(notif) {
       this.selectedNotif = notif;
@@ -197,8 +159,12 @@ export default {
       this.showActivateConfirmModal = false;
     },
     activateNotif(notif) {
-      notif.isActive = true;
-      notif.dateActivation = new Date().toISOString().slice(0, 16); // 05:11 PM CET, June 29, 2025
+      NotificationService.activateNotification(notif.id).then(response => {
+        notif.is_active = true;
+        notif.activated_at = new Date().toLocaleString('sv-SE', { timeZone: 'Africa/Tunis' }).replace(' ', 'T').slice(0, 16);
+        console.log("Activated !! " + response.data)
+      })
+      .catch(error => {console.log(error)})
     },
     showDeactivateConfirm(notif) {
       this.selectedNotif = notif;
@@ -209,16 +175,20 @@ export default {
       this.showDeactivateConfirmModal = false;
     },
     deactivateNotif(notif) {
-      notif.isActive = false;
-      notif.dateActivation = null;
+      NotificationService.deactivateNotification(notif.id).then(response => {
+        notif.is_active = false;
+        console.log("Deactivated !! " + response.data)
+      })
+      .catch(error => {console.log(error)})
     },
     formatDate(dateStr) {
-      return new Date(dateStr).toLocaleString('fr-FR', {
+      return new Date(dateStr).toLocaleString('sv-SE', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
+        timeZone: 'Africa/Tunis'
       });
     },
   },
