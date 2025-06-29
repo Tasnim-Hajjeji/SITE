@@ -38,7 +38,7 @@ export default {
   computed: {
     duplicatedSponsors() {
       // Duplicate the array for seamless looping
-      return [...this.sponsors, ...this.sponsors];
+      return [...this.sponsors, ...this.sponsors, ...this.sponsors, ...this.sponsors];
     }
   },
   async mounted() {

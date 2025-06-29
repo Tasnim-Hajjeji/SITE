@@ -1,6 +1,6 @@
 ```vue
 <template>
-  <footer class="bg-white shadow-inner-dark">
+  <footer class="bg-white border-t border-gray-500 ">
     <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <div class="absolute end-4 top-4 sm:end-6 sm:top-6 lg:end-8 lg:top-8">
         <button

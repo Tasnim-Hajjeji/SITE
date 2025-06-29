@@ -150,7 +150,7 @@ export default {
 .hero {
     font-family: 'Segoe UI', sans-serif;
     background: white;
-    padding: 2rem;
+    padding: 3rem;
     position: relative;
     min-height: 40vh;
     display: flex;

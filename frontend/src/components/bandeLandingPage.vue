@@ -57,7 +57,7 @@
 
 .contacts {
   display: flex;
-  gap: 1rem;
+  gap: 3rem;
 }
 
 .contact-item {
@@ -66,6 +66,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  
+  padding-right: 2rem;
 }
 
 .contact-item a {

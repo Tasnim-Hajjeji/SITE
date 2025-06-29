@@ -47,16 +47,16 @@ export default {
    * @returns {Promise} Axios promise
    */
   updateSponsor(id, sponsorData) {
-    const formData = new FormData();
-    Object.keys(sponsorData).forEach(key => {
-      if (key === 'logo') {
-        formData.append('logo', sponsorData.logo);
-      } else {
-        formData.append(key, sponsorData[key]);
-      }
-    });
+    // const formData = new FormData();
+    // Object.keys(sponsorData).forEach(key => {
+    //   if (key === 'logo') {
+    //     formData.append('logo', sponsorData.logo);
+    //   } else {
+    //     formData.append(key, sponsorData[key]);
+    //   }
+    // });
 
-    return axios.post(`/sponsors/${id}`, formData, {
+    return axios.post(`/sponsors/${id}`, sponsorData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

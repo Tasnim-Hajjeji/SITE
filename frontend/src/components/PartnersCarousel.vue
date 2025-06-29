@@ -33,7 +33,7 @@ export default {
   computed: {
     duplicatedPartners() {
       // Duplicate the array for seamless looping
-      return [...this.partners, ...this.partners];
+      return [...this.partners, ...this.partners, ...this.partners, ...this.partners];
     }
   },
   async mounted() {
