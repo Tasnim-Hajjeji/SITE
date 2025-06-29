@@ -8,5 +8,5 @@ class Notification extends Model
 {
     protected $table = 'notification';
 
-    protected $fillable = ['title', 'message', 'is_active'];
+    protected $fillable = ['title', 'message', 'is_active', 'activated_at'];
 }

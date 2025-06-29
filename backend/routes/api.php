@@ -14,7 +14,7 @@ use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\KeynoteController;
 use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\NotificationController;
-use App\Models\CommitteeMember;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -147,9 +147,11 @@ Route::prefix('keynotes')->group(function () {
 // Notification Routes
 Route::prefix('notifications')->group(function () {
     Route::get('/', [NotificationController::class, 'index']);
+    Route::get('/activated', [NotificationController::class, 'getActivatedNotifs']);
     Route::get('/{id}', [NotificationController::class, 'show']);
     Route::post('/', [NotificationController::class, 'store']);
-    Route::put('/{id}', [NotificationController::class, 'update']);
+    Route::put('/{id}/activate', [NotificationController::class, 'activate']);
+    Route::put('/{id}/deactivate', [NotificationController::class, 'deactivate']);
     Route::delete('/{id}', [NotificationController::class, 'destroy']);
 });
 

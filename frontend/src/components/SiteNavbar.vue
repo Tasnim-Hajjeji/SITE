@@ -1,4 +1,3 @@
-```vue
 <template>
   <nav class="bg-white shadow-xl sticky top-0 z-50">
     <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
@@ -82,7 +81,7 @@
                     {{ $t('navbar.honorCommittee') }}
                   </router-link>
                 </li>
-                <li>
+                <li> <!---->
                   <router-link
                     class="block px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-[#265985] transition-all duration-200"
                     :class="{ 'border-b-2 border-[#265985] font-bold text-[#265985] text-base': $route.path === '/organizing' }"
@@ -128,15 +127,15 @@
               <ul
                 :class="['notification-dropdown absolute top-full right-0 bg-white shadow-md rounded-md py-2 min-w-[400px] z-50', { 'hidden': !notificationDropdownOpen }]"
               >
-                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Recent Notifications</li>
-                <li v-for="(notification, index) in notifications" :key="index" class="list-row flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-all duration-200">
+                <li class="p-3 text-xs opacity-60 tracking-wide">Recent Notifications</li>
+                <li v-for="(notification, index) in notifications" :key="index" class="list-row flex items-center gap-3 p-3 hover:bg-gray-100 transition-all duration-200 border-t-[1px] border-t-gray-500">
                   <div class="icon-container">
                     <img class="size-10 rounded-box" src="../assets/notification.png" alt="Notification Icon" />
                   </div>
                   <div class="list-col-grow">
                     <div class="font-semibold text-gray-800">{{ notification.title }}</div>
-                    <div class="text-xs text-gray-500">{{ notification.message }}</div>
-                    <div class="text-xs opacity-60">{{ formatDate(notification.date) }}</div>
+                    <div class="text-xs text-gray-500 mt-[1px]">{{ notification.message }}</div>
+                    <div class="text-xs opacity-60 mt-1">{{ formatDate(notification.activated_at) }}</div>
                   </div>
                 </li>
               </ul>
@@ -176,8 +175,9 @@
 
 <script setup>
 /* eslint-disable no-unused-vars */
+import NotificationService from '@/services/NotificationService'
 import router from '@/router';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
@@ -189,23 +189,13 @@ const currentLanguage = ref(locale.value);
 const route = useRoute();
 
 // Sample notifications data
-const notifications = ref([
-  {
-    title: 'New Participant Registered',
-    message: 'John Doe has registered for SITE 2025. John Doe has registered for SITE 2025. John Doe has registered for SITE 2025. John Doe has registered for SITE 2025. John Doe has registered for SITE 2025.',
-    date: '2025-06-27T10:00:00Z',
-  },
-  {
-    title: 'Program Updated',
-    message: 'The schedule for Day 2 has been updated.',
-    date: '2025-06-26T15:30:00Z',
-  },
-  {
-    title: 'Payment Received',
-    message: 'Payment from Jane Smith has been confirmed.',
-    date: '2025-06-25T09:20:00Z',
-  },
-]);
+const notifications = ref([]);
+
+onMounted(() => {
+  NotificationService.getActivatedNotifs().then(response => {
+      notifications.value = response.data
+    }).catch(error => {console.log(error)})
+})
 
 const switchLanguage = (lang) => {
   currentLanguage.value = lang;
