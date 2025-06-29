@@ -100,6 +100,7 @@
   <style scoped>
   /* Your existing styles remain unchanged */
   .carousel-container {
+    margin-top: 3%;
     text-align: center;
     padding: 0.5rem;
     font-family: 'Segoe UI', sans-serif;
