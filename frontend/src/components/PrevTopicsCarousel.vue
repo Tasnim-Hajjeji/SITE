@@ -138,6 +138,7 @@ function prev() {
   position: relative;
   font-family: 'Segoe UI', sans-serif;
   background-color: #ffffff;
+  margin-top: 3rem;
 }
 
 .carousel-title {

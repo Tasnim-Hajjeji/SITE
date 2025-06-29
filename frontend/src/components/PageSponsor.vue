@@ -20,7 +20,7 @@
       />
     </div>
     <div class="text-center px-4">
-      <p class="text-3xl font-semibold animated-text text-gray-800 tracking-wide mx-8" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
+      <p class="text-2xl font-semibold animated-text text-gray-800 tracking-wide mx-8" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
         A heartfelt thank you to our incredible past sponsors! Your generous support and visionary contributions have been the driving force behind the triumphant success of previous SITE editions.
       </p>
     </div>
@@ -45,6 +45,7 @@ const openOrDownload = (url) => {
 <style scoped>
 .hero {
   font-family: 'Segoe UI', sans-serif;
+  margin-bottom: -4rem;
 }
 
 .hero-content {
