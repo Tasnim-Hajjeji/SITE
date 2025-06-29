@@ -1,7 +1,7 @@
 <template>
   <div class="carousel-wrapper">
     <div class="section-title">
-      <h2 class="carousel-title">Main Topics Of The Conference</h2>
+      <h2 class="carousel-title">Main Topics Of The Conference </h2>
     </div>
 
     <button @click="prev" class="nav-button left" :disabled="currentIndex === 0">
@@ -117,15 +117,15 @@ function prev() {
   content: "";
   flex: 1;
   height: 1px;
-  background-color: #0c5fa6;
+  background-color: #265985;
   margin: 0 1rem;
 }
 
 .section-title h2 {
   font-size: 1.2rem;
-  color: #0c5fa6;
+  color: #265985;
   font-weight: bold;
-  border: 1px solid #0c5fa6;
+  border: 1px solid #265985;
   border-radius: 999px;
   padding: 0.5rem 2rem;
   background-color: #fff;
@@ -138,6 +138,7 @@ function prev() {
   position: relative;
   font-family: 'Segoe UI', sans-serif;
   background-color: #ffffff;
+  margin-top: 3rem;
 }
 
 .carousel-title {
@@ -145,7 +146,7 @@ function prev() {
   font-size: 1.3rem;
   font-weight: bold;
   margin-bottom: 2rem;
-  color: #1f2937;
+  color: #265985;
 }
 
 .carousel-container {
@@ -175,7 +176,7 @@ function prev() {
 .custom-line {
   width: 96%;
   height: 1px;
-  background-color: #003f7f;
+  background-color: #265985;
   border: none;
   position: relative;
 }
@@ -185,7 +186,7 @@ function prev() {
   content: '';
   position: absolute;
   height: 1px;
-  background-color: #003f7f;
+  background-color: #265985;
   width: 50px;
   top: 0;
 }

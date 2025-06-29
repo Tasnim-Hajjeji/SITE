@@ -1,12 +1,13 @@
 <template>
     <div v-if="editionData && editionData.id">
         <HeaderEdition :edition-data="editionData" />
-        <PrevTimeLine :edition-id="editionData.id" />
         <PrevTopicsCarousel />
         <Keynote :edition-id="editionData.id" />
-        <Document :edition-id="editionData.id" />
         <ConferenceGallery :edition-data="editionData" />
+        <PrevTimeLine :edition-id="editionData.id" />
         <GuestGrid :edition-id="editionData.id" />
+        <Document :edition-id="editionData.id" />
+
     </div>
     <div v-else-if="editionData && !editionData.id">
         <h1 class="text-center text-2xl font-bold">No previous edition available</h1>

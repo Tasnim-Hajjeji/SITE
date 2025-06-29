@@ -1,18 +1,18 @@
 <template>
   <section class="sponsor-form-section">
     <div class="header">
-      <h1>We welcome your support!</h1>
-      <p>Submit your application through the form below</p>
+      <h1>{{ $t("sponsors.welcome") }}</h1>
+      <p>{{ $t("sponsors.come_on") }}</p>
     </div>
 
     <form class="sponsor-form" @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label>Company Name *</label>
+        <label>{{ $t("sponsors.name") }} *</label>
         <input type="text" v-model="form.name" required />
       </div>
 
       <div class="form-group">
-        <label>Company address *</label>
+        <label>{{ $t("sponsors.address") }} *</label>
         <input type="text" v-model="form.adresse" required />
       </div>
 
@@ -22,12 +22,12 @@
       </div>
 
       <div class="form-group">
-        <label>Phone *</label>
+        <label>{{ $t("sponsors.phone") }} *</label>
         <input type="tel" v-model="form.phone" required />
       </div>
 
       <div class="form-group">
-        <label>Upload Company Logo *</label>
+        <label>{{ $t("sponsors.logo") }} *</label>
         <input type="file" @change="handleFileUpload" required />
       </div>
 
@@ -36,14 +36,14 @@
         <textarea rows="4" v-model="form.description" required></textarea>
       </div>
 
-      <button class="submit-btn" type="submit">Submit</button>
+      <button class="submit-btn" type="submit">{{ $t("sponsors.submit") }}</button>
     </form>
 
     <!-- MODAL -->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
         <p>
-          We appreciate your interest in supporting SITE 2025. Our team will review your application and get back to you shortly 
+          {{ $t("sponsors.appreciate") }}
         </p>
         <button @click="showModal = false" class="modal-button">ok</button>
       </div>
