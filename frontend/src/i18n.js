@@ -93,7 +93,7 @@ const messages = {
             title: 'Conference Highlights from',
             highlight: 'Previous Years',
             carousel_subtitle_1: 'From inspiring talks to vibrant exchanges, each edition brought something unique.',
-            carousel_subtitle_2: ' Relive the highlights through photos and memories.',
+            carousel_subtitle_2: 'Relive the highlights through photos and memories.',
             button: 'See More'
         },
         prevTimeLine: {
@@ -126,6 +126,10 @@ const messages = {
             messagePlaceholder: 'Enter your message here',
             submit: 'Send Message',
             successMessage: 'Thank you for your message! We will get back to you soon.'
+        },
+        page: {
+            title: 'Speakers of SITE 2025',
+            subtitle: 'Discover innovation, collaboration, and inspiration'
         }
     },
     fr: {
@@ -197,7 +201,6 @@ const messages = {
         },
         importantDates: {
             title: 'Dates Importantes',
-           
         },
         footer: {
             contact: 'Contactez-nous',
@@ -253,6 +256,10 @@ const messages = {
             messagePlaceholder: 'Entrez votre message ici',
             submit: 'Envoyer le Message',
             successMessage: 'Merci pour votre message ! Nous vous répondrons bientôt.'
+        },
+        page: {
+            title: 'Les intervenants de SITE 2025',
+            subtitle: 'Découvrez l\'innovation, la collaboration et l\'inspiration'
         }
     }
 };
