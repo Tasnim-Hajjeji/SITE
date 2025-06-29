@@ -176,21 +176,26 @@ footer {
   border-width: 0;
 }
 
+
+
 @media (max-width: 768px) {
   footer {
     padding-bottom: 4rem; /* Extra space for Back to Top button */
   }
 
   .flex-row {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 2px;
+}
 
-  .flex-row img {
-    max-width: 80px; /* Smaller logos on mobile */
-    height: auto;
-  }
+.flex-row img {
+  max-width: 60px;
+  height: auto;
+}
 
   .font-cinzel {
     font-size: 1.5rem; /* Slightly smaller title */

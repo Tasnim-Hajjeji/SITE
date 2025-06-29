@@ -27,9 +27,9 @@
         </button>
         <ul v-if="committeeDropdownOpen" class="dropdown-menu">
           <li @click="onCommitteeOption('All')">Tous</li>
-          <li @click="onCommitteeOption('Honor')">Honeur</li>
-          <li @click="onCommitteeOption('Organizing')">Organization</li>
-          <li @click="onCommitteeOption('Scientific')">Scientifique</li>
+          <li @click="onCommitteeOption('honor')">Honeur</li>
+          <li @click="onCommitteeOption('organizing')">Organization</li>
+          <li @click="onCommitteeOption('scientific')">Scientifique</li>
         </ul>
       </div>
     </div>
@@ -63,13 +63,13 @@
                 <span class="name">{{ member.full_name }}</span>
               </td>
               <td>
-                <span class="role">{{ member.role }}</span>
+                <span class="role">{{ member.role ? member.role : "VIP" }}</span>
               </td>
               <td class="etablissement">{{ member.from_etablissement }}</td>
               <td class="edition">{{ member.edition?.name }}</td>
               <td>
                 <span :class="['badge', member.committee.toLowerCase()]">
-                  {{ member.committee }}
+                  {{ committe_fr[member.committee] }}
                 </span>
               </td>
               <td class="contact">
@@ -273,6 +273,11 @@ export default {
   name: "CommitteesAdmin",
   data() {
     return {
+      committe_fr: {
+        'honor': 'honeur',
+        'scientific': 'scientifique',
+        'organizing': 'organization'
+      },
       loading: true,
       editionDropdownOpen: false,
       committeeDropdownOpen: false,
@@ -507,7 +512,7 @@ export default {
       }
     },
     openEditModal(member) {
-      this.editMemberData = { ...member, role: member.role.toLowerCase() };
+      this.editMemberData = { ...member, role: member.role ? member.role.toLowerCase() : '' };
       this.showEditRoleField = this.editMemberData.committee !== 'Honor';
       this.showEditModal = true;
     },
@@ -780,6 +785,7 @@ h1 {
 }
 
 .role {
+  text-transform: capitalize;
   color: #6366F1;
   font-weight: 500;
   font-size: 14px;
@@ -792,6 +798,7 @@ h1 {
 }
 
 .badge {
+  text-transform: capitalize !important;
   padding: 4px 12px;
   border-radius: 9999px;
   font-size: 12px;

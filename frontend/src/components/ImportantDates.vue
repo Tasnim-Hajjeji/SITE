@@ -171,17 +171,6 @@ export default {
     justify-content: center !important;
   }
 
-  .content {
-    flex-direction: row;
-    align-items: center;
-    text-align: left;
-    border-radius: 30px;
-    padding: 0.5rem;
-    width: 90%;
-    max-width: 350px;
-    margin: 0.2rem;
-    gap: 0.5rem;
-  }
 
   .date-circle {
     order: 1;
@@ -196,8 +185,16 @@ export default {
     padding: 0.1rem;
     font-size: 0.9rem;
     color: #333;
-    text-align: left;
+  text-align: center;
+
     width: auto;
   }
+  
+  .title {
+    font-size: 1.3rem; /* نقصنا حجم عنوان القسم */
+    margin-bottom: 2rem; /* نقصنا المسافة تحت العنوان */
+  }
 }
+
+
 </style>

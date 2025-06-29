@@ -3,7 +3,7 @@
     <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-20 items-center justify-between">
         <div class="flex-1 flex items-center gap-4">
-          <div class="flex items-center font-bold text-lg" style="color: #265985;">
+          <div class="flex items-center font-bold text-lg site-title" style="color: #265985;">
             <img src="../assets/logosite.png" alt="Logo" class="h-10 mr-2" />
             SITE 2025
           </div>
@@ -81,7 +81,7 @@
                     {{ $t('navbar.honorCommittee') }}
                   </router-link>
                 </li>
-                <li> <!---->
+                <li>
                   <router-link
                     class="block px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-[#265985] transition-all duration-200"
                     :class="{ 'border-b-2 border-[#265985] font-bold text-[#265985] text-base': $route.path === '/organizing' }"
@@ -364,13 +364,40 @@ html {
   }
 }
 
-@media (max-width: 600px) {
-  .lang-switch .short {
-    display: inline;
+@media (max-width: 768px) {
+  .nav-links li a,
+  .dropdown-menu li a,
+  .notification-dropdown li {
+    font-size: 0.85rem;
   }
-  .lang-switch .full {
-    display: none;
+
+  /* تصغير حجم أزرار اللغة */
+  .lang-switch button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
   }
 }
+@media (max-width: 768px) {
+  .nav-links li a {
+    font-size: 0.875rem; /* صغرنا الخط شوية (14px) */
+    padding: 0.3rem 0.8rem; /* نقصنا padding أفقي ورأسي */
+  }
+
+  nav .flex.h-20 {
+    height: 56px; /* نقصنا ارتفاع النافبار */
+  }
+
+  .nav-links li {
+    padding: 0.3rem 0; /* نقصنا padding الأفقي والرأسي للروابط */
+  }
+
+  /* لو حبيت تصغر حجم اللوجو */
+  nav img.h-10 {
+    height: 32px; /* بدل 40px الى 32px */
+  }
+  .site-title {
+    font-size: 0.85rem; /* تقريبًا 14px */
+  }
+}
+
 </style>
-```

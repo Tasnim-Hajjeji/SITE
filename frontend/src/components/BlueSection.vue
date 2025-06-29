@@ -155,4 +155,38 @@ export default {
   /* Réduit depuis 1rem */
   border-radius: 10px;
 }
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.3rem; /* صغرنا العنوان من 1.7rem إلى 1.3rem */
+    margin: 2rem 0 1.5rem;
+  }
+
+  .info-grid {
+    gap: 1rem; /* نقصنا الفجوة بين العناصر */
+    margin-bottom: 3rem;
+  }
+
+  .info-item {
+    width: 120px; /* نقصنا عرض العنصر */
+    font-size: 0.8rem; /* صغرنا الخط */
+  }
+
+  .info-item i {
+    font-size: 0.85rem; /* صغرنا الأيقونات */
+    padding: 0.4rem; /* نقصنا padding الأيقونات */
+    border-radius: 8px; /* خففنا شوية الفيرجن */
+  }
+
+  .blue-section {
+    padding-bottom: 2%;
+  }
+
+  .top-curve {
+    height: 150px; /* نقصنا ارتفاع الجزء الأبيض العلوي */
+    top: -75px;
+    border-bottom-left-radius: 100% 75px;
+    border-bottom-right-radius: 100% 75px;
+  }
+}
+
 </style>

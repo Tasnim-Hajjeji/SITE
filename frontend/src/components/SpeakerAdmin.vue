@@ -45,7 +45,7 @@
     <!-- Modal Add -->
     <div v-if="showAddModal" class="modal-overlay">
       <div class="modal-content">
-        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un Orateur</h3>
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un Intervenant</h3>
         <form @submit.prevent="addSpeaker" class="space-y-0">
           <div>
             <label for="full_name_input" class="block mb-1 text-xs text-gray-500 font-medium">Nom complet</label>

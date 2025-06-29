@@ -64,12 +64,27 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, defineExpose, watchEffect } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
-const selected = ref('Dashbord')
+const route = useRoute()
 const isOpen = ref(false)
+const routeToSelected = {
+  '/admin': 'Dashbord',
+  '/admin/sponsor': 'Sponsors',
+  '/admin/partnair': 'Partenaires',
+  '/admin/speaker': 'Intervenants',
+  '/admin/participant-card': 'participant-card',
+  '/admin/contact-question': 'ContactQuestion',
+  '/admin/committies': 'Committies',
+  '/admin/notification': 'Notifications',
+}
+const selected = ref(routeToSelected[route.path] || 'Dashbord')
+
+watchEffect(() => {
+  selected.value = routeToSelected[route.path] || 'Dashbord'
+})
 
 const select = (item) => {
   selected.value = item
