@@ -77,7 +77,6 @@
       <button class="download" @click="downloadPDF">
         <i class="fas fa-download"></i> Download registration form
       </button>
-      <button class="edit">Edit information</button>
       <button class="home" @click="handleReturnHome">Return to Home</button>
     </div>
   </div>
@@ -145,8 +144,6 @@ onMounted(() => {
       console.error('Error creating participant:', error);
     });
   }
-
-  localStorage.clear()
 })
 
 function form_request(formData){
