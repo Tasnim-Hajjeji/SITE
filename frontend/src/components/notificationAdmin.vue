@@ -13,8 +13,8 @@
         <h3 class="name">{{ notif.title }}</h3>
         <p class="desc">{{ notif.message }}</p>
         <div class="details">
-          <p>Created on: {{ formatDate(notif.created_at) }}</p>
-          <p>Activated on: {{ notif.activated_at ? formatDate(notif.activated_at) : 'Not activated' }}</p>
+          <p>Créé le: {{ formatDate(notif.created_at) }}</p>
+          <p>Activé le: {{ notif.activated_at ? formatDate(notif.activated_at) : "N'est pas activé" }}</p>
         </div>
         <div class="card-footer">
           <div class="buttons">
@@ -43,7 +43,7 @@
             <input v-model="newNotif.title" required class="w-[95%] p-2 border border-gray-300 rounded-lg" />
           </div>
           <div>
-            <label class="block mb-1 text-xs text-gray-500 font-medium">Message</label>
+            <label class="block mb-1 mt-2 text-xs text-gray-500 font-medium">Message</label>
             <textarea v-model="newNotif.message" required class="w-[95%] p-2 border border-gray-300 rounded-lg"></textarea>
           </div>
           <div class="modal-actions flex justify-end gap-2 mt-6">

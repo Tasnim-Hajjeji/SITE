@@ -49,8 +49,8 @@
                 </button>
               </div>
             </div>
-            <div class="label">{{ program.name_en }}</div>
-            <div class="description">{{ program.description_en }}</div>
+            <div class="label">{{ program.name_fr }}</div>
+            <div class="description">{{ program.description_fr }}</div>
           </div>
         </div>
       </div>

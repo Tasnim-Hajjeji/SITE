@@ -31,12 +31,12 @@
     <transition name="fade">
       <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
         <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirm Delete</h3>
-          <p class="text-gray-600 mb-4 text-center">Are you sure you want to delete member <strong>{{ deleteQuestionData.name }} , {{ deleteQuestionData.subject }}</strong>?</p>
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmer Suppression</h3>
+          <p class="text-gray-600 mb-4 text-center">Voulez vous supprimer le membre <strong>{{ deleteQuestionData.name }} , {{ deleteQuestionData.subject }}</strong>?</p>
           <div class="modal-actions flex justify-end gap-2 mt-6">
             <button type="button" class="cancel-btn" @click="closeDeleteModal">Cancel</button>
             <button type="button" class="delete-btn" @click="supprimerQuestion" :disabled="isSubmitting">
-              {{ isSubmitting ? 'Deleting...' : 'Delete' }}
+              {{ isSubmitting ? 'Suppression...' : 'Supprimer' }}
             </button>
           </div>
         </div>

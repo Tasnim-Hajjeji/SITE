@@ -1,20 +1,20 @@
 <template>
   <section class="keynote-section">
     <div class="header-row">
-      <h2 class="title">Session Keynote</h2>
+      <h2 class="title">Remarques des sessions</h2>
       <div class="action-buttons">
         <button class="add-btn" @click="showModal = true">
-          <i class="fas fa-plus"></i> Ajouter un Keynote
+          <i class="fas fa-plus"></i> Ajouter un Remarque
         </button>
       </div>
     </div>
 
     <div v-if="isLoading" class="loading-message">
-      Chargement des keynotes...
+      Chargement des remarques...
     </div>
 
     <div v-else-if="items.length === 0" class="empty-message">
-      Aucun keynote disponible.
+      Aucun remarque disponible.
     </div>
     <div v-else class="carousel">
       <button class="nav-btn" @click="prevSlide" :disabled="currentIndex === 0">
@@ -28,7 +28,7 @@
             <i class="fas fa-trash delete-icon" @click="deleteKeynote(item.id)"></i>
           </div>
           <div class="quote-icon">❝</div>
-          <p class="text">{{ currentLanguage === 'fr' ? item.description_fr : item.description_en }}</p>
+          <p class="text">{{ item.description_fr }}</p>
           <div class="profile">
             <img :src="getImageUrl(item.image_url) || 'https://i.pravatar.cc/50'" alt="Photo du conférencier" class="avatar" />
             <div>
@@ -52,7 +52,7 @@
     <div v-if="showModal"
       class="modal-overlay">
       <div class="modal-content">
-        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un nouveau Keynote</h3>
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un nouveau remarque</h3>
         <form @submit.prevent="addKeynote" class="space-y-0">
           <div>
             <label for="description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Citation (Français)</label>
@@ -96,7 +96,7 @@
             </button>
             <button type="submit"
               class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
-              Ajouter Keynote
+              Ajouter remarque
             </button>
           </div>
         </form>
@@ -107,7 +107,7 @@
     <div v-if="showUpdateModal"
       class="modal-overlay">
       <div class="modal-content">
-        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Modifier le Keynote</h3>
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Modifier le remarque</h3>
         <form @submit.prevent="updateKeynote" class="space-y-0">
           <div>
             <label for="update_description_fr" class="block mb-1 text-xs text-gray-500 font-medium">Citation (Français)</label>
@@ -157,7 +157,7 @@
             </button>
             <button type="submit"
               class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out">
-              Modifier Keynote
+              Modifier remarque
             </button>
           </div>
         </form>
@@ -190,7 +190,6 @@ const updateImagePreview = ref(null)
 const error = ref(null)
 const items = ref([])
 const isLoading = ref(true)
-const currentLanguage = ref('en') // Default to English
 
 // Fetch keynotes on component mount
 onMounted(async () => {
@@ -527,6 +526,9 @@ async function deleteKeynote(id) {
 }
 
 .quote-icon {
+  cursor: none;
+  margin-top: -35px;
+  margin-bottom: 35px;
   font-size: 2rem;
   color: #f6b10c;
   margin-bottom: 1rem;
