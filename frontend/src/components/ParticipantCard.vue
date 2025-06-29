@@ -4,7 +4,7 @@
 
     <div class="actions" style="display: flex; justify-content: space-between; align-items: center;">
       <button @click="downloadParticipantListPDF" class="btn download" style="background-color: #3490dc; color: white; padding: 8px 12px; border-radius: 5px; border:none; cursor:pointer;">
-        <i class="fas fa-file-pdf"></i> Download Participant List
+        <i class="fas fa-file-pdf"></i> Télécharger liste des participants
       </button>
 
       <div class="dropdown" @click="toggleDropdown">
@@ -25,14 +25,14 @@
             <span class="date">{{ participant.date }}</span>
           </div>
           <div class="info">
-            <p><strong>Country</strong>: {{ participant.country }}</p>
-            <p><strong>Profession</strong>: {{ participant.profession }}</p>
-            <p><strong>Institution</strong>: {{ participant.institution }}</p>
+            <p><strong>Pays</strong>: {{ participant.country }}</p>
+            <p><strong>Fonction</strong>: {{ participant.profession }}</p>
+            <p><strong>Etablissement</strong>: {{ participant.institution }}</p>
             <p><strong>Email</strong>: {{ participant.email }}</p>
-            <p><strong>Phone</strong>: {{ participant.phone }}</p>
+            <p><strong>Téléphone</strong>: {{ participant.phone }}</p>
           </div>
           <button class="toggle-btn" @click="toggleDetails(index)">
-            {{ participant.showDetails ? 'Less details' : 'More details' }}
+            {{ participant.showDetails ? 'Moins de details' : 'Plus de details' }}
             <i :class="['arrow', participant.showDetails ? 'up' : 'down']"></i>
           </button>
         </div>
@@ -40,14 +40,14 @@
         <transition name="fade">
           <div v-if="participant.showDetails" class="details">
             <p>Participation: {{ participant.details.participation }}</p>
-            <p>Accommodation: {{ participant.details.accommodation }}</p>
-            <p>Children: {{ participant.details.children }}</p>
-            <p>Adults: {{ participant.details.adults }}</p>
-            <p>Single Supplement: {{ participant.details.singleSupplement }}</p>
-            <p>Extra Nights: {{ participant.details.extraNights }}</p>
-            <p>Payment: {{ participant.details.payment }}</p>
-            <p>Total: {{ participant.details.total }}</p>
-            <button class="download-btn" @click="openPaymentModal(index)">
+            <p>Hébergement: {{ participant.details.accommodation }}</p>
+            <p>Enfants: {{ participant.details.children }}</p>
+            <p>Adultes: {{ participant.details.adults }}</p>
+            <p>Supplement Single: {{ participant.details.singleSupplement }}</p>
+            <p>Nuits Supplimentaires: {{ participant.details.extraNights }}</p>
+            <p>Façon de paie: {{ participant.details.payment }}</p>
+            <p>Total: {{ participant.details.total }}&nbsp;{{ participant.country === 'tn' ? "DT" : "€" }}</p>
+            <button v-if="participant.details.payment !== 'Cash'" class="download-btn" @click="openPaymentModal(index)">
               <i class="fas fa-eye"></i> Payment Proof
             </button>
           </div>

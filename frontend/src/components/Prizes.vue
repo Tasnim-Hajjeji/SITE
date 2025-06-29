@@ -19,12 +19,12 @@
         <tr>
           <th>Tunisien (DT)</th>
           <th>Étranger (€)</th>
-          <th>Hébergement (DT)</th>
-          <th>Article (DT)</th> <!-- ou "Communication", si tu parles d’un papier scientifique -->
-          <th>Accompagnateur adulte (DT)</th>
-          <th>Enfant accompagnateur (DT)</th>
-          <th>Supplément single (DT)</th>
-          <th>Nuit supplémentaire (DT)</th>
+          <th>Hébergement</th>
+          <th>Article</th> <!-- ou "Communication", si tu parles d’un papier scientifique -->
+          <th>Accompagnateur adulte</th>
+          <th>Accompagnateur Enfant</th>
+          <th>Supplément single</th>
+          <th>Nuit supplémentaire</th>
           <th>Actions</th>
 
         </tr>
@@ -33,13 +33,13 @@
         <tr v-for="(prize) in prizes" :key="prize.id">
           <td class="numeric">{{ prize.prix_tun }}</td>
           <td class="numeric">{{ prize.prix_international }}</td>
-          <td class="numeric">{{ prize.prix_tun_hebergement }}</td>
-          <td class="numeric">{{ prize.prix_article }}</td>
+          <td class="numeric">{{ prize.prix_tun_hebergement }} DT / {{ prize.prix_eur_hebergement }} &euro;</td>
+          <td class="numeric">{{ prize.prix_article_tun }} DT / {{ prize.prix_article_eur }} &euro;</td>
 
-          <td class="numeric">{{ prize.prix_acc_adulte }}</td>
-          <td class="numeric">{{ prize.prix_acc_enfant }}</td>
-          <td class="numeric">{{ prize.prix_single_supp }}</td>
-          <td class="numeric">{{ prize.prix_nuit_supp }}</td>
+          <td class="numeric">{{ prize.prix_acc_adulte_tun }} DT / {{ prize.prix_acc_adulte_eur }} &euro;</td>
+          <td class="numeric">{{ prize.prix_acc_enfant_tun }} DT / {{ prize.prix_acc_enfant_eur }} &euro;</td>
+          <td class="numeric">{{ prize.prix_single_supp_tun }} DT / {{ prize.prix_single_supp_eur }} &euro;</td>
+          <td class="numeric">{{ prize.prix_nuit_supp_tun }} DT / {{ prize.prix_nuit_supp_eur }} &euro;</td>
           <td class="actions-cell">
             <button class="small-btn update-btn" @click="openUpdateModal(prize)">
               <i class="fas fa-pen"></i>
@@ -56,18 +56,18 @@
     <transition name="fade">
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">{{ isUpdating ? 'Update Prize' : 'Add Prize' }}
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">{{ isUpdating ? 'Mise à jour des prix' : 'Ajout des prix' }}
           </h3>
           <form @submit.prevent="isUpdating ? updatePrize() : addPrize()" class="space-y-0">
             <div v-for="(label, key) in fieldLabels" :key="key">
-              <label :for="key" class="block mb-1 text-xs text-gray-500 font-medium">{{ label }}</label>
+              <label :for="key" class="block mb-1 text-xs text-gray-500 font-medium mt-2">{{ label }}</label>
               <input v-model.number="form[key]" :id="key" :placeholder="label" type="number" min="0"
                 class="w-[95%] p-2 border border-gray-300 rounded-lg" />
             </div>
-            <div class="modal-actions flex justify-end gap-2 mt-6">
-              <button type="button" class="cancel-btn" @click="cancelModal">Cancel</button>
-              <button type="submit" class="add-btn" :disabled="isSubmitting">
-                {{ isSubmitting ? (isUpdating ? 'Updating...' : 'Adding...') : (isUpdating ? 'Update' : 'Add') }}
+            <div class="modal-actions flex justify-end gap-2">
+              <button type="button" class="cancel-btn update_price_btns" @click="cancelModal">Annuler</button>
+              <button type="submit" class="add-btn update_price_btns" :disabled="isSubmitting">
+                {{ isSubmitting ? (isUpdating ? 'Mise a jour...' : 'Ajout...') : (isUpdating ? 'Mettre a jour' : 'Ajouter') }}
               </button>
             </div>
           </form>
@@ -80,13 +80,13 @@
       <div v-if="showDeleteModal" class="modal-overlay">
         <div class="modal-content">
           <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmation du suppression</h3>
-          <p class="text-gray-600 mb-4">Are you sure you want to delete this prize? This action is irreversible.</p>
+          <p class="text-gray-600 mb-4">Êtes-vous sûr de vouloir supprimer ces prix ? Cette action est irréversible.</p>
           <div class="modal-actions flex justify-end gap-2 mt-6">
             <button type="button" class="cancel-btn" @click="showDeleteModal = false; selectedPrizeId = null;">
-              Cancel
+              Annuler
             </button>
             <button type="button" class="delete-btn" @click="deletePrize()" :disabled="isDeleting">
-              {{ isDeleting ? 'Deleting...' : 'Delete' }}
+              {{ isDeleting ? 'Suppression...' : 'Supprimer' }}
             </button>
           </div>
         </div>
@@ -112,23 +112,36 @@ const selectedEditionId = ref(null);
 const form = ref({
   prix_tun: '',
   prix_international: '',
-  prix_tun_sans_hebergement: '',
-  prix_acc_adulte: '',
-  prix_acc_enfant: '',
-  prix_single_supp: '',
-  prix_nuit_supp: '',
+  prix_tun_hebergement: '',
+  prix_eur_hebergement: '',
+  prix_article_tun: '',
+  prix_article_eur: '',
+  prix_acc_adulte_tun: '',
+  prix_acc_adulte_eur: '',
+  prix_acc_enfant_tun: '',
+  prix_acc_enfant_eur: '',
+  prix_single_supp_tun: '',
+  prix_single_supp_eur: '',
+  prix_nuit_supp_tun: '',
+  prix_nuit_supp_eur: '',
   edition_id: null
 });
 
 const fieldLabels = {
-  prix_tun: 'Tunisian (DT)',
-  prix_international: 'Foreign (EUR)',
-  prix_tun_hebergement: 'Accommodation (DT)',
-  prix_article: 'Article (DT)',
-  prix_acc_adulte: 'Adult Companion (DT)',
-  prix_acc_enfant: 'Child Companion (DT)',
-  prix_single_supp: 'Single Supplement (DT)',
-  prix_nuit_supp: 'Extra Night (DT)'
+  prix_tun: 'Tunisien (DT)',
+  prix_international: 'Étranger (EUR)',
+  prix_tun_hebergement: 'Hébergement (DT)',
+  prix_eur_hebergement: 'Hébergement (€)',
+  prix_article_tun: 'Article (DT)',
+  prix_article_eur: 'Article (€)',
+  prix_acc_adulte_tun: 'Accompagnateur Adulte (DT)',
+  prix_acc_adulte_eur: 'Accompagnateur Adulte (€)',
+  prix_acc_enfant_tun: 'Accompagnateur Enfant (DT)',
+  prix_acc_enfant_eur: 'Accompagnateur Enfant (€)',
+  prix_single_supp_tun: 'Supplément Single (DT)',
+  prix_single_supp_eur: 'Single Supplement (€)',
+  prix_nuit_supp_tun: 'Nuit Supplémentaire (DT)',
+  prix_nuit_supp_eur: 'Nuit Supplémentaire (€)'
 };
 
 const hasPrices = computed(() => {
@@ -263,6 +276,10 @@ function resetForm() {
   }
 }
 
+.update_price_btns{
+  margin-top: 15px;
+}
+
 .header-row {
   display: flex;
   justify-content: space-between;
@@ -324,6 +341,7 @@ function resetForm() {
 }
 
 .prizes-table th {
+  text-transform: capitalize;
   font-weight: 600;
   color: #1b2d56;
   background: #f1f5f9;
@@ -345,7 +363,7 @@ function resetForm() {
 }
 
 .prizes-table .numeric {
-  text-align: right;
+  text-align: center;
 }
 
 .prizes-table .actions-cell {

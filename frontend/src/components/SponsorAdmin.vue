@@ -67,7 +67,7 @@
     <!-- Modal Ajouter -->
     <div v-if="showAddModal" class="modal-overlay">
       <div class="modal-content">
-        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un Partenaire</h3>
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un Sponsor</h3>
         <form @submit.prevent="addSponsor" class="space-y-0">
           <div>
             <label for="name_input" class="block mb-1 text-xs text-gray-500 font-medium">Nom de l'entreprise</label>

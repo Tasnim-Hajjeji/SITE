@@ -14,9 +14,9 @@
     <div v-else class="article-list">
       <div class="article-card" v-for="(article) in articles" :key="article.id">
         <div class="article-name" @click="openPDF(getPdfUrl(article.url))">
-          <i class="fas fa-file-pdf"></i> {{ article.name_en }}
+          <i class="fas fa-file-pdf"></i> {{ article.name_fr }}
         </div>
-        <button class="small-btn delete-btn" @click="confirmDelete(article.id, article.name_en)">
+        <button class="small-btn delete-btn" @click="confirmDelete(article.id, article.name_fr)">
           <i class="fas fa-trash"></i>
         </button>
       </div>
