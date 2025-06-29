@@ -17,7 +17,7 @@
           :class="{ 'center-card': isCenterCard(index), 'partial-card': isPartialCard(index) }"
         >
           <div class="image-container">
-            <img :src="`http://localhost:8000${item}`" :alt="`image${index}`" />
+            <img :src="getImageUrl(item)" :alt="`image${index}`" />
           </div>
         </div>
       </div>
@@ -54,6 +54,7 @@ export default {
   computed: {
     slides() {
       if (Array.isArray(this.editionData.images_url)) {
+        console.log(this.editionData.images_url);
         return this.editionData.images_url
       } else if (typeof this.editionData.images_url === 'string' && this.editionData.images_url) {
         return [this.editionData.images_url]
@@ -89,6 +90,9 @@ export default {
     isPartialCard(index) {
       const lastIndex = this.currentIndex + 3
       return index === lastIndex && index < this.slides.length
+    },
+    getImageUrl(item){
+      return `http://localhost:8000/storage/${item}`;
     }
   },
   mounted() {

@@ -12,7 +12,7 @@
           v-for="(article, index) in articles"
           :key="index"
           class="dropdown-item"
-          @click="openOrDownload(article.url)"
+          @click="openOrDownload(index)"
         >
           <i class="fas fa-file-pdf"></i> {{ file_name(article) }}
         </div>
@@ -44,9 +44,36 @@
       toggleDropdown() {
         this.dropdownOpen = !this.dropdownOpen
       },
-      openOrDownload(url) {
-        window.open(url, '_blank')
-      }
+      async openOrDownload(i) {
+        {
+            try {
+                const pdfUrl = `${this.articles[i].url}`; 
+                // For external URL, uncomment below and replace with your URL
+                // const pdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+                const response = await fetch(pdfUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/pdf',
+                    },
+                });
+                if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+                const blob = await response.blob();
+                if (blob.type !== 'application/pdf') throw new Error('Le fichier reçu n\'est pas un PDF');
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'Article_SITE.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Erreur lors du téléchargement du modèle d\'article :', error.message);
+                alert('Impossible de télécharger le modèle d\'article : ' + error.message + '. Veuillez vérifier votre connexion ou réessayer plus tard.');
+            }
+        }
+      },
+      
     },
     mounted() {
       axios.get('http://localhost:8000/api/documents/edition/'+this.editionId)
@@ -54,7 +81,7 @@
           this.articles = response.data.map(file => ({
             name_fr: file.name_fr,
             name_en: file.name_en,
-            url: `http://localhost:8000${file.url}`
+            url: `http://localhost:8000/storage/${file.url}`
           }))
         })
         .catch(error => {
@@ -66,6 +93,7 @@
   
   
   <style scoped>
+  
   .user-article-section {
     max-width: 600px;
     margin: 2rem auto;

@@ -1,23 +1,23 @@
 <template>
   <section class="photo-gallery">
     <div class="header-row">
-      <h2 class="title">Galerie Photo</h2>
+      <h2 class="title">Album Photo</h2>
       <div class="action-buttons">
         <button class="delete-btn" @click="showDeleteAllModal = true">
-          <i class="fas fa-trash"></i> Delete All
+          <i class="fas fa-trash"></i> Supprimer Tout
         </button>
         <button class="add-btn" @click="showModal = true">
-          <i class="fas fa-plus"></i> Add
+          <i class="fas fa-plus"></i> Ajouter une image
         </button>
       </div>
     </div>
 
     <div v-if="isLoading" class="loading">
-      Loading images...
+      Chargement des images...
     </div>
 
     <div v-else-if="images.length === 0" class="empty-msg">
-      No images available.
+      Aucune image disponible.
     </div>
 
     <div v-else class="carousel">
@@ -48,10 +48,10 @@
     <!-- Add Image Modal -->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
-        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add Image</h3>
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter Image</h3>
         <form @submit.prevent="addImage" class="space-y-0">
           <div>
-            <label for="image_upload" class="block mb-1 text-xs text-gray-500 font-medium">Upload Image</label>
+            <label for="image_upload" class="block mb-1 text-xs text-gray-500 font-medium">Importer une image</label>
             <input id="image_upload" type="file" accept="image/*" @change="handleImageUpload"
               class="w-[95%] p-2 border border-gray-300 rounded-lg" required />
             <div v-if="imagePreview" class="mt-2">
@@ -65,13 +65,13 @@
             <button type="button"
               class="cancel-btn bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-semibold rounded-lg px-4 py-1.5 hover:from-gray-300 hover:to-gray-400 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
               @click="showModal = false">
-              Cancel
+              Annuler
             </button>
             <button type="submit"
               class="add-btn bg-gradient-to-r from-blue-800 to-blue-600 text-white font-semibold rounded-lg px-4 py-1.5 hover:from-blue-900 hover:to-blue-700 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300 ease-in-out"
               :disabled="!imagePreview || isAdding">
-              <span v-if="!isAdding">Add Image</span>
-              <span v-else class="flex items-center"><i class="fas fa-spinner fa-spin mr-2"></i> Adding...</span>
+              <span v-if="!isAdding">Ajouter Image</span>
+              <span v-else class="flex items-center"><i class="fas fa-spinner fa-spin mr-2"></i> Ajout en cours...</span>
             </button>
           </div>
         </form>
@@ -328,14 +328,22 @@ onUnmounted(() => {
 }
 
 .delete-btn {
-  border-color: #e53935;
-  color: #e53935;
-  background-color: white;
+  background: linear-gradient(to right, #e53935, #c62828);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  margin-right: 1rem;
 }
 
 .delete-btn:hover {
-  background-color: #e53935;
-  color: white;
+  background: linear-gradient(to right, #c62828, #b71c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .add-btn {

@@ -1,11 +1,11 @@
 ```vue
 <template>
   <div class="container">
-    <h1 class="title">Committees {{ this.selectedEditionName }}</h1>
+    <h1 class="title">Comités {{ this.selectedEditionName }}</h1>
 
     <div class="actions">
       <button class="btn add" @click="openAddModal">
-        <span class="plus">+</span> Add Committee Member
+        <span class="plus">+</span> Ajouter un membre
       </button>
 
       <!-- Edition Dropdown -->
@@ -26,17 +26,17 @@
           {{ selectedCommitteeType || 'Committee' }} ▼
         </button>
         <ul v-if="committeeDropdownOpen" class="dropdown-menu">
-          <li @click="onCommitteeOption('All')">All</li>
-          <li @click="onCommitteeOption('Honor')">Honor</li>
-          <li @click="onCommitteeOption('Organizing')">Organizing</li>
-          <li @click="onCommitteeOption('Scientific')">Scientific</li>
+          <li @click="onCommitteeOption('All')">Tous</li>
+          <li @click="onCommitteeOption('Honor')">Honeur</li>
+          <li @click="onCommitteeOption('Organizing')">Organization</li>
+          <li @click="onCommitteeOption('Scientific')">Scientifique</li>
         </ul>
       </div>
     </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="loading">
-      <i class="fas fa-spinner fa-spin"></i> Loading...
+      <i class="fas fa-spinner fa-spin"></i> Chargement...
     </div>
 
     <!-- Committee Members Table -->
@@ -45,11 +45,11 @@
         <table class="members-table">
           <thead>
             <tr>
-              <th>Full Name</th>
+              <th>Nom complet</th>
               <th>Role</th>
               <th>Etablissement</th>
               <th>Edition</th>
-              <th>Committee Type</th>
+              <th>Type de Comités</th>
               <th>Contact</th>
               <th>Actions</th>
             </tr>
@@ -100,8 +100,7 @@
 
     <!-- Empty State -->
     <div v-if="!loading && filteredMembers.length === 0" class="empty-state">
-      No committee members found for the selected criteria.
-    </div>
+      Aucun membre du comité n'a été trouvé pour les critères sélectionnés.</div>
 
     <!-- Tooltip -->
     <div v-if="tooltip.show" class="tooltip" :style="{ top: tooltip.y + 'px', left: tooltip.x + 'px' }">
@@ -117,7 +116,7 @@
     <transition name="fade">
       <div v-if="showAddModal" class="modal-overlay" @click.self="closeAddModal">
         <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Add Committee Member</h3>
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Ajouter un membre</h3>
           <form @submit.prevent="submitAddMember" class="space-y-4">
             <label class="block text-sm font-medium text-gray-700">
               Full Name:
@@ -126,19 +125,19 @@
             <label class="block text-sm font-medium text-gray-700">
               Committee Type:
               <select v-model="newMember.committee" required @change="handleCommitteeTypeChange" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                <option disabled value="">Select Committee</option>
-                <option value="Honor">Honor</option>
-                <option value="Organizing">Organizing</option>
-                <option value="Scientific">Scientific</option>
+                <option disabled value="">Selectionner une comité</option>
+                <option value="Honor">Honeur</option>
+                <option value="Organizing">Organization</option>
+                <option value="Scientific">Scientifique</option>
               </select>
             </label>
             <label v-if="showRoleField" class="block text-sm font-medium text-gray-700">
               Role:
               <select v-model="newMember.role" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                <option disabled value="">Select Role</option>
-                <option value="chair">chair</option>
-                <option value="vicechair">vicechair</option>
-                <option value="member">member</option>
+                <option disabled value="">Selectinner Role</option>
+                <option value="chair">Président</option>
+                <option value="vicechair">vice président</option>
+                <option value="member">membre</option>
               </select>
             </label>
             <label class="block text-sm font-medium text-gray-700">
@@ -166,7 +165,7 @@
               <input type="email" v-model="newMember.email" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
             </label>
             <label class="block text-sm font-medium text-gray-700">
-              Phone:
+              Num de Telephone:
               <input type="tel" v-model="newMember.phone" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
             </label>
             <div class="modal-actions flex justify-end gap-2 mt-6">
@@ -187,11 +186,11 @@
           <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Edit Committee Member</h3>
           <form @submit.prevent="submitEditMember" class="space-y-4">
             <label class="block text-sm font-medium text-gray-700">
-              Full Name:
+              Nom Complet:
               <input type="text" v-model="editMemberData.full_name" required class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
             </label>
             <label class="block text-sm font-medium text-gray-700">
-              Committee Type:
+              Type de Comité:
               <select v-model="editMemberData.committee" required @change="handleEditCommitteeTypeChange" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                 <option disabled value="">Select Committee</option>
                 <option value="Honor">Honor</option>
@@ -234,7 +233,7 @@
               <input type="email" v-model="editMemberData.email" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
             </label>
             <label class="block text-sm font-medium text-gray-700">
-              Phone:
+              Num de Telephone:
               <input type="tel" v-model="editMemberData.phone" class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
             </label>
             <div class="modal-actions flex justify-end gap-2 mt-6">
@@ -252,10 +251,10 @@
     <transition name="fade">
       <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
         <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirm Delete</h3>
-          <p class="text-gray-600 mb-4 text-center">Are you sure you want to delete member <strong>{{ deleteMemberData.full_name }}</strong>?</p>
+          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmation de suppression</h3>
+          <p class="text-gray-600 mb-4 text-center">Êtes-vous sûr de vouloir supprimer le membre? <strong>{{ deleteMemberData.full_name }}</strong>?</p>
           <div class="modal-actions flex justify-end gap-2 mt-6">
-            <button type="button" class="cancel-btn" @click="closeDeleteModal">Cancel</button>
+            <button type="button" class="cancel-btn" @click="closeDeleteModal">Annuler</button>
             <button type="button" class="delete-btn" @click="confirmDeleteMember" :disabled="isSubmitting">
               {{ isSubmitting ? 'Deleting...' : 'Delete' }}
             </button>

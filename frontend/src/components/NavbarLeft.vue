@@ -164,11 +164,10 @@ li.active {
   font-size: 1.2rem;
   display: flex;
   align-items: center;
-  color: white;
 }
 
 .icon i {
-  color: white;
+  color: #265985;
 }
 
 .text {
