@@ -14,11 +14,14 @@
             <input id="email" type="email" v-model="form.email" placeholder="Entrez votre e-mail" required
               class="w-full px-4 py-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-all duration-200 bg-gray-50 text-gray-800 placeholder-gray-400" />
           </div>
-          <div>
+          <div class="relative">
             <label for="password" class="block text-sm text-gray-600">Mot de passe</label>
-            <input id="password" type="password" v-model="form.password" placeholder="Entrez votre mot de passe"
+            <input id="password" :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="Entrez votre mot de passe"
               required
               class="w-full px-4 py-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-all duration-200 bg-gray-50 text-gray-800 placeholder-gray-400" />
+            <button type="button" @click="togglePasswordVisibility" class="absolute right-3 top-9 text-gray-500 hover:text-gray-700">
+              <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
           </div>
 
           <div class="flex justify-center">
@@ -58,6 +61,7 @@ const form = ref({
 });
 const isSubmitting = ref(false);
 const error = ref(null);
+const showPassword = ref(false);
 
 const openModal = () => {
   showModal.value = true;
@@ -67,6 +71,11 @@ const closeModal = () => {
   showModal.value = false;
   form.value = { email: '', password: '' };
   error.value = null;
+  showPassword.value = false;
+};
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
 };
 
 const handleSubmit = async () => {
@@ -133,8 +142,6 @@ defineExpose({ openModal });
 .z-50 {
   z-index: 50;
 }
-
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
 
 .login-section {
   font-family: 'Segoe UI', sans-serif;
