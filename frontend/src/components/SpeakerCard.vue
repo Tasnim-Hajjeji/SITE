@@ -8,14 +8,12 @@
         <hr />
         <p class="intervention">
           <strong>Interventions :</strong><br />
-        <ul>
-            <li v-for="(program, index) in speaker.programs" :key="index">
-            {{ programName(program) }}
-          </li>
-        </ul>
+          {{ speaker_desc() }}
         </p>
       </div>
-      <div class="flag"><CountryFlag :iso="speaker.code_pays" mode="squared" /></div>
+      <div class="flag">
+        <CountryFlag :iso="speaker.code_pays" mode="squared" />
+      </div>
       <!--<img class="flag" src="@/assets/image.png" alt="Flag" /> -->
     </div>
   </div>
@@ -49,6 +47,9 @@ export default {
     },
     programName(program) {
       return (this.language === 'fr') ? program.name_fr : program.name_en;
+    },
+    speaker_desc() {
+      return this.$i18n.locale === 'fr' ? this.speaker.description_fr : this.speaker.description_en
     },
   }
 }
