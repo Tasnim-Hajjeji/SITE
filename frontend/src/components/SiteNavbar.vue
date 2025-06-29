@@ -81,7 +81,7 @@
                     {{ $t('navbar.honorCommittee') }}
                   </router-link>
                 </li>
-                <li>
+                <li> <!---->
                   <router-link
                     class="block px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-[#265985] transition-all duration-200"
                     :class="{ 'border-b-2 border-[#265985] font-bold text-[#265985] text-base': $route.path === '/organizing' }"
