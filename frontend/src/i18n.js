@@ -247,7 +247,7 @@ const messages = {
             subtitle: 'Rencontrez les experts qui dirigent nos sessions et ateliers. Leurs idées susciteront des réflexions et des conversations significatives.'
         },
         previousEditions: {
-            title: 'Moments forts de la conférence d',
+            title: 'Moments forts de la conférence d\'',
             highlight: 'Années Précédentes',
             carousel_subtitle_1: 'Des discours inspirants aux échanges vibrants, chaque édition a apporté quelque chose d\'unique.',
             carousel_subtitle_2: 'Revivez les moments forts à travers des photos et des souvenirs.',

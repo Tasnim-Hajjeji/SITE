@@ -7,7 +7,7 @@
           {{ $t("sponsors.promote") }}
         </p>
         <button
-          class="download-btn animated-image shadow-lg transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          class="download-btn animated-image capitalize shadow-lg transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
           @click="openOrDownload(dossier_file)"
         >
           <i class="fas fa-download mr-2"></i> {{ $t("sponsors.download") }}
