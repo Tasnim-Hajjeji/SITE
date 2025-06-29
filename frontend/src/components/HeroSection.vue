@@ -146,7 +146,6 @@ export default {
     }
 };
 </script>
-
 <style scoped>
 .hero {
     font-family: 'Segoe UI', sans-serif;
@@ -255,7 +254,6 @@ a {
 
 .hero h1 {
     font-size: 3rem;
-    font-weight: bold;
     font-weight: 700;
 }
 
@@ -265,7 +263,6 @@ a {
 
 .hero h2 {
     font-size: 2rem;
-    font-weight: bold;
     font-weight: 700;
     margin-top: 0.5rem;
 }
@@ -290,21 +287,19 @@ a {
     display: flex;
     flex-direction: column;
     align-items: right;
+}
 
-    span:not(.sec) {
-        &::after {
-            content: ' :';
-        }
-    }
+.countdown div span:not(.sec)::after {
+    content: ' :';
 }
 
 .countdown small {
     font-size: 0.75rem;
     font-weight: normal;
+}
 
-    &:not(.sec) {
-        margin-right: 1rem;
-    }
+.countdown small:not(.sec) {
+    margin-right: 1rem;
 }
 
 .image-container {
@@ -329,29 +324,12 @@ a {
 }
 
 @keyframes heartbeat {
-    0% {
-        transform: scale(1);
-    }
-
-    20% {
-        transform: scale(1.1);
-    }
-
-    40% {
-        transform: scale(1);
-    }
-
-    60% {
-        transform: scale(1.1);
-    }
-
-    80% {
-        transform: scale(1);
-    }
-
-    100% {
-        transform: scale(1);
-    }
+    0% { transform: scale(1); }
+    20% { transform: scale(1.1); }
+    40% { transform: scale(1); }
+    60% { transform: scale(1.1); }
+    80% { transform: scale(1); }
+    100% { transform: scale(1); }
 }
 
 .decorative-dots {
@@ -365,6 +343,7 @@ a {
     opacity: 0.5;
 }
 
+/* ✅ SECTION MOBILE */
 @media (max-width: 768px) {
     .hero {
         justify-content: center;
@@ -390,15 +369,50 @@ a {
     }
 
     .hero h1 {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
 
     .hero h2 {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .hero p {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        padding: 0 0.5rem;
+    }
+
+    .countdown {
+        font-size: 1.3rem;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .countdown small {
+        font-size: 0.6rem;
+    }
+
+    .countdown_event {
+        font-size: 0.9rem !important;
+        margin-top: 0.5rem;
+        margin-bottom: -0.5rem;
+    }
+
+    .buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .buttons button,
+    .buttons .btn-blue,
+    .buttons .btn-green {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+    }
+
+    a {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
     }
 }
 </style>

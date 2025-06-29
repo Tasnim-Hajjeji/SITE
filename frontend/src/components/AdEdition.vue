@@ -706,7 +706,7 @@ const updateEdition = async () => {
 /* Responsive */
 @media (max-width: 768px) {
   .conference-card {
-    margin-top: 60px;
+    margin-top: 1px;
   }
 
   .card-body {

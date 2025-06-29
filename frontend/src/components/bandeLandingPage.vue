@@ -1,4 +1,3 @@
-```vue
 <template>
   <footer class="conference-footer">
     <div class="container">
@@ -98,15 +97,14 @@
   .container {
     flex-direction: column;
     text-align: center;
-    gap: 1.5rem;
-    padding: 1rem;
+    gap: 1.2rem;
+    padding: 0.1rem;
   }
 
   .logos {
-    display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   .logo {
@@ -118,25 +116,33 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap; /* Allow wrapping if content overflows */
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
   }
 
   .contact-item {
-    font-size: 0.75rem; /* Smaller font for mobile to fit horizontally */
-    justify-content: center;
-    white-space: nowrap; /* Prevent text wrapping */
+    font-size: 0.7rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+  }
+
+  .contact-item i {
+    font-size: 0.75rem;
   }
 
   .contact-item a {
-    padding: 0.5rem;
-    display: inline-block;
-    min-width: 44px; /* Minimum touch target size */
+    color: white;
+    text-decoration: none;
+    padding: 0;
+    font-size: 0.7rem;
   }
 
   .social-links {
-    display: none; /* Hide social links on mobile */
+    display: none;
   }
 }
 </style>
-```

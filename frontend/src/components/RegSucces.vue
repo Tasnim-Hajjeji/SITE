@@ -1,16 +1,36 @@
 <template>
   <div class="registration-container">
     <h1 class="title">
-      Registration <span class="highlight">successful!</span>
+      Inscription <span class="highlight">réussie !</span>
     </h1>
     <p class="subtitle">
-      Print and bring the generated registration form on the day of the SITE 2025 welcome to facilitate your admission
+      Imprimez et apportez le formulaire d'inscription généré le jour de l'accueil de SITE 2025 pour faciliter votre admission
     </p>
 
     <div class="form-card" ref="pdfContent">
+      <!-- Header with Logos -->
+      <div class="pdf-header">
+        <img src="@/assets/iset.png" alt="Logo ISET" class="logo" />
+        <img src="@/assets/adt.png" alt="Logo ADT" class="logo" />
+        <img src="@/assets/logosite.png" alt="Logo SITE 2025" class="logo" />
+      </div>
+
+      <!-- Title and Subtitle -->
+      <h2 class="pdf-title">Fiche d'Inscription - SITE 2025</h2>
+      <p class="pdf-subtitle">Confirmation d'Inscription | Date : {{ new Date().toLocaleDateString('fr-FR') }}</p>
+
+      <!-- Conference Content Section -->
+      <div class="pdf-section">
+        <h3 class="section-title">Aperçu de la Conférence SITE 2025</h3>
+        <p class="section-text">
+          La conférence SITE 2025 réunira des leaders académiques et industriels pour des interventions plénières de haut niveau, des panels d’experts reconnus, ainsi que des présentations de propositions de projets innovants. Des invités de marque enrichiront les débats, offrant une plateforme d’échange d’idées et de perspectives avancées.
+        </p>
+      </div>
+
+      <!-- Form Data Grid -->
       <div class="form-grid">
         <div class="form-field">
-          <label>Full name</label>
+          <label>Nom complet</label>
           <input type="text" :value="formData.firstName + ' ' + formData.lastName" readonly />
         </div>
         <div class="form-field">
@@ -18,13 +38,13 @@
           <input type="text" :value="formData.email" readonly />
         </div>
         <div class="form-field">
-          <label>Phone</label>
+          <label>Téléphone</label>
           <input type="text" :value="formData.phone" readonly />
         </div>
         <div class="form-field flag">
-          <label>Country</label>
+          <label>Pays</label>
           <div class="flag-field">
-            <img :src="`https://flagcdn.com/${formData.country}.svg`" alt="Tunisia flag" />
+            <img :src="`https://flagcdn.com/${formData.country}.svg`" alt="Drapeau du pays" />
             <span>{{ formData.full_country }}</span>
           </div>
         </div>
@@ -33,7 +53,7 @@
           <input type="text" :value="formData.profession" readonly />
         </div>
         <div class="form-field">
-          <label>Institution</label>
+          <label>Établissement</label>
           <input type="text" :value="formData.institution" readonly />
         </div>
         <div class="form-field">
@@ -41,43 +61,64 @@
           <input type="text" :value="formData.participation" readonly />
         </div>
         <div class="form-field">
-          <label>Accommodation</label>
+          <label>Hébergement</label>
           <input type="text" :value="formData.hebergement" readonly />
         </div>
         <div class="form-field">
-          <label>Number of accompanying adults</label>
+          <label>Nombre d'adultes accompagnants</label>
           <input type="text" :value="formData.adultCompanions" readonly />
         </div>
         <div class="form-field">
-          <label>Number of accompanying children</label>
+          <label>Nombre d'enfants accompagnants</label>
           <input type="text" :value="formData.childCompanions" readonly />
         </div>
         <div class="form-field">
-          <label>Single supplement</label>
+          <label>Supplément single</label>
           <input type="text" :value="formData.singleSupplement" readonly />
         </div>
         <div class="form-field">
-          <label>Extra night</label>
+          <label>Nuit supplémentaire</label>
           <input type="text" :value="formData.extraNights" readonly />
         </div>
         <div class="form-field">
-          <label>Payment method</label>
+          <label>Méthode de paiement</label>
           <input type="text" :value="formData.paymentMethod" readonly />
         </div>
         <div class="form-field">
-          <label>Total amount</label>
+          <label>Montant total</label>
           <input type="text" :value="`${formData.totalPrice} ${currency}`" readonly />
         </div>
+      </div>
+
+      <!-- Accommodation Extensions Section -->
+      <div class="pdf-section">
+        <h3 class="section-title">Les Extensions d'Hébergement</h3>
+        <p class="section-text">
+          Les extensions d'hébergement offrent un accès prolongé aux ateliers spécialisés, à la présence de figures influentes du secteur, à des discours stimulants, ainsi qu’à des propositions de projets novateurs et des idées d’excellence. Les options d'hébergement garantissent un confort optimal, adapté aux besoins des participants, avec des chambres single disponibles sous réserve de la capacité de l’hôtel. Pour toute demande spéciale, veuillez contacter l'ADT - Association  de Developpement Technologique au (+216) 62 362 232 ou 71 995 577, en présentant une copie de l'ordre de virement lors du séminaire.
+        </p>
+      </div>
+
+      <!-- Signature Section -->
+      <div class="pdf-section signature-section">
+        <h3 class="section-title">Signature du Participant</h3>
+        <p class="section-text">Veuillez signer ci-dessous pour confirmer votre inscription :</p>
+        <div class="signature-space" style="height: 50px; border-bottom: 1px solid #dcdcdc; margin-top: 0.5rem;"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="pdf-footer">
+        <p>Détails de Paiement : ADT - Association  de Developpement Technologique, ISET Bizerte, Tunisie | ID Fiscal : xxxxxxx/1</p>
+        <p>Contact : (+216) 62 362 232 | Email : info@adt.tn</p>
       </div>
     </div>
 
     <br />
 
     <div class="buttons">
-      <button class="download" @click="downloadPDF">
-        <i class="fas fa-download"></i> Download registration form
+      <button class="download  animated-image" @click="downloadPDF">
+        <i class="fas fa-download"></i> Télécharger la fiche d'inscription
       </button>
-      <button class="home" @click="handleReturnHome">Return to Home</button>
+      <button class="home" @click="handleReturnHome">Retour à l'Accueil</button>
     </div>
   </div>
 </template>
@@ -131,17 +172,17 @@ onMounted(() => {
     const file = new File([blob],"receipt_file",{type: blob.type})
     const form_req = form_request(formData)
     ParticipantService.createParticipant(form_req, file).then((response) => {
-      console.log("SuccessFul !!" + response.data)
+      console.log("Succès !!" + response.data)
     }).catch((error) => {
-      console.error('Error creating participant:', error);
+      console.error('Erreur lors de la création du participant :', error);
     });
   })}
   else{
     const form_req = form_request(formData)
     ParticipantService.createParticipant(form_req).then((response) => {
-      console.log("SuccessFul !!" + response.data)
+      console.log("Succès !!" + response.data)
     }).catch((error) => {
-      console.error('Error creating participant:', error);
+      console.error('Erreur lors de la création du participant :', error);
     });
   }
 })
@@ -174,7 +215,7 @@ function handleReturnHome() {
 async function fetchCountryName(countryCode) {
   try {
     const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
-    formData.full_country = response.data[0].name.common; // Accessing the full name
+    formData.full_country = response.data[0].name.common; // Accéder au nom complet
   } catch (error) {
     console.error(error);
   }
@@ -183,9 +224,9 @@ async function fetchCountryName(countryCode) {
 async function downloadPDF() {
   const element = pdfContent.value;
 
-  // Check if element has size
+  // Vérifier si l'élément a une taille
   if (!element || element.offsetWidth === 0 || element.offsetHeight === 0) {
-    alert('Registration form is not visible or has no size!');
+    alert('Le formulaire d\'inscription n\'est pas visible ou n\'a pas de taille !');
     return;
   }
 
@@ -205,7 +246,6 @@ async function downloadPDF() {
 
   pdf.setFontSize(20);
   pdf.setTextColor('#051d37');
-  pdf.text('SITE 2025 - Registration Form', pageWidth / 2, 15, { align: 'center' });
   pdf.addImage(imgData, 'PNG', x, 25, pdfWidth, pdfHeight);
   pdf.save(`SITE2025_${formData.firstName}_${formData.lastName}.pdf`);
 }
@@ -216,7 +256,7 @@ async function downloadPDF() {
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Arial', sans-serif; /* Changed to a more professional font */
   color: #222;
   text-align: center;
 }
@@ -244,6 +284,52 @@ async function downloadPDF() {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
+.pdf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+}
+
+.pdf-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #051d37;
+  margin-bottom: 0.5rem;
+}
+
+.pdf-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.pdf-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f5f9ff;
+  border-radius: 10px;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #051d37;
+  margin-bottom: 0.5rem;
+}
+
+.section-text {
+  font-size: 0.95rem; /* Slightly increased for readability */
+  color: #444;
+  line-height: 1.6; /* Improved line spacing for professionalism */
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -254,12 +340,16 @@ async function downloadPDF() {
 .form-field {
   text-align: left;
 }
+.animated-image {
+  animation: pulse 1s ease-in-out infinite alternate;
+}
 
 .form-field label {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.95rem; /* Slightly increased for professionalism */
   margin-bottom: 0.3rem;
   color: #666;
+  font-weight: 500; /* Added weight for a formal look */
 }
 
 .form-field input {
@@ -269,6 +359,7 @@ async function downloadPDF() {
   border-radius: 6px;
   background-color: #f5f9ff;
   color: #333;
+  font-size: 0.95rem; /* Consistent with labels */
 }
 
 .flag img {
@@ -285,6 +376,25 @@ async function downloadPDF() {
   border: 1px solid #dcdcdc;
   border-radius: 6px;
   background-color: #f5f9ff;
+}
+
+.signature-section {
+  margin-bottom: 1rem;
+}
+
+.signature-space {
+  height: 50px;
+  border-bottom: 1px solid #dcdcdc;
+  margin-top: 0.5rem;
+}
+
+.pdf-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dcdcdc;
+  font-size: 0.85rem; /* Slightly adjusted for consistency */
+  color: #666;
+  text-align: center;
 }
 
 .buttons {

@@ -1,7 +1,7 @@
 ```vue
 <template>
   <div class="container">
-    <h1 class="title">Comités {{ this.selectedEditionName }}</h1>
+    <h1>Comités {{ this.selectedEditionName }}</h1>
 
     <div class="actions">
       <button class="btn add" @click="openAddModal">
@@ -624,11 +624,11 @@ export default {
   overflow-x: hidden;
 }
 
-.title {
-  font-size: 32px;
+h1 {
+  font-size: 24px;
   font-weight: bold;
-  color: #265985;
-  margin-bottom: 24px;
+  color: #2c3e50;
+  margin-bottom: 20px;
 }
 
 .actions {
