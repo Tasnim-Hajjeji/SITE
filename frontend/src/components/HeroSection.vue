@@ -27,7 +27,7 @@
                 <div class="buttons">
                     <a href="#date" class="btn-blue">{{ $t('hero.buttons.importantDates') }}</a>
                     <button class="btn-white">{{ $t('hero.buttons.articleSubmission') }}</button>
-                    <button class="btn-whit" @click="downloadArticleTemplate">{{ $t('hero.buttons.callForPaper') }}</button>
+                    <button class="btn-whit" @click="downloadCallForPaper">{{ $t('hero.buttons.callForPaper') }}</button>
                     <router-link to="/profile-selection" class="btn-green">{{ $t('hero.buttons.registration')
                     }}</router-link>
                 </div>
@@ -116,9 +116,9 @@ export default {
                 this.timeRemaining = 0;
             }
         },
-        async downloadArticleTemplate() {
+        async downloadCallForPaper() {
             try {
-                const pdfUrl = '/assets/CallForPaper.pdf'; // Local public folder for testing
+                const pdfUrl = `http://localhost:8000/storage/${this.editionData.call_for_paper}`; 
                 // For external URL, uncomment below and replace with your URL
                 // const pdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
                 const response = await fetch(pdfUrl, {
