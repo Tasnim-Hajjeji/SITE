@@ -104,6 +104,19 @@ const messages = {
         },
         sponsors: {
             title: 'Our Sponsors',
+            slang: "Empower Innovation",
+            call_for: "Become a SITE 2025 Sponsor",
+            promote: "Promote your brand at the heart of tech and sustainability!",
+            download: "Download sponsor file",
+            thanks: "A heartfelt thank you to our incredible past sponsors! Your generous support and visionary contributions have been the driving force behind the triumphant success of previous SITE editions.",
+            name: "Company Name",
+            address: "Company address",
+            phone: "Phone",
+            logo: "Upload Company Logo",
+            submit: "Submit",
+            appreciate: "We appreciate your interest in supporting SITE 2025. Our team will review your application and get back to you shortly",
+            welcome: "We welcome your support!",
+            come_on: "Submit your application through the form below"
         },
         committees: {
             title_scientific: 'Scientific Committee',
@@ -234,6 +247,19 @@ const messages = {
         },
         sponsors: {
             title: 'Nos Sponsors',
+            slang: "Favoriser l'innovation",
+            call_for: "Devenez un sponsor pour SITE 2025",
+            promote: "Promouvez votre marque au cœur de la technologie et de la durabilité!",
+            download: "Télécharger le fichier sponsor",
+            thanks: "Un grand merci à nos formidables sponsors passés ! Votre généreux soutien et vos contributions visionnaires ont été le moteur du succès retentissant des précédentes éditions du SITE.",
+            name: "Nom de société",
+            address: "Addresse de la société",
+            phone: "Téléphone",
+            logo: "Envoyer le logo de société",
+            submit: "Soumettre",
+            appreciate: "Nous vous remercions de votre intérêt pour le projet SITE 2025. Notre équipe examinera votre candidature et vous répondra dans les plus brefs délais.",
+            welcome: "Nous apprécions votre soutien !",
+            come_on: "Soumettre votre application à travers le formulaire si-dessous"
         },
         committees: {
             title_scientific: 'Comité Scientifique',
