@@ -53,36 +53,13 @@
           </div>
         </transition>
         <div class="tools">
-          <button class="icon-btn" @click="openUpdateModal(index)">
-            <i class="fas fa-edit"></i>
-          </button>
+          
           <button class="icon-btn" @click="openDeleteModal(index)">
             <i class="fas fa-trash"></i>
           </button>
         </div>
       </div>
     </div>
-
-    <!-- Update Modal -->
-    <transition name="fade">
-      <div v-if="showUpdateModal" class="modal-overlay">
-        <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Update Participant</h3>
-          <form @submit.prevent="updateParticipant" class="space-y-4">
-            <!-- input fields (same as your original form) -->
-            <!-- ... جميع حقول النموذج ... -->
-            <div class="modal-actions flex justify-end gap-2 mt-6">
-              <button type="button" class="cancel-btn" @click="toggleUpdateModal">
-                Cancel
-              </button>
-              <button type="submit" class="add-btn">
-                Update
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </transition>
 
     <!-- Delete Modal -->
     <transition name="fade">
