@@ -4,7 +4,7 @@
       <h2 class="title">Dates importantes</h2>
       <div class="action-buttons">
         <button class="add-btn" @click="openAddModal">
-          <i class="fas fa-plus"></i> Ajouter une date Importante
+          <i class="fas fa-plus"></i> Ajouter une date
         </button>
       </div>
     </div>
