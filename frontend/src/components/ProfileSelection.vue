@@ -39,6 +39,7 @@
   const stranger_price = ref(0);
 
   onMounted(() => {
+    localStorage.clear()
     let editionId = cookieUtils.getCookie('editionId')
   priceService.getPrizesByEdition(editionId).then(dataArr => {
     if (Array.isArray(dataArr) && dataArr.length > 0) {

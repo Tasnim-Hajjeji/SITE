@@ -66,7 +66,7 @@
         </div>
         <div class="form-field">
           <label>Total amount</label>
-          <input type="text" :value="formData.totalPrice" readonly />
+          <input type="text" :value="`${formData.totalPrice} ${currency}`" readonly />
         </div>
       </div>
     </div>
@@ -94,6 +94,7 @@ import html2canvas from 'html2canvas'
 
 const router = useRouter()
 const pdfContent = ref(null)
+const currency = ref('')
 
 const formData = reactive({
   firstName: '',
@@ -116,6 +117,7 @@ const formData = reactive({
 
 onMounted(() => {
   let formType = localStorage.getItem("form_type")
+  currency.value = formType === 'tunisian' ? "DT" : "€";
   const personalInfo = formType === 'tunisian' ? JSON.parse(localStorage.getItem('tunisian_form')) : JSON.parse(localStorage.getItem('stranger_form'))
   const accommodationInfo = JSON.parse(localStorage.getItem('accommodation_form') || '{}')
   const totalPrice = parseInt(localStorage.getItem('totalPrice') || '0', 10)
@@ -143,6 +145,8 @@ onMounted(() => {
       console.error('Error creating participant:', error);
     });
   }
+
+  localStorage.clear()
 })
 
 function form_request(formData){
