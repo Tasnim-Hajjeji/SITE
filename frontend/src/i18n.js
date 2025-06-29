@@ -94,7 +94,21 @@ const messages = {
             highlight: 'Previous Years',
             carousel_subtitle_1: 'From inspiring talks to vibrant exchanges, each edition brought something unique.',
             carousel_subtitle_2: 'Relive the highlights through photos and memories.',
-            button: 'See More'
+            button: 'See More',
+            topics: "Main Topics Of The Conference",
+            keynote: {
+                title: "KeyNote Session",
+                subtitle: "Highlights from past SITE keynotes, where leading experts shaped the future of smart industry and sustainability"
+            },
+            gallery: {
+                title: "Conference Gallery",
+                subtitle1: "Relive the highlights of previous editions through our photo gallery.",
+                subtitle2: "Discover the atmosphere, the speakers, and the discussions that marked each conference."
+            },
+            honor: {
+                title: "Our guests of honor",
+                description: "Discover the speakers for this edition: experts, professionals and inspiring personalities who will come to share their experiences and visions."
+            }
         },
         prevTimeLine: {
             title: 'The Program'
@@ -237,7 +251,21 @@ const messages = {
             highlight: 'Années Précédentes',
             carousel_subtitle_1: 'Des discours inspirants aux échanges vibrants, chaque édition a apporté quelque chose d\'unique.',
             carousel_subtitle_2: 'Revivez les moments forts à travers des photos et des souvenirs.',
-            button: 'Voir plus'
+            button: 'Voir plus',
+            topics: "Sujets Principales De Conference",
+            keynote: {
+                title: "Temps forts des sessions",
+                subtitle: "Points forts des discours d'ouverture passés du SITE, où des experts de premier plan ont façonné l'avenir de l'industrie intelligente et de la durabilité"
+            },
+            gallery: {
+                title: "Gallerie de Conference",
+                subtitle1: "Revivez les moments forts des éditions précédentes à travers notre galerie photos.",
+                subtitle2: "Découvrez l'ambiance, les intervenants et les discussions qui ont marqué chaque conférence."
+            },
+            honor: {
+                title: "Nos invités d'honneur",
+                description: "Découvrez les intervenants de cette édition : experts, professionnels et personnalités inspirantes qui viendront partager leurs expériences et leurs visions."
+            }
         },
         prevTimeLine: {
             title: 'Le Programme'

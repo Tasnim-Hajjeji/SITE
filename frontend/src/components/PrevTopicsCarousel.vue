@@ -1,7 +1,7 @@
 <template>
   <div class="carousel-wrapper">
     <div class="section-title">
-      <h2 class="carousel-title">Main Topics Of The Conference </h2>
+      <h2 class="carousel-title">{{ $t("previousEditions.topics") }}</h2>
     </div>
 
     <button @click="prev" class="nav-button left" :disabled="currentIndex === 0">
@@ -17,9 +17,9 @@
       >
         <div class="carousel-item" v-for="(topic, index) in topics" :key="index">
           <div class="card">
-            <img :src="topic.image" :alt="topic.title" />
-            <h3 class="card-title">{{ topic.title }}</h3>
-            <p>{{ topic.description }}</p>
+            <img :src="topic.image" :alt="topic.title_en" />
+            <h3 class="card-title">{{ translate(topic.title_fr,topic.title_en) }}</h3>
+            <p>{{ translate(topic.description_fr,topic.description_en) }}</p>
           </div>
         </div>
       </div>
@@ -42,29 +42,39 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+const { locale } = useI18n()
 
 const currentIndex = ref(0)
 const visibleItems = ref(4)
 
 const topics = [
   {
-    title: 'Engineering Innovation',
-    description: 'Smart factory, robotics, Cybersecurity, AI, materials, Energy management, Cloud Computing, Big Data, Machine Learning !',
+    title_en: 'Engineering Innovation',
+    title_fr: "Innovation en ingénierie",
+    description_en: 'Smart factory, robotics, Cybersecurity, AI, materials, Energy management, Cloud Computing, Big Data, Machine Learning !',
+    description_fr: 'Usine intelligente, robotique, cybersécurité, IA, matériaux, gestion de l\'énergie, Cloud Computing, Big Data, Machine Learning !',
     image: require('@/assets/topic1.png')
   },
   {
-    title: 'Pedagogy, Teaching and Socio-human processes',
-    description: 'Pedagogy, Serious Game, Case of Study !',
+    title_en: 'Pedagogy, Teaching and Socio-human processes',
+    title_fr: "Pédagogie, Enseignement et Processus Socio-Humains",
+    description_en: 'Pedagogy, Serious Game, Case of Study !',
+    description_fr: 'Pédagogie, Serious Game, Cas d\'Etude !',
     image: require('@/assets/topic2.png')
   },
   {
-    title: 'New Technologies',
-    description: 'AR/VR, IoT, Quantum Computing, Edge Computing, Web3 !',
+    title_en: 'New Technologies',
+    title_fr: "Nouvelles Technologies",
+    description_en: 'AR/VR, IoT, Quantum Computing, Edge Computing, Web3 !',
+    description_fr: 'AR/VR, IoT, Informatique Quantique, Edge Computing, Web3 !',
     image: require('@/assets/topic3.png')
   },
   {
-    title: 'Social Impact',
-    description: 'Tech for good, Education, HealthTech, CivicTech !',
+    title_en: 'Social Impact',
+    title_fr: "Impact Social",
+    description_en: 'Tech for good, Education, HealthTech, CivicTech !',
+    description_fr: 'Tech pour le bien, Education, HealthTech, CivicTech !',
     image: require('@/assets/topic4.png')
   }
 ]
@@ -78,6 +88,10 @@ function updateVisibleItems() {
   if (currentIndex.value > topics.length - visibleItems.value) {
     currentIndex.value = Math.max(0, topics.length - visibleItems.value)
   }
+}
+
+function translate(fr,en){
+  return locale.value === 'fr' ? fr : en;
 }
 
 onMounted(() => {
@@ -162,6 +176,7 @@ function prev() {
 }
 
 .carousel-item {
+  margin-top: -2rem;
   flex: 0 0 calc(100% / 4); /* Par défaut 4 items */
   padding: 1rem;
   box-sizing: border-box;

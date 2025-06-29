@@ -1,8 +1,8 @@
 <template>
   <section class="guest-section">
-    <h2 class="title">Our guests of honor</h2>
+    <h2 class="title">{{ $t("previousEditions.honor.title") }}</h2>
     <p class="description">
-      Discover the speakers for this edition: experts, professionals and inspiring personalities who will come to share their experiences and visions.
+      {{ $t("previousEditions.honor.description") }}
     </p>
     <div class="guest-grid">
       <div v-for="(guest, index) in guests" :key="index" class="guest-card">

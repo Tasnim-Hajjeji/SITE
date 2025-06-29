@@ -1,9 +1,9 @@
 <template>
   <div class="gallery-container">
-    <h2 class="gallery-title">{{ editionData.name }} Conference Gallery</h2>
+    <h2 class="gallery-title">{{ editionData.name }} {{ $t("previousEditions.gallery.title") }}</h2>
     <p class="gallery-subtitle">
-      Relive the highlights of previous editions through our photo gallery.<br />
-      Discover the atmosphere, the speakers, and the discussions that marked each conference.
+      {{ $t("previousEditions.gallery.subtitle1") }}<br />
+      {{ $t("previousEditions.gallery.subtitle2") }}
     </p>
 
     <div class="carousel">

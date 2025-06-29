@@ -1,9 +1,9 @@
 <template>
   <section class="section-keynote">
     <div class="title-section">
-      <h2 class="main-title">Keynote Session</h2>
+      <h2 class="main-title">{{ $t("previousEditions.keynote.title") }}</h2>
       <p class="subtitle">
-        Highlights from past SITE keynotes, where leading experts shaped the future of smart industry and sustainability
+        {{ $t("previousEditions.keynote.subtitle") }}
       </p>
     </div>
     <div class="cards-wrapper">
