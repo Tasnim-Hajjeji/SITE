@@ -24,7 +24,7 @@
 
         <div :class="['input-group', {disabled: paymentMethod === 'Cash'}]">
           <label class="fixed-label">Proof of Payment *</label>
-          <input type="file" @change="handleFileUpload($event)" :disabled="paymentMethod === 'Cash'" />
+          <input type="file" accept="image/png, image/jpeg, image/jpg, .png, .jpeg, .jpg" @change="handleFileUpload($event)" :disabled="paymentMethod === 'Cash'" />
         </div>
 
           <button type="submit" class="submit-btn" @click.prevent="postFile()">Submit</button>

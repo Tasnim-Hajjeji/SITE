@@ -3,7 +3,8 @@
     <h1>Participants {{ selectedEditionName }} ({{ participants.length }} participants)</h1>
 
     <div class="actions" style="display: flex; justify-content: space-between; align-items: center;">
-      <button @click="downloadParticipantListPDF" class="btn download" style="background-color: #3490dc; color: white; padding: 8px 12px; border-radius: 5px; border:none; cursor:pointer;">
+      <button @click="downloadParticipantListPDF" class="btn download"
+        style="background-color: #3490dc; color: white; padding: 8px 12px; border-radius: 5px; border:none; cursor:pointer;">
         <i class="fas fa-file-pdf"></i> Télécharger liste des participants
       </button>
 
@@ -53,7 +54,7 @@
           </div>
         </transition>
         <div class="tools">
-          
+
           <button class="icon-btn" @click="openDeleteModal(index)">
             <i class="fas fa-trash"></i>
           </button>
@@ -66,7 +67,8 @@
       <div v-if="showDeleteModal" class="modal-overlay">
         <div class="modal-content">
           <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Delete Participant</h3>
-          <p class="text-gray-600 mb-4 text-center">Are you sure you want to delete <strong>{{ editParticipant.name }}</strong>?</p>
+          <p class="text-gray-600 mb-4 text-center">Are you sure you want to delete <strong>{{ editParticipant.name
+              }}</strong>?</p>
           <div class="modal-actions flex justify-end gap-2 mt-6">
             <button type="button" class="cancel-btn" @click="toggleDeleteModal">
               Cancel
@@ -81,10 +83,12 @@
 
     <!-- Payment Proof Modal -->
     <transition name="fade">
-      <div v-if="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+      <div v-if="showPaymentModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
         <div class="bg-white p-6 rounded-lg w-full max-w-2xl shadow-md font-poppins max-h-[90vh] overflow-y-auto">
           <h3 class="text-xl font-bold text-gray-800 mb-4 text-center sticky top-0 bg-white z-10">Payment Proof</h3>
-          <img :src="getImageUrl(currentPaymentProof)" alt="Payment Proof" class="w-full h-auto max-h-[70vh] object-contain mb-4" />
+          <img :src="getImageUrl(currentPaymentProof)" alt="Payment Proof"
+            class="w-full h-auto max-h-[70vh] object-contain mb-4" />
           <div class="flex justify-end space-x-3">
             <button class="btn confirm" @click="downloadPaymentProof">
               <i class="fas fa-download"></i> Download Payment Proof
@@ -264,7 +268,8 @@ export default {
     },
     async openPaymentModal(index) {
       this.paymentIndex = index;
-      this.currentPaymentProof = this.participants[index].paymentProof || null;
+      this.currentPaymentProof = this.participants[index].recu_paie || null;
+      console.log(this.currentPaymentProof)
       this.showPaymentModal = true;
     },
     closePaymentModal() {
@@ -272,14 +277,29 @@ export default {
       this.currentPaymentProof = null;
     },
     getImageUrl(imagePath) {
-      return imagePath ? `${process.env.VUE_APP_BASE_URL}/uploads/${imagePath}` : '';
+      return `http://localhost:8000/storage/${imagePath}`;
     },
-    downloadPaymentProof() {
+    async downloadPaymentProof() {
       if (!this.currentPaymentProof) return;
-      const link = document.createElement('a');
-      link.href = this.getImageUrl(this.currentPaymentProof);
-      link.download = 'payment-proof.jpg';
-      link.click();
+
+      try {
+        const imageUrl = this.getImageUrl(this.currentPaymentProof);
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'payment-proof.jpg';
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        console.error('Download failed:', error);
+      }
     },
     resetEditParticipant() {
       this.editParticipant = {
@@ -680,6 +700,7 @@ h1 {
     opacity: 0;
     transform: scale(0.85);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -733,7 +754,7 @@ h1 {
   transition: opacity 0.3s ease;
 }
 
-.fixed.inset-0 > div {
+.fixed.inset-0>div {
   background-color: #ffffff;
   padding: 1.5rem;
   border-radius: 0.5rem;
