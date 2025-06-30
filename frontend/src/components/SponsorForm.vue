@@ -45,7 +45,7 @@
         <p>
           {{ $t("sponsors.appreciate") }}
         </p>
-        <button @click="showModal = false" class="modal-button">ok</button>
+        <button @click="closeModal" class="modal-button">ok</button>
       </div>
     </div>
   </section>
@@ -85,6 +85,22 @@ export default {
         .catch(error => {
           console.error("Error submitting application:", error);
         });
+    },
+    closeModal() {
+      this.showModal = false;
+      this.resetForm();
+    },
+    resetForm() {
+      this.form = {
+        name: '',
+        adresse: '',
+        email: '',
+        phone: '',
+        logo: null,
+        description: '',
+        etat: 'pending',
+        edition_id: cookieUtils.getCookie("editionId")
+      };
     },
   },
 };
