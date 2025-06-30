@@ -2,47 +2,44 @@
   <div class="container">
     <!-- Titre H1 ajouté -->
     <h1>Questions du contact</h1>
+  </div>
 
-    </div>
-
-    <!-- Liste des questions -->
-    <div class="cards-wrapper">
-      <div class="card" v-for="(question) in questions" :key="question.key">
-        <div class="card-header">
-          <div class="title-date">
-            <h3 class="title">{{ question.name }}</h3>
-          </div>
-          <div class="info">
-            <p><strong>Email :</strong> {{ question.email }}</p>
-            <p><strong>Sujet :</strong> {{ question.subject }}</p>
-            <p><strong>Message :</strong> {{ question.message }}</p>
-          </div>
+  <!-- Liste des questions -->
+  <div class="cards-wrapper">
+    <div class="card" v-for="(question) in questions" :key="question.key">
+      <div class="card-header">
+        <div class="title-date">
+          <h3 class="title">{{ question.name }}</h3>
         </div>
-        <div class="tools">
+        <div class="info">
+          <p><strong>Email :</strong> {{ question.email }}</p>
+          <p><strong>Sujet :</strong> {{ question.subject }}</p>
+          <p><strong>Message :</strong> {{ question.message }}</p>
+        </div>
+      </div>
+      <div class="tools">
+        <button class="icon-btn" @click="openDeleteModal(question)">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 
-          <button class="icon-btn" @click="openDeleteModal(question)">
-            <i class="fas fa-trash"></i>
+  <!-- Modal Delete Confirmation -->
+  <transition name="fade">
+    <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
+      <div class="modal-content">
+        <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmer Suppression</h3>
+        <p class="text-gray-600 mb-4 text-center">Voulez vous supprimer le membre <strong>{{ deleteQuestionData.name }} , {{ deleteQuestionData.subject }}</strong>?</p>
+        <div class="modal-actions flex justify-end gap-2 mt-6">
+          <button type="button" class="cancel-btn" @click="closeDeleteModal">Cancel</button>
+          <button type="button" class="delete-btn" @click="supprimerQuestion" :disabled="isSubmitting">
+            {{ isSubmitting ? 'Suppression...' : 'Supprimer' }}
           </button>
         </div>
       </div>
     </div>
-
-    <!-- Modal Delete Confirmation -->
-    <transition name="fade">
-      <div v-if="showDeleteModal" class="modal-overlay" @click.self="closeDeleteModal">
-        <div class="modal-content">
-          <h3 class="text-xl font-bold text-blue-700 mb-4 text-center">Confirmer Suppression</h3>
-          <p class="text-gray-600 mb-4 text-center">Voulez vous supprimer le membre <strong>{{ deleteQuestionData.name }} , {{ deleteQuestionData.subject }}</strong>?</p>
-          <div class="modal-actions flex justify-end gap-2 mt-6">
-            <button type="button" class="cancel-btn" @click="closeDeleteModal">Cancel</button>
-            <button type="button" class="delete-btn" @click="supprimerQuestion" :disabled="isSubmitting">
-              {{ isSubmitting ? 'Suppression...' : 'Supprimer' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
-  
+  </transition>
 </template>
 
 <script>
@@ -62,8 +59,6 @@ export default {
       showDeleteModal:false,
       deleteQuestionData:null,
       isSubmitting: false,
-
-
     };
   },
   async created() {
@@ -79,7 +74,6 @@ export default {
         console.log('questions in fetch', this.questions)
       } catch (error) {
         console.error("error fetching contacts", error);
-
       }
     },
     enregistrerQuestion() {
@@ -109,7 +103,7 @@ export default {
       } finally {
         this.isSubmitting = false;
       }
-      },
+    },
     reinitialiserFormulaire() {
       this.showModal = false;
       this.editIndex = null;
@@ -120,8 +114,6 @@ export default {
         message: ''
       };
     },
-
-    // Dropdown Edition
     toggleEditionDropdown() {
       this.editionDropdownOpen = !this.editionDropdownOpen;
     },
@@ -242,6 +234,12 @@ h1 {
   color: #3a3a83;
 }
 
+.info {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
 .info p {
   font-size: 14px;
   margin: 4px 0;
@@ -347,7 +345,6 @@ h1 {
     opacity: 0;
     transform: scale(0.85);
   }
-
   100% {
     opacity: 1;
     transform: scale(1);
