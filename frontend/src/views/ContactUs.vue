@@ -60,6 +60,22 @@
         </form>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+      <div class="modal-content">
+        <h2 v-if="isSuccess" class="modal-title text-[#265985]">{{ $t('contact.successTitle') }}</h2>
+        <h2 v-else class="modal-title text-red-600">{{ $t('contact.errorTitle') }}</h2>
+        <p v-if="isSuccess" class="modal-message">{{ $t('contact.successMessage') }}</p>
+        <p v-else class="modal-message">{{ $t('contact.errorMessage') }}</p>
+        <button
+          @click="closeModal"
+          class="modal-btn bg-[#265985] text-white px-4 py-2 rounded-md hover:bg-[#1e4a6e] transition-all duration-200"
+        >
+          {{ isSuccess ? $t('contact.close') : $t('contact.retry') }}
+        </button>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -74,12 +90,31 @@ const form = ref({
   message: ''
 });
 
-const submitForm = async () => {
-  console.log('Form submitted:', form.value);
-  const response = await ContactService.addContact(form.value);
-  console.log(response);
+const showModal = ref(false);
+const isSuccess = ref(false);
+const errorMessage = ref('');
 
-  form.value = { name: '', email: '', subject: '', message: '' }; // Reset form
+const submitForm = async () => {
+  try {
+    console.log('Form submitted:', form.value);
+    const response = await ContactService.addContact(form.value);
+    console.log(response);
+    isSuccess.value = true;
+    form.value = { name: '', email: '', subject: '', message: '' }; // Reset form
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    isSuccess.value = false;
+    errorMessage.value = error.message || 'An unexpected error occurred.';
+  } finally {
+    showModal.value = true;
+  }
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  if (!isSuccess.value) {
+    form.value = { name: '', email: '', subject: '', message: '' }; // Reset on retry
+  }
 };
 </script>
 
@@ -114,6 +149,45 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(38, 89, 133, 0.3);
 }
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-message {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.modal-btn {
+  font-size: 1rem;
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .contact {
     padding: 1rem 0;
@@ -140,6 +214,23 @@ textarea:focus {
   button {
     padding: 0.5rem 1.5rem;
     font-size: 0.9rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+  }
+
+  .modal-message {
+    font-size: 0.9rem;
+  }
+
+  .modal-btn {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
   }
 }
 </style>

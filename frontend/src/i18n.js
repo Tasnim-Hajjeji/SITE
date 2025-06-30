@@ -152,7 +152,12 @@ const messages = {
             message: 'Message',
             messagePlaceholder: 'Enter your message here',
             submit: 'Send Message',
-            successMessage: 'Thank you for your message! We will get back to you soon.'
+            successTitle: 'Success!',
+            successMessage: 'Thank you for your message! We will get back to you soon.',
+            errorTitle: 'Error',
+            errorMessage: 'Failed to send your message. Please try again.',
+            close: 'Close',
+            retry: 'Retry'
         },
         page: {
             title: 'Speakers of SITE 2025',
@@ -297,7 +302,7 @@ const messages = {
             description_honor1: 'Le Comité d\'honneur réunit des personnalités influentes qui partagent notre vision et soutiennent notre mission.',
             description_honor2: 'Leur présence reflète la qualité et la crédibilité de cette conférence.'
         },
-        contact: {
+       contact: {
             title: 'Nous Contacter',
             description: 'Nous serions ravis d\'avoir de vos nouvelles ! Veuillez remplir le formulaire ci-dessous pour contacter l\'équipe SITE 2025.',
             name: 'Nom',
@@ -309,7 +314,12 @@ const messages = {
             message: 'Message',
             messagePlaceholder: 'Entrez votre message ici',
             submit: 'Envoyer le Message',
-            successMessage: 'Merci pour votre message ! Nous vous répondrons bientôt.'
+            successTitle: 'Succès !',
+            successMessage: 'Merci pour votre message ! Nous vous répondrons bientôt.',
+            errorTitle: 'Erreur',
+            errorMessage: 'Échec de l\'envoi de votre message. Veuillez réessayer.',
+            close: 'Fermer',
+            retry: 'Réessayer'
         },
         page: {
             title: 'Les intervenants de SITE 2025',
