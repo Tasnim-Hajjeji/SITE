@@ -4,7 +4,7 @@
         <PrevTopicsCarousel />
         <Keynote :edition-id="editionData.id" />
         <ConferenceGallery :edition-data="editionData" />
-        <PrevTimeLine :edition-id="editionData.id" />
+        <!-- <PrevTimeLine :edition-id="editionData.id" /> -->
         <GuestGrid :edition-id="editionData.id" />
         <Document :edition-id="editionData.id" />
 
@@ -21,7 +21,7 @@
 
 <script setup>
 import HeaderEdition from '@/components/HeaderEdition.vue';
-import PrevTimeLine from '@/components/PrevTimeLine.vue';
+// import PrevTimeLine from '@/components/PrevTimeLine.vue';
 import PrevTopicsCarousel from '@/components/PrevTopicsCarousel.vue';
 import Keynote from '@/components/Keynote.vue';
 import Document from '@/components/Document.vue';
