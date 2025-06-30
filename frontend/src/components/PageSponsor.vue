@@ -1,24 +1,31 @@
 <template>
   <div class="hero bg-base-200 min-h-screen">
-    <div class="hero-content flex-col lg:flex-row">
-      <div>
-        <h1 class="text-5xl font-bold">{{ $t("sponsors.slang") }} –<br>{{ $t("sponsors.call_for") }}</h1>
-        <p class="py-6">
-          {{ $t("sponsors.promote") }}
-        </p>
-        <button
+    
+    <section class="voices-header relative w-full h-64 md:h-80 lg:h-96 mb-4">
+    <div class="absolute inset-0 flex">
+      <!-- Left side with gradient and text -->
+      <div class="w-1/2 bg-gradient-to-r from-gray-600 to-transparent flex items-center justify-start">
+        <div class="text-white text-left px-4 md:px-8">
+          <h2 class="text-4xl md:text-4xl lg:text-5xl font-bold">
+            {{ $t("sponsors.call_for") }} !
+          </h2>
+          <p class="text-base md:text-lg lg:text-xl mt-4 max-w-md">
+            {{ $t("sponsors.promote") }}
+          </p>
+           <button
           class="download-btn animated-image capitalize shadow-lg transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
           @click="openOrDownload(dossier_file)"
         >
           <i class="fas fa-download mr-2"></i> {{ $t("sponsors.download") }}
         </button>
+        </div>
       </div>
-      <img
-        src="@/assets/sponsoring.jpg"
-        class="sponsor-image rounded-3xl shadow-2xl"
-        alt="Sponsorship handshake"
-      />
+      <!-- Right side with image -->
+      <div class="w-1/2 flex items-center justify-end">
+        <img src="../assets/intervenant2.png" alt="Conference experts" class="h-full object-cover">
+      </div>
     </div>
+  </section>
     <div class="text-center px-4">
       <p class="text-2xl font-semibold animated-text text-gray-800 tracking-wide mx-8" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
         {{ $t("sponsors.thanks") }}
@@ -121,6 +128,7 @@ const openOrDownload = (url) => {
   gap: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   transition: all 0.2s ease-in-out;
+  margin-top: 2rem;
 }
 
 .download-btn:hover {

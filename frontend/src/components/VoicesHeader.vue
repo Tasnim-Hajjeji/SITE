@@ -1,23 +1,5 @@
 <template>
-  <section class="voices-header relative w-full h-64 md:h-80 lg:h-96">
-    <div class="absolute inset-0 flex">
-      <!-- Left side with gradient and text -->
-      <div class="w-1/2 bg-gradient-to-r from-gray-600 to-transparent flex items-center justify-start">
-        <div class="text-white text-left px-4 md:px-8">
-          <h2 class="text-4xl md:text-4xl lg:text-5xl font-bold">
-            {{ $t('voices.title') }} <span class="text-blue-800">{{ $t('voices.conf') }}!</span>
-          </h2>
-          <p class="text-base md:text-lg lg:text-xl mt-4 max-w-md">
-            {{ $t('voices.subtitle') }}
-          </p>
-        </div>
-      </div>
-      <!-- Right side with image -->
-      <div class="w-1/2 flex items-center justify-end">
-        <img src="../assets/intervenant2.png" alt="Conference experts" class="h-full object-cover">
-      </div>
-    </div>
-  </section>
+  
 
   <!-- New title section below voices-header with translations -->
   <section class="page-title-section py-8 bg-gradient-to-b from-white to-gray-50 text-center">
