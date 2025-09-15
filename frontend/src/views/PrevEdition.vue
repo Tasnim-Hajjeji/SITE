@@ -3,10 +3,10 @@
         <HeaderEdition :edition-data="editionData" />
         <PrevTopicsCarousel />
         <Keynote :edition-id="editionData.id" />
+        <Document :edition-id="editionData.id" />
         <ConferenceGallery :edition-data="editionData" />
         <!-- <PrevTimeLine :edition-id="editionData.id" /> -->
         <GuestGrid :edition-id="editionData.id" />
-        <Document :edition-id="editionData.id" />
 
     </div>
     <div v-else-if="editionData && !editionData.id">
