@@ -4,8 +4,8 @@
       <div class="flex h-20 items-center justify-between">
         <div class="flex-1 flex items-center gap-4">
           <div class="flex items-center font-bold text-lg site-title" style="color: #265985;">
-            <img src="../assets/logosite.png" alt="Logo" class="h-10 mr-2" />
-            SITE 2025
+            <img src="../assets/x.png" alt="Logo" class="h-10 mr-2" />
+            Conference
           </div>
         </div>
 

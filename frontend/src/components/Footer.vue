@@ -25,12 +25,12 @@
 
       <div class="flex flex-col items-center text-[#265985]">
         <div class="flex flex-row gap-4 md:gap-6">
-          <img src="../assets/logosite.png" alt="SITE Logo" class="h-12 sm:h-16" />
-          <img src="../assets/iset.png" alt="ISET Logo" class="h-12 sm:h-16" />
-          <img src="../assets/adt.png" alt="ADT Logo" class="h-12 sm:h-16" />
+          <img src="../assets/x.png" alt="SITE Logo" class="h-12 sm:h-16" />
+          <img src="../assets/x1.png" alt="ISET Logo" class="h-12 sm:h-16" />
+          <img src="../assets/x2.png" alt="ADT Logo" class="h-12 sm:h-16" />
         </div>
         <span class="mt-4 font-cinzel font-bold text-2xl sm:text-3xl text-[#265985] tracking-wide">
-          SITE 2025
+          Conference 
         </span>
       </div>
 

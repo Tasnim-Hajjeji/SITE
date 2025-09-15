@@ -34,7 +34,7 @@ const messages = {
             }
         },
         blueSection: {
-            title: 'About SITE 2025',
+            title: 'About Conference2025',
             items: {
                 date: 'October 24–26, 2025',
                 location: 'Hammamet, Tunisia',
@@ -75,7 +75,7 @@ const messages = {
         footer: {
             contact: 'Contact us',
             backToTop: 'Back to top',
-            description: 'SITE 2025: International Conference on Software and Information Technology Excellence.',
+            description: 'Ccnference 2025: International Conference on Software and Information Technology Excellence.',
             subtitle: 'Join us in shaping the future of technology.',
             copyright: 'Copyright © 2025 SITE. All rights reserved.'
         },

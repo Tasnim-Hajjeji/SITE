@@ -2,13 +2,13 @@
   <footer class="conference-footer">
     <div class="container">
       <div class="logos">
-        <img src="@/assets/iset.png" alt="SET Logo" class="logo" />
-        <img src="@/assets/adt.png" alt="ADT Logo" class="logo" />
+        <img src="@/assets/x1.png" alt="SET Logo" class="logo" />
+        <img src="@/assets/x2.png" alt="ADT Logo" class="logo" />
       </div>
       <div class="contacts">
-        <p class="contact-item"><i class="fas fa-phone"></i> <a href="tel:+21671123456">+216 71 123 456</a></p>
-        <p class="contact-item"><i class="fas fa-phone"></i> <a href="tel:+21671789012">+216 71 789 012</a></p>
-        <p class="contact-item"><i class="fas fa-envelope"></i> <a href="mailto:info@conference2025.tn">info@conference2025.tn</a></p>
+        <p class="contact-item"><i class="fas fa-phone"></i> <a href="tel:+21671123456">+216 00 000 000</a></p>
+        <p class="contact-item"><i class="fas fa-phone"></i> <a href="tel:+21671789012">+216 00 000 000</a></p>
+        <p class="contact-item"><i class="fas fa-envelope"></i> <a href="mailto:info@conference2025.tn">info@conference0000.tn</a></p>
       </div>
       <div class="social-links">
         <a href="https://facebook.com/conference2025" target="_blank" class="social-link">

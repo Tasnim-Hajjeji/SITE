@@ -304,7 +304,7 @@ a {
 
 .image-container {
     max-width: 30%;
-    margin-top: -5rem;
+    margin-top: -8rem;
     margin-right: 3rem;
 }
 
